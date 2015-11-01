@@ -118,14 +118,8 @@ int main(int argc, char* args[]) {
 			//Event handler
 			SDL_Event e;
 
-			printf("1\n");
-			fflush(stdout);
-
 			//Player * player = Player_create("res/hello_world.bmp");
 			Player * player = Player_create("res/simpson.png");
-
-			printf("2\n");
-			fflush(stdout);
 
 			int x_move, y_move;
 
