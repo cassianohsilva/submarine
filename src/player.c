@@ -41,20 +41,44 @@ void Player_move(const Player * player, int h_move, int v_move, int x_max,
 
 		SDL_Rect * r = player->rect;
 
-		/// TODO Fazer a verificação de movimento restante pare cima e para a esquerda
-		if ((r->x + h_move) >= 0) {
-			if ((r->x + r->w + h_move) <= x_max) {
+		short int to_right = !(h_move >> 31);
+		short int to_bottom = !(v_move >> 31);
+
+		if (to_right) {
+
+			int rest = x_max - (r->x + r->w);
+
+			if (rest >= h_move) {
 				r->x += h_move;
-			} else if ((r->x + r->w) < x_max) {
-				r->x += x_max - (r->x + r->w);
+			} else {
+				r->x += rest;
+			}
+		} else {
+			int rest = -r->x;
+
+			if (rest <= h_move) {
+				r->x += h_move;
+			} else {
+				r->x += rest;
 			}
 		}
 
-		if ((r->y + v_move) >= 0) {
-			if (((r->y + r->h + v_move) <= y_max)) {
+		if (to_bottom) {
+
+			int rest = y_max - (r->y + r->h);
+
+			if (rest >= v_move) {
 				r->y += v_move;
-			} else if (((r->y + r->h) < y_max)) {
-				r->y += y_max - (r->y + r->h);
+			} else {
+				r->y += rest;
+			}
+		} else {
+			int rest = -r->y;
+
+			if (rest <= v_move) {
+				r->y += v_move;
+			} else {
+				r->y += rest;
 			}
 		}
 	}
