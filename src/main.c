@@ -9,6 +9,7 @@
  #include <SDL2/SDL_image.h>
  */
 #include "player.h"
+#include "resources.h"
 
 typedef enum {
 	true = 1, false = 0
@@ -119,7 +120,7 @@ int main(int argc, char* args[]) {
 			SDL_Event e;
 
 			//Player * player = Player_create("res/hello_world.bmp");
-			Player * player = Player_create("res/simpson.png");
+			Player * player = Player_create(gWindow, RES_SUBMARINE);
 
 			int x_move, y_move;
 
@@ -157,7 +158,7 @@ int main(int argc, char* args[]) {
 						Player_move(player, x_move, y_move, gScreenSurface->w, gScreenSurface->h);
 					}
 				}
-		        SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0x0, 0x0, 0x0));
+		        SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 
 				Player_render(player, gScreenSurface);
 				/*
