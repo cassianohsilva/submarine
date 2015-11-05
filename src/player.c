@@ -5,6 +5,7 @@
  *      Author: cassiano
  */
 
+#include <stdio.h>
 #include "player.h"
 
 Player * Player_create(SDL_Window * window, const char * filename) {
@@ -20,9 +21,11 @@ Player * Player_create(SDL_Window * window, const char * filename) {
 		if (player->surface != NULL) {
 
 			player->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
+			player->sprite_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
 			player->rect->x = 0;
 			player->rect->y = 0;
+
 			player->rect->w = (int) (player->surface->w * 0.5);
 			player->rect->h = player->surface->h;
 

@@ -8,6 +8,6 @@
 #ifndef SRC_RESOURCES_H_
 #define SRC_RESOURCES_H_
 
-static char * RES_SUBMARINE = "res/submarino.png";
+static char * RES_SUBMARINE = "./res/submarino.png";
 
 #endif /* SRC_RESOURCES_H_ */

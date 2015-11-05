@@ -121,6 +121,8 @@ int main(int argc, char* args[]) {
 
 			//Player * player = Player_create("res/hello_world.bmp");
 			Player * player = Player_create(gWindow, RES_SUBMARINE);
+			//Player * player = Player_create(gWindow, "res/submarino.png");
+
 
 			int x_move, y_move;
 
