@@ -9,11 +9,8 @@
  #include <SDL2/SDL_image.h>
  */
 #include "player.h"
+#include "enemy.h"
 #include "resources.h"
-
-typedef enum {
-	true = 1, false = 0
-} bool;
 
 int HORIZONTAL_KEY_PRESSED = 0;
 int VERTICAL_KEY_PRESSED = 0;
@@ -94,6 +91,44 @@ bool loadMedia() {
 	return success;
 }
 
+void move_player(SDL_Event * e, Player * player) {
+	if (e->type == SDL_KEYDOWN) {
+		switch (e->key.keysym.sym) {
+			case SDLK_UP:
+				// Para cima
+				VERTICAL_KEY_PRESSED = -1;
+				break;
+			case SDLK_DOWN:
+				// Para baixo
+				VERTICAL_KEY_PRESSED = 1;
+				break;
+			case SDLK_LEFT:
+				// Para a esquerda
+				HORIZONTAL_KEY_PRESSED = -1;
+				break;
+			case SDLK_RIGHT:
+				// Para a direita
+				HORIZONTAL_KEY_PRESSED = 1;
+				break;
+		}
+
+		Player_move(player, PASSO * HORIZONTAL_KEY_PRESSED,
+				PASSO * VERTICAL_KEY_PRESSED, gScreenSurface->w,
+				gScreenSurface->h);
+	} else if (e->type == SDL_KEYUP) {
+		switch (e->key.keysym.sym) {
+			case SDLK_UP:
+			case SDLK_DOWN:
+				VERTICAL_KEY_PRESSED = 0;
+				break;
+			case SDLK_LEFT:
+			case SDLK_RIGHT:
+				HORIZONTAL_KEY_PRESSED = 0;
+				break;
+		}
+	}
+}
+
 void close() {
 	//Deallocate surface
 	SDL_FreeSurface(gXOut);
@@ -104,7 +139,7 @@ void close() {
 	gWindow = NULL;
 
 	//Quit SDL subsystems
-	//SDL_Quit();
+	SDL_Quit();
 }
 
 int main(int argc, char* args[]) {
@@ -122,52 +157,18 @@ int main(int argc, char* args[]) {
 			//Event handler
 			SDL_Event e;
 
-			//Player * player = Player_create("res/hello_world.bmp");
 			Player * player = Player_create(gWindow, RES_SUBMARINE);
-			//Player * player = Player_create(gWindow, "res/submarino.png");
 
 			//While application is running
 			while (!quit) {
 
 				//Handle events on queue
-				//while (SDL_PollEvent(&e) != 0) {
 				if (SDL_PollEvent(&e) != 0) {
 					//User requests quit
 					if (e.type == SDL_QUIT) {
 						quit = true;
-					} else if (e.type == SDL_KEYDOWN) {
-						switch (e.key.keysym.sym) {
-							case SDLK_UP:
-								// Para cima.
-								VERTICAL_KEY_PRESSED = -1;
-								break;
-							case SDLK_DOWN:
-								// Para baixo.
-								VERTICAL_KEY_PRESSED = 1;
-								break;
-							case SDLK_LEFT:
-								// Para a esquerda.
-								HORIZONTAL_KEY_PRESSED = -1;
-								break;
-							case SDLK_RIGHT:
-								// Para a direita.
-								HORIZONTAL_KEY_PRESSED = 1;
-								break;
-						}
-
-						Player_move(player, PASSO * HORIZONTAL_KEY_PRESSED, PASSO * VERTICAL_KEY_PRESSED, gScreenSurface->w,
-								gScreenSurface->h);
-					} else if (e.type == SDL_KEYUP) {
-						switch (e.key.keysym.sym) {
-						case SDLK_UP:
-						case SDLK_DOWN:
-							VERTICAL_KEY_PRESSED = 0;
-							break;
-						case SDLK_LEFT:
-						case SDLK_RIGHT:
-							HORIZONTAL_KEY_PRESSED = 0;
-							break;
-						}
+					} else if(e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+						move_player(&e, player);
 					}
 				}
 				SDL_FillRect(gScreenSurface, NULL,

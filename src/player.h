@@ -9,12 +9,10 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 
+#include "types.h"
+
 #ifndef SRC_PLAYER_H_
 #define SRC_PLAYER_H_
-
-typedef enum _direction {
-	LEFT, RIGHT
-} Direction;
 
 typedef struct _Player {
 	SDL_Window * window;

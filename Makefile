@@ -1,23 +1,34 @@
 CC=gcc
 LIBS=-lSDL2 -lSDL2_image
-CFLAGS=-c
+C_FLAGS=-c
 
 SRC= ./src/
 BIN= ./bin/
 
+OBJS += \
+./bin/main.o \
+./bin/enemy.o \
+./bin/player.o
+
+USER_OBJS += \
+./src/main.c \
+./src/enemy.c \
+./src/player.c
+
 all: Submarino
 
-player.o: $(SRC)player.c
-	$(CC) $(CFLAGS) -o $(BIN)player.o  $(SRC)player.c
+./bin/%.o: ./src/%.c
+	@mkdir -p $(@D)
+	$(CC) $(C_FLAGS) -o "$@" "$<"
 
-main.o: $(SRC)main.c
-	$(CC) $(CFLAGS) -o $(BIN)main.o  $(SRC)main.c
+Submarino: $(OBJS) $(USER_OBJS)
+	$(CC) $(FLAGS) -o ./bin/main $(OBJS) $(LIBS)
 
-Submarino: player.o main.o
-	$(CC) -o $(BIN)main $(BIN)player.o $(BIN)main.o $(LIBS)
+#Submarino: player.o main.o
+#	$(CC) -o $(BIN)main $(BIN)player.o $(BIN)main.o $(LIBS)
 
 
 clean:
-	rm $(BIN)*.o
+	rm $(OBJS)
 
 .PHONY= all clean
