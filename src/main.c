@@ -15,6 +15,9 @@ typedef enum {
 	true = 1, false = 0
 } bool;
 
+int HORIZONTAL_KEY_PRESSED = 0;
+int VERTICAL_KEY_PRESSED = 0;
+
 #define PASSO 10
 
 //Screen dimension constants
@@ -80,13 +83,13 @@ bool loadMedia() {
 
 	//Load splash image
 	/*
-	gXOut = SDL_LoadBMP("res/hello_world.bmp");
-	if (gXOut == NULL) {
-		printf("Unable to load image %s! SDL Error: %s\n",
-				"res/hello_world.bmp", SDL_GetError());
-		success = false;
-	}
-	*/
+	 gXOut = SDL_LoadBMP("res/hello_world.bmp");
+	 if (gXOut == NULL) {
+	 printf("Unable to load image %s! SDL Error: %s\n",
+	 "res/hello_world.bmp", SDL_GetError());
+	 success = false;
+	 }
+	 */
 
 	return success;
 }
@@ -123,17 +126,12 @@ int main(int argc, char* args[]) {
 			Player * player = Player_create(gWindow, RES_SUBMARINE);
 			//Player * player = Player_create(gWindow, "res/submarino.png");
 
-
-			int x_move, y_move;
-
 			//While application is running
 			while (!quit) {
 
-				x_move = 0;
-				y_move = 0;
-
 				//Handle events on queue
-				while (SDL_PollEvent(&e) != 0) {
+				//while (SDL_PollEvent(&e) != 0) {
+				if (SDL_PollEvent(&e) != 0) {
 					//User requests quit
 					if (e.type == SDL_QUIT) {
 						quit = true;
@@ -141,26 +139,39 @@ int main(int argc, char* args[]) {
 						switch (e.key.keysym.sym) {
 							case SDLK_UP:
 								// Para cima.
-								y_move = -PASSO;
+								VERTICAL_KEY_PRESSED = -1;
 								break;
 							case SDLK_DOWN:
 								// Para baixo.
-								y_move = PASSO;
+								VERTICAL_KEY_PRESSED = 1;
 								break;
 							case SDLK_LEFT:
 								// Para a esquerda.
-								x_move = -PASSO;
+								HORIZONTAL_KEY_PRESSED = -1;
 								break;
 							case SDLK_RIGHT:
 								// Para a direita.
-								x_move = PASSO;
+								HORIZONTAL_KEY_PRESSED = 1;
 								break;
 						}
 
-						Player_move(player, x_move, y_move, gScreenSurface->w, gScreenSurface->h);
+						Player_move(player, PASSO * HORIZONTAL_KEY_PRESSED, PASSO * VERTICAL_KEY_PRESSED, gScreenSurface->w,
+								gScreenSurface->h);
+					} else if (e.type == SDL_KEYUP) {
+						switch (e.key.keysym.sym) {
+						case SDLK_UP:
+						case SDLK_DOWN:
+							VERTICAL_KEY_PRESSED = 0;
+							break;
+						case SDLK_LEFT:
+						case SDLK_RIGHT:
+							HORIZONTAL_KEY_PRESSED = 0;
+							break;
+						}
 					}
 				}
-		        SDL_FillRect(gScreenSurface, NULL, SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+				SDL_FillRect(gScreenSurface, NULL,
+						SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 
 				Player_render(player, gScreenSurface);
 				/*
