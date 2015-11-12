@@ -19,7 +19,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename);
 
 void Enemy_render(const Enemy * enemy, SDL_Surface * parent);
 
-void Enemy_move(Enemy * enemy, int h_move, int v_move, int x_max, int y_max);
+void Enemy_move(Enemy * enemy, int h_move, int v_move);
 
 bool Enemy_is_visible(Enemy * enemy);
 

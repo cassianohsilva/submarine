@@ -1,13 +1,4 @@
-/*This source code copyrighted by Lazy Foo' Productions (2004-2015)
- and may not be redistributed without written permission.*/
-
 //Using SDL and standard IO
-/*
- #include <stdio.h>
- #include <stdlib.h>
- #include <SDL2/SDL.h>
- #include <SDL2/SDL_image.h>
- */
 #include "player.h"
 #include "enemy.h"
 #include "resources.h"
@@ -23,9 +14,6 @@ const int SCREEN_HEIGHT = 480;
 
 //Starts up SDL and creates window
 bool init();
-
-//Loads media
-bool loadMedia();
 
 //Frees media and shuts down SDL
 void close();
@@ -74,23 +62,6 @@ bool init() {
 	return success;
 }
 
-bool loadMedia() {
-	//Loading success flag
-	bool success = true;
-
-	//Load splash image
-	/*
-	 gXOut = SDL_LoadBMP("res/hello_world.bmp");
-	 if (gXOut == NULL) {
-	 printf("Unable to load image %s! SDL Error: %s\n",
-	 "res/hello_world.bmp", SDL_GetError());
-	 success = false;
-	 }
-	 */
-
-	return success;
-}
-
 void move_player(SDL_Event * e, Player * player) {
 	if (e->type == SDL_KEYDOWN) {
 		switch (e->key.keysym.sym) {
@@ -113,8 +84,7 @@ void move_player(SDL_Event * e, Player * player) {
 		}
 
 		Player_move(player, PASSO * HORIZONTAL_KEY_PRESSED,
-				PASSO * VERTICAL_KEY_PRESSED, gScreenSurface->w,
-				gScreenSurface->h);
+		PASSO * VERTICAL_KEY_PRESSED, gScreenSurface->w, gScreenSurface->h);
 	} else if (e->type == SDL_KEYUP) {
 		switch (e->key.keysym.sym) {
 			case SDLK_UP:
@@ -147,42 +117,36 @@ int main(int argc, char* args[]) {
 	if (!init()) {
 		printf("Failed to initialize!\n");
 	} else {
-		//Load media
-		if (!loadMedia()) {
-			printf("Failed to load media!\n");
-		} else {
-			//Main loop flag
-			bool quit = false;
+		//Main loop flag
+		bool quit = false;
 
-			//Event handler
-			SDL_Event e;
+		//Event handler
+		SDL_Event e;
 
-			Player * player = Player_create(gWindow, RES_SUBMARINE);
+		Player * player = Player_create(gWindow, RES_SUBMARINE);
 
-			//While application is running
-			while (!quit) {
+		//While application is running
+		while (!quit) {
 
-				//Handle events on queue
-				if (SDL_PollEvent(&e) != 0) {
-					//User requests quit
-					if (e.type == SDL_QUIT) {
-						quit = true;
-					} else if(e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-						move_player(&e, player);
-					}
+			//Handle events on queue
+			if (SDL_PollEvent(&e) != 0) {
+				//User requests quit
+				if (e.type == SDL_QUIT) {
+					quit = true;
+				} else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
+					move_player(&e, player);
 				}
-				SDL_FillRect(gScreenSurface, NULL,
-						SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
-
-				Player_render(player, gScreenSurface);
-				/*
-				 //Apply the image
-				 SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
-				 */
-				//Update the surface
-				SDL_UpdateWindowSurface(gWindow);
-
 			}
+			SDL_FillRect(gScreenSurface, NULL,
+					SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
+
+			Player_render(player, gScreenSurface);
+			/*
+			 //Apply the image
+			 SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
+			 */
+			//Update the surface
+			SDL_UpdateWindowSurface(gWindow);
 		}
 	}
 

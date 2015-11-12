@@ -13,8 +13,6 @@ Player * Player_create(SDL_Window * window, const char * filename) {
 	Player *player = (Player *) malloc(sizeof(Player));
 
 	if (player != NULL) {
-		//player->surface = SDL_LoadBMP(filename);
-
 		player->window = window;
 		player->surface = IMG_Load(filename);
 
@@ -35,9 +33,6 @@ Player * Player_create(SDL_Window * window, const char * filename) {
 			player->sprite_rect->y = 0;
 			player->sprite_rect->w = (int) (player->surface->w * 0.5);
 			player->sprite_rect->h = player->surface->h;
-
-			//player->sprite_rect = player->rect;
-
 		} else {
 			printf("Erro ao carregar a imagem: %s\n", IMG_GetError());
 		}

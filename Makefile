@@ -24,10 +24,6 @@ all: Submarino
 Submarino: $(OBJS) $(USER_OBJS)
 	$(CC) $(FLAGS) -o ./bin/main $(OBJS) $(LIBS)
 
-#Submarino: player.o main.o
-#	$(CC) -o $(BIN)main $(BIN)player.o $(BIN)main.o $(LIBS)
-
-
 clean:
 	rm $(OBJS)
 
