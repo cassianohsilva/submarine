@@ -7,16 +7,16 @@
 
 #include "bullet.h"
 
-Bullet * Bullet_create(SDL_Window * window, Direction direction, float velocity_factor, int x, int y,
-		const char * filename) {
+Bullet * Bullet_create(SDL_Window * window, Direction direction,
+		float velocity_factor, int x, int y, const char * filename) {
 
 	Bullet * bullet = (Bullet *) malloc(sizeof(Bullet));
 
-	if(bullet != NULL) {
+	if (bullet != NULL) {
 		bullet->window = window;
 		bullet->surface = IMG_Load(filename);
 
-		if(bullet->surface != NULL) {
+		if (bullet->surface != NULL) {
 
 			bullet->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
@@ -28,7 +28,8 @@ Bullet * Bullet_create(SDL_Window * window, Direction direction, float velocity_
 			bullet->direction = direction;
 			bullet->velocity_factor = velocity_factor;
 		} else {
-			printf("Erro ao carregar a imagem \'%s\': %s\n", filename, IMG_GetError());
+			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
+					IMG_GetError());
 		}
 	}
 
@@ -40,14 +41,25 @@ void Bullet_render(Bullet * bullet, SDL_Surface * parent) {
 }
 
 void Bullet_move(Bullet * bullet) {
-	if(bullet != NULL) {
+	if (bullet != NULL) {
 		bullet->rect->x += (int) bullet->direction * bullet->velocity_factor;
 	}
 }
 
 bool Bullet_is_visible(Bullet * bullet) {
-	//TODO Implementar essa função
-	return false;
+	SDL_Surface * surface = SDL_GetWindowSurface(bullet->window);
+	bool is_visible = true;
+
+	SDL_Rect * bullet_rect = bullet->rect;
+	SDL_Rect screen_rect = { 0, 0, surface->w, surface->h };
+
+	if (bullet_rect->x + bullet_rect->w < 0 || bullet_rect->x > screen_rect.w
+			|| bullet_rect->y + bullet_rect->h < 0
+			|| bullet_rect->y > screen_rect.h) {
+		is_visible = false;
+	}
+
+	return is_visible;
 }
 
 void Bullet_destroy(Bullet * bullet) {

@@ -8,7 +8,7 @@ typedef struct {
 } Shark;
 
 typedef struct {
-
+	List * bullet_list;
 } EnemySubmarine;
 
 typedef struct {

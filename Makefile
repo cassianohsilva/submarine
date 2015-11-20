@@ -10,14 +10,16 @@ OBJS += \
 ./bin/enemy.o \
 ./bin/player.o \
 ./bin/game.o \
-./bin/bullet.o
+./bin/bullet.o \
+./bin/linked_list.o
 
 USER_OBJS += \
 ./src/main.c \
 ./src/enemy.c \
 ./src/player.c \
 ./src/game.c \
-./src/bullet.c
+./src/bullet.c \
+./src/linked_list.c
 
 all: Submarino
 

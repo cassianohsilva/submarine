@@ -97,6 +97,4 @@ void Enemy_destroy(Enemy * enemy) {
 	free(enemy->rect);
 	free(enemy->surface);
 	free(enemy);
-
-	enemy = NULL;
 }
