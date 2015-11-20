@@ -6,7 +6,7 @@
  */
 #include "enemy.h"
 
-Enemy * Enemy_create(SDL_Window * window, const char * filename) {
+Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type) {
 
 	Enemy *enemy = (Enemy *) malloc(sizeof(Enemy));
 

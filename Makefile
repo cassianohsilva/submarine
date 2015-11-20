@@ -8,12 +8,16 @@ BIN= ./bin/
 OBJS += \
 ./bin/main.o \
 ./bin/enemy.o \
-./bin/player.o
+./bin/player.o \
+./bin/game.o \
+./bin/bullet.o
 
 USER_OBJS += \
 ./src/main.c \
 ./src/enemy.c \
-./src/player.c
+./src/player.c \
+./src/game.c \
+./src/bullet.c
 
 all: Submarino
 
@@ -22,7 +26,7 @@ all: Submarino
 	$(CC) $(C_FLAGS) -o "$@" "$<"
 
 Submarino: $(OBJS) $(USER_OBJS)
-	$(CC) $(FLAGS) -o ./bin/main $(OBJS) $(LIBS)
+	$(CC) $(FLAGS) -o ./main $(OBJS) $(LIBS)
 
 clean:
 	rm $(OBJS)

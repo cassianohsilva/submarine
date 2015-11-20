@@ -5,10 +5,6 @@
  *      Author: cassiano
  */
 
-#include <stdlib.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-
 #include "types.h"
 
 #ifndef SRC_PLAYER_H_
@@ -17,6 +13,7 @@
 typedef struct _Player {
 	SDL_Window * window;
 	SDL_Rect * rect;
+	int oxygen;
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
 	Direction look_dir;
@@ -30,7 +27,7 @@ Player * Player_create(SDL_Window *, const char *);
 /**
  * Renderiza o player na SDL_Surface pai
  */
-void Player_render(const Player *player, SDL_Surface * parent);
+void Player_render(const Player* player, SDL_Surface* parent);
 
 /**
  * Move o player na horizontal e na vertical

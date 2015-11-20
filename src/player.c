@@ -33,8 +33,10 @@ Player * Player_create(SDL_Window * window, const char * filename) {
 			player->sprite_rect->y = 0;
 			player->sprite_rect->w = (int) (player->surface->w * 0.5);
 			player->sprite_rect->h = player->surface->h;
+
+			player->oxygen = 100;
 		} else {
-			printf("Erro ao carregar a imagem: %s\n", IMG_GetError());
+			printf("Erro ao carregar a imagem \'%s\': %s\n", filename, IMG_GetError());
 		}
 	}
 

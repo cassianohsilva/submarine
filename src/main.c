@@ -1,6 +1,6 @@
-//Using SDL and standard IO
 #include "player.h"
 #include "enemy.h"
+#include "game.h"
 #include "resources.h"
 
 int HORIZONTAL_KEY_PRESSED = 0;
@@ -8,37 +8,28 @@ int VERTICAL_KEY_PRESSED = 0;
 
 #define PASSO 10
 
-//Screen dimension constants
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
-//Starts up SDL and creates window
 bool init();
 
-//Frees media and shuts down SDL
 void close();
 
-//The window we'll be rendering to
 SDL_Window* gWindow = NULL;
 
-//The surface contained by the window
 SDL_Surface* gScreenSurface = NULL;
 
-//The image we will load and show on the screen
 SDL_Surface* gXOut = NULL;
 
 bool init() {
-	//Initialization flag
 	bool success = true;
 
-	//Initialize SDL
 	if (SDL_Init( SDL_INIT_VIDEO) < 0 || SDL_Init( SDL_INIT_EVENTS) < 0) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		success = false;
 	} else {
 		atexit(SDL_Quit);
 
-		//Create window
 		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL) {
@@ -53,7 +44,6 @@ bool init() {
 				IMG_GetError());
 				success = false;
 			} else {
-				//Get window surface
 				gScreenSurface = SDL_GetWindowSurface(gWindow);
 			}
 		}
@@ -100,57 +90,38 @@ void move_player(SDL_Event * e, Player * player) {
 }
 
 void close() {
-	//Deallocate surface
 	SDL_FreeSurface(gXOut);
 	gXOut = NULL;
 
-	//Destroy window
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
-
-	//Quit SDL subsystems
-	SDL_Quit();
 }
 
 int main(int argc, char* args[]) {
-	//Start up SDL and create window
 	if (!init()) {
 		printf("Failed to initialize!\n");
 	} else {
-		//Main loop flag
 		bool quit = false;
 
-		//Event handler
 		SDL_Event e;
 
-		Player * player = Player_create(gWindow, RES_SUBMARINE);
+		Game * game = Game_create(10, gWindow);
+		Player * player = game->player;
 
-		//While application is running
 		while (!quit) {
 
-			//Handle events on queue
 			if (SDL_PollEvent(&e) != 0) {
-				//User requests quit
 				if (e.type == SDL_QUIT) {
 					quit = true;
 				} else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
 					move_player(&e, player);
 				}
 			}
-			SDL_FillRect(gScreenSurface, NULL,
-					SDL_MapRGB(gScreenSurface->format, 0xFF, 0xFF, 0xFF));
 
-			Player_render(player, gScreenSurface);
-			/*
-			 //Apply the image
-			 SDL_BlitSurface( gXOut, NULL, gScreenSurface, NULL );
-			 */
-			//Update the surface
-			SDL_UpdateWindowSurface(gWindow);
+			Game_update(game);
 		}
 	}
 
-	//Free resources and close SDL
 	close();
 
 	return 0;

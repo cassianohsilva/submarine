@@ -1,11 +1,15 @@
-#include <stdlib.h>
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include "types.h"
 
 #ifndef SRC_ENEMY_H_
 #define SRC_ENEMY_H_
 
-#include "types.h"
+typedef struct {
+
+} Shark;
+
+typedef struct {
+
+} EnemySubmarine;
 
 typedef struct {
 	SDL_Window * window;
@@ -13,9 +17,14 @@ typedef struct {
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
 	Direction look_dir;
+	float velocity_factor;
+
+	EnemyType type;
+	void * real_enemy;
+
 } Enemy;
 
-Enemy * Enemy_create(SDL_Window * window, const char * filename);
+Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type);
 
 void Enemy_render(const Enemy * enemy, SDL_Surface * parent);
 
