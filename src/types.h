@@ -11,7 +11,6 @@
 #include <SDL2/SDL_image.h>
 
 #include "resources.h"
-#include "linked_list.h"
 
 #ifndef SRC_TYPES_H_
 #define SRC_TYPES_H_

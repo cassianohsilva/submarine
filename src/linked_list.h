@@ -24,7 +24,7 @@ List * List_create();
 
 void List_insert(List * list, void * value);
 
-void List_remove(List * list, void * value);
+bool List_remove(List * list, void * value);
 
 void List_destroy(List * list);
 

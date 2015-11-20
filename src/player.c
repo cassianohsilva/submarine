@@ -5,7 +5,7 @@
  *      Author: cassiano
  */
 
-#include <stdio.h>
+
 #include "player.h"
 
 Player * Player_create(SDL_Window * window, const char * filename) {

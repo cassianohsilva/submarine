@@ -1,4 +1,5 @@
 #include "types.h"
+#include "linked_list.h"
 
 #ifndef SRC_ENEMY_H_
 #define SRC_ENEMY_H_

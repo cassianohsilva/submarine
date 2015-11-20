@@ -6,6 +6,8 @@
  */
 
 #include "types.h"
+#include "bullet.h"
+#include "linked_list.h"
 
 #ifndef SRC_PLAYER_H_
 #define SRC_PLAYER_H_
