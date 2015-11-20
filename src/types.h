@@ -16,7 +16,7 @@
 #define SRC_TYPES_H_
 
 typedef enum {
-	LEFT = 5, RIGHT = 12
+	LEFT = -1, RIGHT = 1
 } Direction;
 
 typedef enum {
