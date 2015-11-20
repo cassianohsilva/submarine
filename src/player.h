@@ -17,6 +17,8 @@ typedef struct _Player {
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
 	Direction look_dir;
+
+	List * bullet_list;
 } Player;
 
 /**

@@ -35,6 +35,8 @@ Player * Player_create(SDL_Window * window, const char * filename) {
 			player->sprite_rect->h = player->surface->h;
 
 			player->oxygen = 100;
+
+			player->bullet_list = List_create();
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename, IMG_GetError());
 		}
@@ -118,9 +120,18 @@ void Player_move(Player * player, int h_move, int v_move, int x_max, int y_max) 
 }
 
 void Player_destroy(Player * player) {
+
+	Node * node = player->bullet_list->begin;
+
+	while(node != NULL) {
+		Bullet_destroy((Bullet *) node->value);
+
+		node = node->next;
+	}
+
+	List_destroy(player->bullet_list);
+
 	free(player->rect);
 	free(player->surface);
 	free(player);
-
-	player = NULL;
 }
