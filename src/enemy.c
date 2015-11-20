@@ -6,7 +6,8 @@
  */
 #include "enemy.h"
 
-Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type) {
+Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
+		Direction direction, int y, float velocity_factor) {
 
 	Enemy *enemy = (Enemy *) malloc(sizeof(Enemy));
 
@@ -19,13 +20,19 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type)
 			enemy->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 			enemy->sprite_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-			enemy->rect->x = 0;
-			enemy->rect->y = 0;
-
 			enemy->rect->w = (int) (enemy->surface->w * 0.5);
 			enemy->rect->h = enemy->surface->h;
 
-			enemy->look_dir = LEFT;
+			enemy->rect->y = y;
+
+			if (direction == LEFT) {
+				enemy->rect->x = SDL_GetWindowSurface(enemy->window)->w;
+			} else {
+				enemy->rect->x = -enemy->rect->w;
+			}
+
+			enemy->direction = direction;
+			enemy->velocity_factor = velocity_factor;
 
 			enemy->sprite_rect->x = 0;
 			enemy->sprite_rect->y = 0;
@@ -40,7 +47,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type)
 }
 
 void Enemy_render(const Enemy * enemy, SDL_Surface * parent) {
-	switch (enemy->look_dir) {
+	switch (enemy->direction) {
 
 		case LEFT:
 			enemy->sprite_rect->x = 0;
@@ -55,25 +62,9 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent) {
 	SDL_BlitSurface(enemy->surface, enemy->sprite_rect, parent, enemy->rect);
 }
 
-void Enemy_move(Enemy * enemy, int h_move, int v_move) {
+void Enemy_move(Enemy * enemy) {
 	if (enemy != NULL) {
-		SDL_Rect * r = enemy->rect;
-
-		short int to_right = h_move > 0;
-
-		if (h_move) {
-			r->x += h_move;
-
-			if (to_right) {
-				enemy->look_dir = RIGHT;
-			} else {
-				enemy->look_dir = LEFT;
-			}
-		}
-
-		if (v_move) {
-			r->y += v_move;
-		}
+		enemy->rect->x += (int) (enemy->direction * enemy->velocity_factor);
 	}
 }
 
@@ -84,9 +75,9 @@ bool Enemy_is_visible(Enemy * enemy) {
 	SDL_Rect * enemy_rect = enemy->rect;
 	SDL_Rect screen_rect = { 0, 0, surface->w, surface->h };
 
-	if (enemy_rect->x + enemy_rect->w < 0 || enemy_rect->x > screen_rect.w
-			|| enemy_rect->y + enemy_rect->h < 0
-			|| enemy_rect->y > screen_rect.h) {
+	if (enemy_rect->x < 0 || enemy_rect->x > screen_rect.w
+				|| enemy_rect->y < 0
+				|| enemy_rect->y > screen_rect.h) {
 		is_visible = false;
 	}
 

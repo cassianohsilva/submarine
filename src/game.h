@@ -8,22 +8,27 @@
 #include "types.h"
 #include "player.h"
 #include "enemy.h"
+#include "resources.h"
+#include "linked_list.h"
 
 #ifndef SRC_GAME_H_
 #define SRC_GAME_H_
 
 typedef struct {
 	Player * player;
-	int max_enemy;
-	Enemy ** enemies;
+	List * enemies;
 
 	SDL_Window * window;
 	SDL_Surface * surface;
 } Game;
 
-Game * Game_create(int max_enemies, SDL_Window * window);
+Game * Game_create(SDL_Window * window);
 
 void Game_destroy(Game * game);
+
+Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction, int y, float velocity_factor);
+
+void Game_destroy_enemy(Game * game, Enemy * enemy);
 
 void Game_update(Game * game);
 

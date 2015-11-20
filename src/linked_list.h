@@ -17,7 +17,6 @@ typedef struct _node {
 
 typedef struct {
 	Node * begin;
-	//Node * end;
 } List;
 
 List * List_create();

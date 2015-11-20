@@ -9,5 +9,6 @@
 #define SRC_RESOURCES_H_
 
 static char * RES_SUBMARINE = "./res/submarino.png";
+static char * RES_SHARK = "./res/peixe.png";
 
 #endif /* SRC_RESOURCES_H_ */

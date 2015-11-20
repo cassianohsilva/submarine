@@ -1,3 +1,5 @@
+#include <time.h>
+
 #include "player.h"
 #include "enemy.h"
 #include "game.h"
@@ -22,6 +24,9 @@ SDL_Surface* gScreenSurface = NULL;
 SDL_Surface* gXOut = NULL;
 
 bool init() {
+
+	srand(time(NULL));
+
 	bool success = true;
 
 	if (SDL_Init( SDL_INIT_VIDEO) < 0 || SDL_Init( SDL_INIT_EVENTS) < 0) {
@@ -105,7 +110,7 @@ int main(int argc, char* args[]) {
 
 		SDL_Event e;
 
-		Game * game = Game_create(10, gWindow);
+		Game * game = Game_create(gWindow);
 		Player * player = game->player;
 
 		while (!quit) {
@@ -114,10 +119,19 @@ int main(int argc, char* args[]) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
 				} else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-					move_player(&e, player);
+					if (e.key.keysym.sym == SDLK_UP
+							|| e.key.keysym.sym == SDLK_DOWN
+							|| e.key.keysym.sym == SDLK_LEFT
+							|| e.key.keysym.sym == SDLK_RIGHT) {
+						move_player(&e, player);
+
+					} else if (e.key.keysym.sym == SDLK_SPACE) {
+
+						Game_spawn_enemy(game, SHARK, LEFT,
+								rand() % SCREEN_HEIGHT, 1.0);
+					}
 				}
 			}
-
 			Game_update(game);
 		}
 	}

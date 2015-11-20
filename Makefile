@@ -1,6 +1,7 @@
 CC=gcc
 LIBS=-lSDL2 -lSDL2_image
 C_FLAGS=-c
+FLAGS = -Wall
 
 SRC= ./src/
 BIN= ./bin/
@@ -25,7 +26,7 @@ all: Submarino
 
 ./bin/%.o: ./src/%.c
 	@mkdir -p $(@D)
-	$(CC) $(C_FLAGS) -o "$@" "$<"
+	$(CC) $(FLAGS) $(C_FLAGS) -o "$@" "$<"
 
 Submarino: $(OBJS) $(USER_OBJS)
 	$(CC) $(FLAGS) -o ./main $(OBJS) $(LIBS)

@@ -32,19 +32,21 @@ void List_insert(List * l, void * value) {
 
 bool List_remove(List * l, void * value) {
 
-	Node * node = l->begin;
+	Node ** node = &l->begin;
 	bool is_modified = false;
 
-	while(node->next != NULL) {
-		if(node->next->value == value) {
-			Node * aux = node->next;
+	while(*node != NULL) {
+		if((*node)->value == value) {
+			Node * next = (*node)->next;
 
-			node->next = node->next->next;
-			free(aux);
+			free(*node);
+
+			*node = next;
 
 			is_modified = true;
-
 			break;
+		} else {
+			node = &(*node)->next;
 		}
 	}
 
