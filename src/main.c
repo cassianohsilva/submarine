@@ -8,8 +8,6 @@
 int HORIZONTAL_KEY_PRESSED = 0;
 int VERTICAL_KEY_PRESSED = 0;
 
-#define PASSO 10
-
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
@@ -57,41 +55,29 @@ bool init() {
 	return success;
 }
 
-void move_player(SDL_Event * e, Player * player) {
-	if (e->type == SDL_KEYDOWN) {
-		switch (e->key.keysym.sym) {
-			case SDLK_UP:
-				// Para cima
-				VERTICAL_KEY_PRESSED = -1;
-				break;
-			case SDLK_DOWN:
-				// Para baixo
-				VERTICAL_KEY_PRESSED = 1;
-				break;
-			case SDLK_LEFT:
-				// Para a esquerda
-				HORIZONTAL_KEY_PRESSED = -1;
-				break;
-			case SDLK_RIGHT:
-				// Para a direita
-				HORIZONTAL_KEY_PRESSED = 1;
-				break;
-		}
-
-		Player_move(player, PASSO * HORIZONTAL_KEY_PRESSED,
-		PASSO * VERTICAL_KEY_PRESSED, gScreenSurface->w, gScreenSurface->h);
-	} else if (e->type == SDL_KEYUP) {
-		switch (e->key.keysym.sym) {
-			case SDLK_UP:
-			case SDLK_DOWN:
-				VERTICAL_KEY_PRESSED = 0;
-				break;
-			case SDLK_LEFT:
-			case SDLK_RIGHT:
-				HORIZONTAL_KEY_PRESSED = 0;
-				break;
-		}
+void control_player(Player * player, const Uint8 *keystates) {
+	if (keystates[SDL_SCANCODE_UP]) {
+		VERTICAL_KEY_PRESSED = -1;
+	} else if (keystates[SDL_SCANCODE_DOWN]) {
+		VERTICAL_KEY_PRESSED = 1;
+	} else {
+		VERTICAL_KEY_PRESSED = 0;
 	}
+
+	if (keystates[SDL_SCANCODE_LEFT]) {
+		HORIZONTAL_KEY_PRESSED = -1;
+	} else if (keystates[SDL_SCANCODE_RIGHT]) {
+		HORIZONTAL_KEY_PRESSED = 1;
+	} else {
+		HORIZONTAL_KEY_PRESSED = 0;
+	}
+
+	if (keystates[SDL_SCANCODE_SPACE]) {
+		// TODO Spawn bullet here
+	}
+
+	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
+			gScreenSurface->w, gScreenSurface->h);
 }
 
 void close() {
@@ -113,25 +99,18 @@ int main(int argc, char* args[]) {
 		Game * game = Game_create(gWindow);
 		Player * player = game->player;
 
+		const Uint8 *keystates = SDL_GetKeyboardState( NULL);
+
 		while (!quit) {
 
 			if (SDL_PollEvent(&e) != 0) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
-				} else if (e.type == SDL_KEYDOWN || e.type == SDL_KEYUP) {
-					if (e.key.keysym.sym == SDLK_UP
-							|| e.key.keysym.sym == SDLK_DOWN
-							|| e.key.keysym.sym == SDLK_LEFT
-							|| e.key.keysym.sym == SDLK_RIGHT) {
-						move_player(&e, player);
-
-					} else if (e.key.keysym.sym == SDLK_SPACE) {
-
-						Game_spawn_enemy(game, SHARK, LEFT,
-								rand() % SCREEN_HEIGHT, 1.0);
-					}
 				}
 			}
+
+			control_player(player, keystates);
+
 			Game_update(game);
 		}
 	}

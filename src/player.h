@@ -20,13 +20,14 @@ typedef struct _Player {
 	SDL_Surface * surface;
 	Direction look_dir;
 
+	float movement_factor;
 	List * bullet_list;
 } Player;
 
 /**
  * Cria um jogador carregando uma imagem na posição (0, 0)
  */
-Player * Player_create(SDL_Window *, const char *);
+Player * Player_create(SDL_Window * window, const char * filename, float movement_factor);
 
 /**
  * Renderiza o player na SDL_Surface pai
