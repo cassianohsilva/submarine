@@ -37,7 +37,7 @@ bool init() {
 	} else {
 		atexit(SDL_Quit);
 
-		gWindow = SDL_CreateWindow("SDL Tutorial", SDL_WINDOWPOS_UNDEFINED,
+		gWindow = SDL_CreateWindow("Submarine", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n",
