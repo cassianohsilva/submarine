@@ -42,7 +42,7 @@ void Bullet_render(Bullet * bullet, SDL_Surface * parent) {
 
 void Bullet_move(Bullet * bullet) {
 	if (bullet != NULL) {
-		bullet->rect->x += (int) bullet->direction * bullet->velocity_factor;
+		bullet->rect->x += (int) (bullet->direction * bullet->velocity_factor);
 	}
 }
 
@@ -53,8 +53,8 @@ bool Bullet_is_visible(Bullet * bullet) {
 	SDL_Rect * bullet_rect = bullet->rect;
 	SDL_Rect screen_rect = { 0, 0, surface->w, surface->h };
 
-	if (bullet_rect->x + bullet_rect->w < 0 || bullet_rect->x > screen_rect.w
-			|| bullet_rect->y + bullet_rect->h < 0
+	if (bullet_rect->x < 0 || bullet_rect->x > screen_rect.w
+			|| bullet_rect->y < 0
 			|| bullet_rect->y > screen_rect.h) {
 		is_visible = false;
 	}

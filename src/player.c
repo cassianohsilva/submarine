@@ -5,10 +5,10 @@
  *      Author: cassiano
  */
 
-
 #include "player.h"
 
-Player * Player_create(SDL_Window * window, const char * filename, float movement_factor) {
+Player * Player_create(SDL_Window * window, const char * filename,
+		float movement_factor) {
 
 	Player *player = (Player *) malloc(sizeof(Player));
 
@@ -39,11 +39,23 @@ Player * Player_create(SDL_Window * window, const char * filename, float movemen
 
 			player->bullet_list = List_create();
 		} else {
-			printf("Erro ao carregar a imagem \'%s\': %s\n", filename, IMG_GetError());
+			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
+					IMG_GetError());
 		}
 	}
 
 	return player;
+}
+
+void Player_shot(Player* player) {
+
+	int x = (player->rect->x + (player->rect->x + player->rect->w)) >> 1;
+	int y = (player->rect->y + (player->rect->y + player->rect->h)) >> 1;
+
+	Bullet * bullet = Bullet_create(player->window, player->look_dir,
+			player->movement_factor * 2, x, y, RES_BULLET);
+
+	List_insert(player->bullet_list, bullet);
 }
 
 void Player_render(const Player * player, SDL_Surface * parent) {
@@ -58,6 +70,26 @@ void Player_render(const Player * player, SDL_Surface * parent) {
 			player->sprite_rect->x = (int) (player->surface->w * 0.5);
 			player->sprite_rect->w = player->surface->w;
 			break;
+	}
+
+	Node * node = player->bullet_list->begin;
+
+	while (node != NULL) {
+
+		Bullet * bullet = (Bullet *) node->value;
+
+		node = node->next;
+
+		Bullet_move(bullet);
+
+		if (Bullet_is_visible(bullet)) {
+			Bullet_render(bullet, parent);
+		} else {
+			List_remove(player->bullet_list, bullet);
+			Bullet_destroy(bullet);
+
+			printf("Bullet destroyed!\n");
+		}
 	}
 
 	SDL_BlitSurface(player->surface, player->sprite_rect, parent, player->rect);
@@ -127,7 +159,7 @@ void Player_destroy(Player * player) {
 
 	Node * node = player->bullet_list->begin;
 
-	while(node != NULL) {
+	while (node != NULL) {
 		Bullet_destroy((Bullet *) node->value);
 
 		node = node->next;

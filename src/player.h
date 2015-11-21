@@ -34,11 +34,13 @@ Player * Player_create(SDL_Window * window, const char * filename, float movemen
  */
 void Player_render(const Player* player, SDL_Surface* parent);
 
+void Player_shot(Player* player);
+
 /**
  * Move o player na horizontal e na vertical
  */
-void Player_move(Player *, int, int, int, int);
+void Player_move(Player * player, int h, int v, int x_max, int y_max);
 
-void Player_destroy(Player *);
+void Player_destroy(Player * player);
 
 #endif /* SRC_PLAYER_H_ */

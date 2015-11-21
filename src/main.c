@@ -73,7 +73,7 @@ void control_player(Player * player, const Uint8 *keystates) {
 	}
 
 	if (keystates[SDL_SCANCODE_SPACE]) {
-		// TODO Spawn bullet here
+		Player_shot(player);
 	}
 
 	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
