@@ -23,6 +23,21 @@ Game * Game_create(SDL_Window * window) {
 	return game;
 }
 
+bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
+		SDL_Rect * element_2, CollisionMask mask_2) {
+
+	bool is_colliding = false;
+
+	if (mask_1 ^ mask_2) {
+		SDL_Rect rect;
+		SDL_bool b = SDL_IntersectRect(element_1, element_2, &rect);
+
+		is_colliding = b ? true : false;
+	}
+
+	return is_colliding;
+}
+
 Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
 		int y, float velocity_factor) {
 
