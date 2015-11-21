@@ -14,7 +14,7 @@
 
 typedef struct {
 	Direction direction;
-	float velocity_factor;
+	float movement_factor;
 
 	SDL_Surface * surface;
 	SDL_Rect * rect;

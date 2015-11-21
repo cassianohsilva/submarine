@@ -26,7 +26,7 @@ Bullet * Bullet_create(SDL_Window * window, Direction direction,
 			bullet->rect->h = bullet->surface->h;
 
 			bullet->direction = direction;
-			bullet->velocity_factor = velocity_factor;
+			bullet->movement_factor = velocity_factor;
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
 					IMG_GetError());
@@ -42,7 +42,7 @@ void Bullet_render(Bullet * bullet, SDL_Surface * parent) {
 
 void Bullet_move(Bullet * bullet) {
 	if (bullet != NULL) {
-		bullet->rect->x += (int) (bullet->direction * bullet->velocity_factor);
+		bullet->rect->x += (int) (bullet->direction * bullet->movement_factor);
 	}
 }
 

@@ -1,4 +1,5 @@
 #include "types.h"
+#include "bullet.h"
 #include "linked_list.h"
 
 #ifndef SRC_ENEMY_H_
@@ -10,6 +11,8 @@ typedef struct {
 
 typedef struct {
 	List * bullet_list;
+	Uint32 time_between_shots;
+	Uint32 time_shot_counter;
 } EnemySubmarine;
 
 typedef struct {
@@ -18,14 +21,16 @@ typedef struct {
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
 	Direction direction;
-	float velocity_factor;
+	float movement_factor;
 
 	EnemyType type;
 	void * real_enemy;
 
 } Enemy;
 
-Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type, Direction direction, int y, float velocity_factor);
+Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
+		Direction direction, int y, float velocity_factor,
+		int time_between_shots);
 
 void Enemy_render(const Enemy * enemy, SDL_Surface * parent);
 

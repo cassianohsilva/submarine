@@ -11,7 +11,7 @@ Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
 	if (game != NULL) {
-		game->player = Player_create(window, RES_SUBMARINE, MOVEMENT_FACTOR, 50);
+		game->player = Player_create(window, RES_SUBMARINE, MOVEMENT_FACTOR, TIME_BETWEEN_SHOTS);
 		game->enemies = List_create();
 		game->window = window;
 		game->surface = SDL_GetWindowSurface(window);
@@ -27,10 +27,10 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
 
 	if (type == SHARK) {
 		enemy = Enemy_create(game->window, RES_SHARK, type, direction, y,
-				velocity_factor);
+				velocity_factor, 0);
 	} else if (type == SUBMARINE) {
 		enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type, direction, y,
-				velocity_factor);
+				velocity_factor, TIME_BETWEEN_SHOTS);
 	}
 
 	if (enemy != NULL) {

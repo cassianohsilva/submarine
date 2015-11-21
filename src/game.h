@@ -12,6 +12,7 @@
 #include "linked_list.h"
 
 #define MOVEMENT_FACTOR 1.0
+#define TIME_BETWEEN_SHOTS 50
 
 #ifndef SRC_GAME_H_
 #define SRC_GAME_H_

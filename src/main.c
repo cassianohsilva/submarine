@@ -8,6 +8,8 @@
 int HORIZONTAL_KEY_PRESSED = 0;
 int VERTICAL_KEY_PRESSED = 0;
 
+//int SPAWNED = 0;
+
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
@@ -76,6 +78,13 @@ void control_player(Player * player, const Uint8 *keystates) {
 
 	if (keystates[SDL_SCANCODE_SPACE]) {
 		Player_shot(player);
+
+		/*
+		if(!SPAWNED) {
+			Game_spawn_enemy(game, SUBMARINE, LEFT, rand()%SCREEN_HEIGHT, 1.0);
+			SPAWNED = 1;
+		}
+		*/
 	}
 
 	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,

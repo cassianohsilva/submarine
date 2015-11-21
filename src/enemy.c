@@ -7,7 +7,8 @@
 #include "enemy.h"
 
 Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
-		Direction direction, int y, float velocity_factor) {
+		Direction direction, int y, float velocity_factor,
+		int time_between_shots) {
 
 	Enemy *enemy = (Enemy *) malloc(sizeof(Enemy));
 
@@ -32,16 +33,31 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			}
 
 			enemy->direction = direction;
-			enemy->velocity_factor = velocity_factor;
+			enemy->movement_factor = velocity_factor;
 
 			enemy->sprite_rect->y = 0;
 			enemy->sprite_rect->w = (int) (enemy->surface->w * 0.5);
 			enemy->sprite_rect->h = enemy->surface->h;
 
-			if(direction == LEFT) {
+			if (direction == LEFT) {
 				enemy->sprite_rect->x = 0;
 			} else {
 				enemy->sprite_rect->x = (int) (enemy->surface->w * 0.5);
+			}
+
+			enemy->type = type;
+
+			if (type == SUBMARINE) {
+				enemy->real_enemy = (EnemySubmarine *) malloc(
+						sizeof(EnemySubmarine));
+
+				EnemySubmarine * enemy_submarine =
+						(EnemySubmarine *) enemy->real_enemy;
+
+				enemy_submarine->bullet_list = List_create();
+				enemy_submarine->time_between_shots = time_between_shots * 2;
+				enemy_submarine->time_shot_counter =
+						enemy_submarine->time_between_shots;
 			}
 
 		} else {
@@ -65,12 +81,58 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent) {
 			break;
 	}
 
+	if (enemy->type == SUBMARINE) {
+
+		EnemySubmarine * submarine = (EnemySubmarine *) enemy->real_enemy;
+
+		Node * node = submarine->bullet_list->begin;
+
+		if (submarine->time_shot_counter < submarine->time_between_shots) {
+			submarine->time_shot_counter++;
+		}
+
+		if (submarine->time_shot_counter >= submarine->time_between_shots) {
+
+			float random = (rand() * 1.0) / INT32_MAX;
+
+			if (random < 0.01) {
+
+				int x = (enemy->rect->x + (enemy->rect->x + enemy->rect->w))
+						>> 1;
+				int y = (enemy->rect->y + (enemy->rect->y + enemy->rect->h))
+						>> 1;
+
+				Bullet * bullet = Bullet_create(enemy->window, enemy->direction,
+						(enemy->movement_factor * 2.0), x, y, RES_BULLET);
+
+				List_insert(submarine->bullet_list, bullet);
+
+				submarine->time_shot_counter = 0;
+			}
+		}
+
+		while (node != NULL) {
+			Bullet * bullet = (Bullet *) node->value;
+
+			node = node->next;
+
+			Bullet_move(bullet);
+
+			if (Bullet_is_visible(bullet)) {
+				Bullet_render(bullet, parent);
+			} else {
+				List_remove(submarine->bullet_list, bullet);
+				Bullet_destroy(bullet);
+			}
+		}
+	}
+
 	SDL_BlitSurface(enemy->surface, enemy->sprite_rect, parent, enemy->rect);
 }
 
 void Enemy_move(Enemy * enemy) {
 	if (enemy != NULL) {
-		enemy->rect->x += (int) (enemy->direction * enemy->velocity_factor);
+		enemy->rect->x += (int) (enemy->direction * enemy->movement_factor);
 	}
 }
 
@@ -81,9 +143,8 @@ bool Enemy_is_visible(Enemy * enemy) {
 	SDL_Rect * enemy_rect = enemy->rect;
 	SDL_Rect screen_rect = { 0, 0, surface->w, surface->h };
 
-	if (enemy_rect->x < 0 || enemy_rect->x > screen_rect.w
-				|| enemy_rect->y < 0
-				|| enemy_rect->y > screen_rect.h) {
+	if (enemy_rect->x < 0 || enemy_rect->x > screen_rect.w || enemy_rect->y < 0
+			|| enemy_rect->y > screen_rect.h) {
 		is_visible = false;
 	}
 
