@@ -15,13 +15,14 @@
 typedef struct {
 	Direction direction;
 	float movement_factor;
+	CollisionMask collision_mask;
 
 	SDL_Surface * surface;
 	SDL_Rect * rect;
 	SDL_Window * window;
 } Bullet;
 
-Bullet * Bullet_create(SDL_Window * window, Direction direction, float velocity_factor, int x, int y,
+Bullet * Bullet_create(SDL_Window * window, Direction direction, float velocity_factor, int x, int y, CollisionMask collision_mask,
 		const char * filename);
 
 void Bullet_render(Bullet * bullet, SDL_Surface * parent);

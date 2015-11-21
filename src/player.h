@@ -22,6 +22,7 @@ typedef struct _Player {
 	Uint32 time_shot_counter;
 	Direction look_dir;
 
+	CollisionMask collision_mask;
 	float movement_factor;
 } Player;
 

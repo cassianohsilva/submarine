@@ -38,6 +38,7 @@ Player * Player_create(SDL_Window * window, const char * filename,
 			player->movement_factor = movement_factor;
 			player->time_between_shots = time_between_shots;
 			player->time_shot_counter = time_between_shots;
+			player->collision_mask = PLAYER_LAYER;
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
 			IMG_GetError());
@@ -53,7 +54,7 @@ void Player_shot(Player* player, List * bullets) {
 		int y = (player->rect->y + (player->rect->y + player->rect->h)) >> 1;
 
 		Bullet * bullet = Bullet_create(player->window, player->look_dir,
-				player->movement_factor * 2, x, y, RES_BULLET);
+				player->movement_factor * 2, x, y, PLAYER_LAYER, RES_BULLET);
 
 		List_insert(bullets, bullet);
 

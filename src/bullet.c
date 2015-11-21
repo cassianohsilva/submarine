@@ -8,7 +8,7 @@
 #include "bullet.h"
 
 Bullet * Bullet_create(SDL_Window * window, Direction direction,
-		float velocity_factor, int x, int y, const char * filename) {
+		float velocity_factor, int x, int y, CollisionMask collision_mask, const char * filename) {
 
 	Bullet * bullet = (Bullet *) malloc(sizeof(Bullet));
 
@@ -27,6 +27,7 @@ Bullet * Bullet_create(SDL_Window * window, Direction direction,
 
 			bullet->direction = direction;
 			bullet->movement_factor = velocity_factor;
+			bullet->collision_mask = collision_mask;
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
 					IMG_GetError());

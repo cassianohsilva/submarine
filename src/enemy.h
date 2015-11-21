@@ -22,6 +22,7 @@ typedef struct {
 	Direction direction;
 	float movement_factor;
 
+	CollisionMask collision_mask;
 	EnemyType type;
 	void * real_enemy;
 

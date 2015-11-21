@@ -46,6 +46,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			}
 
 			enemy->type = type;
+			enemy->collision_mask = ENEMY_LAYER;
 
 			if (type == SUBMARINE) {
 				enemy->real_enemy = (EnemySubmarine *) malloc(
@@ -99,7 +100,7 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 						>> 1;
 
 				Bullet * bullet = Bullet_create(enemy->window, enemy->direction,
-						(enemy->movement_factor * 2.0), x, y, RES_ENEMY_BULLET);
+						(enemy->movement_factor * 2.0), x, y, ENEMY_LAYER, RES_ENEMY_BULLET);
 
 				List_insert(bullets, bullet);
 

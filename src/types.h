@@ -21,6 +21,10 @@ typedef enum {
 } Direction;
 
 typedef enum {
+	PLAYER_LAYER = 1, ENEMY_LAYER = 2
+} CollisionMask;
+
+typedef enum {
 	SUBMARINE = 10, SHARK = 17
 } EnemyType;
 
