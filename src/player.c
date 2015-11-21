@@ -132,6 +132,6 @@ void Player_destroy(Player * player) {
 	List_destroy(player->bullet_list);
 
 	free(player->rect);
-	free(player->surface);
+	SDL_FreeSurface(player->surface);
 	free(player);
 }

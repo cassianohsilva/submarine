@@ -63,7 +63,7 @@ bool Bullet_is_visible(Bullet * bullet) {
 }
 
 void Bullet_destroy(Bullet * bullet) {
-	free(bullet->surface);
+	SDL_FreeSurface(bullet->surface);
 	free(bullet->rect);
 	free(bullet);
 }
