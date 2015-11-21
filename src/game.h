@@ -13,6 +13,7 @@
 
 #define MOVEMENT_FACTOR 1.0
 #define TIME_BETWEEN_SHOTS 50
+#define MAX_ENEMIES_ON_SCREEN 10
 
 #ifndef SRC_GAME_H_
 #define SRC_GAME_H_
@@ -20,6 +21,7 @@
 typedef struct {
 	Player * player;
 	List * enemies;
+	Uint8 enemies_on_screen;
 	List * bullets;
 
 	SDL_Window * window;

@@ -25,7 +25,7 @@ typedef enum {
 } CollisionMask;
 
 typedef enum {
-	SUBMARINE = 10, SHARK = 17
+	SUBMARINE = 1, SHARK = 0
 } EnemyType;
 
 typedef enum {

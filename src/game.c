@@ -16,6 +16,7 @@ Game * Game_create(SDL_Window * window) {
 		game->enemies = List_create();
 		game->bullets = List_create();
 		game->window = window;
+		game->enemies_on_screen = 0;
 		game->surface = SDL_GetWindowSurface(window);
 	}
 
@@ -27,16 +28,19 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
 
 	Enemy * enemy = NULL;
 
-	if (type == SHARK) {
-		enemy = Enemy_create(game->window, RES_SHARK, type, direction, y,
-				velocity_factor, 0);
-	} else if (type == SUBMARINE) {
-		enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type, direction,
-				y, velocity_factor, TIME_BETWEEN_SHOTS);
-	}
+	if (game->enemies_on_screen < MAX_ENEMIES_ON_SCREEN) {
+		if (type == SHARK) {
+			enemy = Enemy_create(game->window, RES_SHARK, type, direction, y,
+					velocity_factor, 0);
+		} else if (type == SUBMARINE) {
+			enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type,
+					direction, y, velocity_factor, TIME_BETWEEN_SHOTS);
+		}
 
-	if (enemy != NULL) {
-		List_insert(game->enemies, (void *) enemy);
+		if (enemy != NULL) {
+			List_insert(game->enemies, (void *) enemy);
+			game->enemies_on_screen++;
+		}
 	}
 
 	return enemy;
@@ -45,6 +49,8 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
 void Game_destroy_enemy(Game * game, Enemy * enemy) {
 	List_remove(game->enemies, (void *) enemy);
 	Enemy_destroy(enemy);
+
+	game->enemies_on_screen--;
 }
 
 void Game_update(Game * game) {

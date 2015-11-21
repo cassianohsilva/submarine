@@ -78,7 +78,6 @@ void control_player(Player * player, const Uint8 *keystates) {
 
 	if (keystates[SDL_SCANCODE_SPACE]) {
 		Player_shot(player, game->bullets);
-
 //		if(!SPAWNED) {
 //			Game_spawn_enemy(game, SUBMARINE, LEFT, rand()%SCREEN_HEIGHT, 1.0);
 //			SPAWNED = 1;
@@ -119,6 +118,15 @@ int main(int argc, char* args[]) {
 			}
 
 			control_player(player, keystates);
+
+			float probability = ((float) rand()) / INT32_MAX;
+
+			if(probability < 0.01) {
+				EnemyType enemy_type = (rand() > (INT32_MAX >> 1))? SUBMARINE: SHARK;
+				Direction direction = (rand() > (INT32_MAX >> 1))? RIGHT: LEFT;
+
+				Game_spawn_enemy(game, enemy_type, direction, rand() % SCREEN_HEIGHT, 1.0 );
+			}
 
 			Game_update(game);
 		}
