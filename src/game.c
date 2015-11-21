@@ -11,7 +11,7 @@ Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
 	if (game != NULL) {
-		game->player = Player_create(window, RES_SUBMARINE, MOVEMENT_FACTOR);
+		game->player = Player_create(window, RES_SUBMARINE, MOVEMENT_FACTOR, 50);
 		game->enemies = List_create();
 		game->window = window;
 		game->surface = SDL_GetWindowSurface(window);

@@ -15,9 +15,11 @@
 typedef struct _Player {
 	SDL_Window * window;
 	SDL_Rect * rect;
-	int oxygen;
+	Uint8 oxygen;
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
+	Uint32 time_between_shots;
+	Uint32 time_shot_counter;
 	Direction look_dir;
 
 	float movement_factor;
@@ -27,12 +29,12 @@ typedef struct _Player {
 /**
  * Cria um jogador carregando uma imagem na posição (0, 0)
  */
-Player * Player_create(SDL_Window * window, const char * filename, float movement_factor);
+Player * Player_create(SDL_Window * window, const char * filename, float movement_factor, Uint32 time_between_shots);
 
 /**
  * Renderiza o player na SDL_Surface pai
  */
-void Player_render(const Player* player, SDL_Surface* parent);
+void Player_render(Player* player, SDL_Surface* parent);
 
 void Player_shot(Player* player);
 

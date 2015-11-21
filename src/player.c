@@ -8,7 +8,7 @@
 #include "player.h"
 
 Player * Player_create(SDL_Window * window, const char * filename,
-		float movement_factor) {
+		float movement_factor, Uint32 time_between_shots) {
 
 	Player *player = (Player *) malloc(sizeof(Player));
 
@@ -36,11 +36,13 @@ Player * Player_create(SDL_Window * window, const char * filename,
 
 			player->oxygen = 100;
 			player->movement_factor = movement_factor;
+			player->time_between_shots = time_between_shots;
+			player->time_shot_counter = time_between_shots;
 
 			player->bullet_list = List_create();
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
-					IMG_GetError());
+			IMG_GetError());
 		}
 	}
 
@@ -49,16 +51,22 @@ Player * Player_create(SDL_Window * window, const char * filename,
 
 void Player_shot(Player* player) {
 
-	int x = (player->rect->x + (player->rect->x + player->rect->w)) >> 1;
-	int y = (player->rect->y + (player->rect->y + player->rect->h)) >> 1;
+	if (player->time_shot_counter >= player->time_between_shots) {
+		int x = (player->rect->x + (player->rect->x + player->rect->w)) >> 1;
+		int y = (player->rect->y + (player->rect->y + player->rect->h)) >> 1;
 
-	Bullet * bullet = Bullet_create(player->window, player->look_dir,
-			player->movement_factor * 2, x, y, RES_BULLET);
+		Bullet * bullet = Bullet_create(player->window, player->look_dir,
+				player->movement_factor * 2, x, y, RES_BULLET);
 
-	List_insert(player->bullet_list, bullet);
+		List_insert(player->bullet_list, bullet);
+
+		player->time_shot_counter = 0;
+	} else {
+		printf("time_shot_counter: %u\n", player->time_shot_counter);
+	}
 }
 
-void Player_render(const Player * player, SDL_Surface * parent) {
+void Player_render(Player * player, SDL_Surface * parent) {
 
 	switch (player->look_dir) {
 
@@ -74,6 +82,11 @@ void Player_render(const Player * player, SDL_Surface * parent) {
 
 	Node * node = player->bullet_list->begin;
 
+	if (node != NULL
+			&& player->time_shot_counter < player->time_between_shots) {
+		player->time_shot_counter++;
+	}
+
 	while (node != NULL) {
 
 		Bullet * bullet = (Bullet *) node->value;
@@ -87,8 +100,6 @@ void Player_render(const Player * player, SDL_Surface * parent) {
 		} else {
 			List_remove(player->bullet_list, bullet);
 			Bullet_destroy(bullet);
-
-			printf("Bullet destroyed!\n");
 		}
 	}
 
