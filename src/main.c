@@ -77,14 +77,12 @@ void control_player(Player * player, const Uint8 *keystates) {
 	}
 
 	if (keystates[SDL_SCANCODE_SPACE]) {
-		Player_shot(player);
+		Player_shot(player, game->bullets);
 
-		/*
-		if(!SPAWNED) {
-			Game_spawn_enemy(game, SUBMARINE, LEFT, rand()%SCREEN_HEIGHT, 1.0);
-			SPAWNED = 1;
-		}
-		*/
+//		if(!SPAWNED) {
+//			Game_spawn_enemy(game, SUBMARINE, LEFT, rand()%SCREEN_HEIGHT, 1.0);
+//			SPAWNED = 1;
+//		}
 	}
 
 	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,

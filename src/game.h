@@ -20,6 +20,7 @@
 typedef struct {
 	Player * player;
 	List * enemies;
+	List * bullets;
 
 	SDL_Window * window;
 	SDL_Surface * surface;
@@ -34,5 +35,7 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction, int y
 void Game_destroy_enemy(Game * game, Enemy * enemy);
 
 void Game_update(Game * game);
+
+void Game_update_bullets(Game * game);
 
 #endif /* SRC_GAME_H_ */

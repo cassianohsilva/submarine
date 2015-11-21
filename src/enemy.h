@@ -10,7 +10,6 @@ typedef struct {
 } Shark;
 
 typedef struct {
-	List * bullet_list;
 	Uint32 time_between_shots;
 	Uint32 time_shot_counter;
 } EnemySubmarine;
@@ -32,7 +31,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 		Direction direction, int y, float velocity_factor,
 		int time_between_shots);
 
-void Enemy_render(const Enemy * enemy, SDL_Surface * parent);
+void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets);
 
 void Enemy_move(Enemy * enemy);
 

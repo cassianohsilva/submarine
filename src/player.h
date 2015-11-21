@@ -23,7 +23,6 @@ typedef struct _Player {
 	Direction look_dir;
 
 	float movement_factor;
-	List * bullet_list;
 } Player;
 
 /**
@@ -36,7 +35,7 @@ Player * Player_create(SDL_Window * window, const char * filename, float movemen
  */
 void Player_render(Player* player, SDL_Surface* parent);
 
-void Player_shot(Player* player);
+void Player_shot(Player* player, List * bullets);
 
 /**
  * Move o player na horizontal e na vertical

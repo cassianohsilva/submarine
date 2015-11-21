@@ -38,8 +38,6 @@ Player * Player_create(SDL_Window * window, const char * filename,
 			player->movement_factor = movement_factor;
 			player->time_between_shots = time_between_shots;
 			player->time_shot_counter = time_between_shots;
-
-			player->bullet_list = List_create();
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
 			IMG_GetError());
@@ -49,8 +47,7 @@ Player * Player_create(SDL_Window * window, const char * filename,
 	return player;
 }
 
-void Player_shot(Player* player) {
-
+void Player_shot(Player* player, List * bullets) {
 	if (player->time_shot_counter >= player->time_between_shots) {
 		int x = (player->rect->x + (player->rect->x + player->rect->w)) >> 1;
 		int y = (player->rect->y + (player->rect->y + player->rect->h)) >> 1;
@@ -58,7 +55,7 @@ void Player_shot(Player* player) {
 		Bullet * bullet = Bullet_create(player->window, player->look_dir,
 				player->movement_factor * 2, x, y, RES_BULLET);
 
-		List_insert(player->bullet_list, bullet);
+		List_insert(bullets, bullet);
 
 		player->time_shot_counter = 0;
 	}
@@ -78,27 +75,8 @@ void Player_render(Player * player, SDL_Surface * parent) {
 			break;
 	}
 
-	Node * node = player->bullet_list->begin;
-
-	if (node != NULL
-			&& player->time_shot_counter < player->time_between_shots) {
+	if (player->time_shot_counter < player->time_between_shots) {
 		player->time_shot_counter++;
-	}
-
-	while (node != NULL) {
-
-		Bullet * bullet = (Bullet *) node->value;
-
-		node = node->next;
-
-		Bullet_move(bullet);
-
-		if (Bullet_is_visible(bullet)) {
-			Bullet_render(bullet, parent);
-		} else {
-			List_remove(player->bullet_list, bullet);
-			Bullet_destroy(bullet);
-		}
 	}
 
 	SDL_BlitSurface(player->surface, player->sprite_rect, parent, player->rect);
@@ -165,17 +143,6 @@ void Player_move(Player * player, int h, int v, int x_max, int y_max) {
 }
 
 void Player_destroy(Player * player) {
-
-	Node * node = player->bullet_list->begin;
-
-	while (node != NULL) {
-		Bullet_destroy((Bullet *) node->value);
-
-		node = node->next;
-	}
-
-	List_destroy(player->bullet_list);
-
 	free(player->rect);
 	SDL_FreeSurface(player->surface);
 	free(player);

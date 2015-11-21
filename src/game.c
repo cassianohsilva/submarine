@@ -11,8 +11,10 @@ Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
 	if (game != NULL) {
-		game->player = Player_create(window, RES_SUBMARINE, MOVEMENT_FACTOR, TIME_BETWEEN_SHOTS);
+		game->player = Player_create(window, RES_SUBMARINE, MOVEMENT_FACTOR,
+		TIME_BETWEEN_SHOTS);
 		game->enemies = List_create();
+		game->bullets = List_create();
 		game->window = window;
 		game->surface = SDL_GetWindowSurface(window);
 	}
@@ -29,8 +31,8 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
 		enemy = Enemy_create(game->window, RES_SHARK, type, direction, y,
 				velocity_factor, 0);
 	} else if (type == SUBMARINE) {
-		enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type, direction, y,
-				velocity_factor, TIME_BETWEEN_SHOTS);
+		enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type, direction,
+				y, velocity_factor, TIME_BETWEEN_SHOTS);
 	}
 
 	if (enemy != NULL) {
@@ -64,7 +66,7 @@ void Game_update(Game * game) {
 			Enemy_move(enemy);
 
 			if (Enemy_is_visible(enemy)) {
-				Enemy_render(enemy, game->surface);
+				Enemy_render(enemy, game->surface, game->bullets);
 			} else {
 				Game_destroy_enemy(game, enemy);
 			}
@@ -73,7 +75,29 @@ void Game_update(Game * game) {
 		}
 	}
 
+	Game_update_bullets(game);
+
 	SDL_UpdateWindowSurface(game->window);
+}
+
+void Game_update_bullets(Game * game) {
+	Node * node = game->bullets->begin;
+
+	while (node != NULL) {
+
+		Bullet * bullet = (Bullet *) node->value;
+
+		node = node->next;
+
+		Bullet_move(bullet);
+
+		if (Bullet_is_visible(bullet)) {
+			Bullet_render(bullet, game->surface);
+		} else {
+			List_remove(game->bullets, bullet);
+			Bullet_destroy(bullet);
+		}
+	}
 }
 
 void Game_destroy(Game * game) {
@@ -83,17 +107,32 @@ void Game_destroy(Game * game) {
 		Player_destroy(game->player);
 
 		Node * actual = game->enemies->begin;
+		Node * aux = NULL;
 
 		while (actual != NULL) {
 
-			if (actual->value != NULL) {
-				Enemy_destroy((Enemy *) game->enemies);
-			}
+			aux = actual->next;
 
-			actual = actual->next;
+			if (actual->value != NULL) {
+				Enemy_destroy((Enemy *) actual->value);
+			}
+			actual = aux;
+		}
+
+		actual = game->bullets->begin;
+
+		while (actual != NULL) {
+
+			aux = actual->next;
+
+			if (actual->value != NULL) {
+				Bullet_destroy((Bullet *) actual->value);
+			}
+			actual = aux;
 		}
 
 		List_destroy(game->enemies);
+		List_destroy(game->bullets);
 		free(game);
 	}
 }

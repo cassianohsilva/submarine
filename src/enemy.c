@@ -54,7 +54,6 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 				EnemySubmarine * enemy_submarine =
 						(EnemySubmarine *) enemy->real_enemy;
 
-				enemy_submarine->bullet_list = List_create();
 				enemy_submarine->time_between_shots = time_between_shots * 2;
 				enemy_submarine->time_shot_counter =
 						enemy_submarine->time_between_shots;
@@ -68,7 +67,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 	return enemy;
 }
 
-void Enemy_render(const Enemy * enemy, SDL_Surface * parent) {
+void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 	switch (enemy->direction) {
 
 		case LEFT:
@@ -85,8 +84,6 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent) {
 
 		EnemySubmarine * submarine = (EnemySubmarine *) enemy->real_enemy;
 
-		Node * node = submarine->bullet_list->begin;
-
 		if (submarine->time_shot_counter < submarine->time_between_shots) {
 			submarine->time_shot_counter++;
 		}
@@ -96,33 +93,17 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent) {
 			float random = (rand() * 1.0) / INT32_MAX;
 
 			if (random < 0.01) {
-
 				int x = (enemy->rect->x + (enemy->rect->x + enemy->rect->w))
 						>> 1;
 				int y = (enemy->rect->y + (enemy->rect->y + enemy->rect->h))
 						>> 1;
 
 				Bullet * bullet = Bullet_create(enemy->window, enemy->direction,
-						(enemy->movement_factor * 2.0), x, y, RES_BULLET);
+						(enemy->movement_factor * 2.0), x, y, RES_ENEMY_BULLET);
 
-				List_insert(submarine->bullet_list, bullet);
+				List_insert(bullets, bullet);
 
 				submarine->time_shot_counter = 0;
-			}
-		}
-
-		while (node != NULL) {
-			Bullet * bullet = (Bullet *) node->value;
-
-			node = node->next;
-
-			Bullet_move(bullet);
-
-			if (Bullet_is_visible(bullet)) {
-				Bullet_render(bullet, parent);
-			} else {
-				List_remove(submarine->bullet_list, bullet);
-				Bullet_destroy(bullet);
 			}
 		}
 	}

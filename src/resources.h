@@ -12,5 +12,6 @@ static char * RES_SUBMARINE = "./res/submarine.png";
 static char * RES_ENEMY_SUBMARINE = "./res/enemy_submarine.png";
 static char * RES_SHARK = "./res/shark.png";
 static char * RES_BULLET = "./res/bullet.png";
+static char * RES_ENEMY_BULLET = "./res/enemy_bullet.png";
 
 #endif /* SRC_RESOURCES_H_ */
