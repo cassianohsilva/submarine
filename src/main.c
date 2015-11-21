@@ -11,6 +11,8 @@ int VERTICAL_KEY_PRESSED = 0;
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
+Game * game = NULL;
+
 bool init();
 
 void close();
@@ -96,7 +98,7 @@ int main(int argc, char* args[]) {
 
 		SDL_Event e;
 
-		Game * game = Game_create(gWindow);
+		game = Game_create(gWindow);
 		Player * player = game->player;
 
 		const Uint8 *keystates = SDL_GetKeyboardState( NULL);

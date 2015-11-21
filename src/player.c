@@ -61,8 +61,6 @@ void Player_shot(Player* player) {
 		List_insert(player->bullet_list, bullet);
 
 		player->time_shot_counter = 0;
-	} else {
-		printf("time_shot_counter: %u\n", player->time_shot_counter);
 	}
 }
 

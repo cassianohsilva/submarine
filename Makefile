@@ -22,14 +22,14 @@ USER_OBJS += \
 ./src/bullet.c \
 ./src/linked_list.c
 
-all: Submarino
+all: Submarine
 
 ./bin/%.o: ./src/%.c
 	@mkdir -p $(@D)
 	$(CC) $(FLAGS) $(C_FLAGS) -o "$@" "$<"
 
-Submarino: $(OBJS) $(USER_OBJS)
-	$(CC) $(FLAGS) -o ./main $(OBJS) $(LIBS)
+Submarine: $(OBJS) $(USER_OBJS)
+	$(CC) $(FLAGS) -o ./Submarine $(OBJS) $(LIBS)
 
 clean:
 	rm $(OBJS)

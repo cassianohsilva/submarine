@@ -28,16 +28,22 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			if (direction == LEFT) {
 				enemy->rect->x = SDL_GetWindowSurface(enemy->window)->w;
 			} else {
-				enemy->rect->x = -enemy->rect->w;
+				enemy->rect->x = 0;
 			}
 
 			enemy->direction = direction;
 			enemy->velocity_factor = velocity_factor;
 
-			enemy->sprite_rect->x = 0;
 			enemy->sprite_rect->y = 0;
 			enemy->sprite_rect->w = (int) (enemy->surface->w * 0.5);
 			enemy->sprite_rect->h = enemy->surface->h;
+
+			if(direction == LEFT) {
+				enemy->sprite_rect->x = 0;
+			} else {
+				enemy->sprite_rect->x = (int) (enemy->surface->w * 0.5);
+			}
+
 		} else {
 			printf("Erro ao carregar a imagem: %s\n", IMG_GetError());
 		}

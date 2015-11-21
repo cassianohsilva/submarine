@@ -29,8 +29,8 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
 		enemy = Enemy_create(game->window, RES_SHARK, type, direction, y,
 				velocity_factor);
 	} else if (type == SUBMARINE) {
-		// TODO Adicionar a imagem do submarino
-		//enemy = Enemy_create(game->window, RES_SHARK, type);
+		enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type, direction, y,
+				velocity_factor);
 	}
 
 	if (enemy != NULL) {
