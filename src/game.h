@@ -8,6 +8,7 @@
 #include "types.h"
 #include "player.h"
 #include "enemy.h"
+#include "timer.h"
 #include "resources.h"
 #include "linked_list.h"
 
@@ -25,6 +26,7 @@ typedef struct {
 	List * bullets;
 	SDL_Rect breathe_zone;
 	bool is_paused;
+	Timer * timer;
 
 	SDL_Window * window;
 	SDL_Surface * surface;

@@ -24,6 +24,7 @@ Game * Game_create(SDL_Window * window) {
 				(game->surface->h >> 3) };
 
 		game->breathe_zone = breathe_zone;
+		game->timer = Timer_create();
 	}
 
 	return game;
@@ -236,4 +237,6 @@ void Game_destroy(Game * game) {
 		List_destroy(game->bullets);
 		free(game);
 	}
+
+	Timer_destroy(game->timer);
 }

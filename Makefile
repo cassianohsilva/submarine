@@ -12,7 +12,8 @@ OBJS += \
 ./bin/player.o \
 ./bin/game.o \
 ./bin/bullet.o \
-./bin/linked_list.o
+./bin/linked_list.o \
+./bin/timer.o
 
 USER_OBJS += \
 ./src/main.c \
@@ -20,7 +21,8 @@ USER_OBJS += \
 ./src/player.c \
 ./src/game.c \
 ./src/bullet.c \
-./src/linked_list.c
+./src/linked_list.c \
+./src/timer.c
 
 all: Submarine
 
