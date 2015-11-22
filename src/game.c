@@ -29,10 +29,14 @@ bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
 	bool is_colliding = false;
 
 	if (mask_1 ^ mask_2) {
+
 		SDL_Rect rect;
 		SDL_bool b = SDL_IntersectRect(element_1, element_2, &rect);
 
 		is_colliding = b ? true : false;
+
+//		if (is_colliding)
+//			printf("mask1: %d mask2: %d\n", mask_1, mask_2);
 	}
 
 	return is_colliding;
@@ -68,6 +72,11 @@ void Game_destroy_enemy(Game * game, Enemy * enemy) {
 	game->enemies_on_screen--;
 }
 
+void Game_destroy_bullet(Game * game, Bullet * bullet) {
+	List_remove(game->bullets, (void *) bullet);
+	Bullet_destroy(bullet);
+}
+
 void Game_update(Game * game) {
 
 	SDL_FillRect(game->surface, NULL,
@@ -75,6 +84,15 @@ void Game_update(Game * game) {
 
 	Player_render(game->player, game->surface);
 
+	Game_update_enemies(game);
+	Game_update_bullets(game);
+
+	Game_check_bullets_collision(game);
+
+	SDL_UpdateWindowSurface(game->window);
+}
+
+void Game_update_enemies(Game * game) {
 	Node * actual = game->enemies->begin;
 
 	while (actual != NULL) {
@@ -95,10 +113,6 @@ void Game_update(Game * game) {
 			actual = actual->next;
 		}
 	}
-
-	Game_update_bullets(game);
-
-	SDL_UpdateWindowSurface(game->window);
 }
 
 void Game_update_bullets(Game * game) {
@@ -118,6 +132,49 @@ void Game_update_bullets(Game * game) {
 			List_remove(game->bullets, bullet);
 			Bullet_destroy(bullet);
 		}
+	}
+}
+
+void Game_check_bullets_collision(Game * game) {
+
+	Node * node = game->bullets->begin;
+	Node * aux = NULL;
+
+	while (node != NULL) {
+		aux = node->next;
+
+		Bullet * bullet = (Bullet *) node->value;
+
+		Node * node_enemy = game->enemies->begin;
+		Node * aux_enemy = NULL;
+
+		while (node_enemy != NULL) {
+			aux_enemy = node_enemy->next;
+
+			Enemy * enemy = (Enemy *) node_enemy->value;
+
+			bool collision = collision_check(bullet->rect,
+					bullet->collision_mask, enemy->rect, enemy->collision_mask);
+
+			if (collision) {
+				Game_destroy_enemy(game, enemy);
+				Game_destroy_bullet(game, bullet);
+			}
+
+			node_enemy = aux_enemy;
+		}
+
+		// TODO Adicionar verificação de colisão entre o jogador e os tiros
+
+//		bool collision = collision_check(bullet->rect, bullet->collision_mask,
+//				game->player->rect, game->player->collision_mask);
+
+//		if (collision) {
+//			Enemy_destroy(enemy);
+//			Bullet_destroy(bullet);
+//		}
+
+		node = aux;
 	}
 }
 

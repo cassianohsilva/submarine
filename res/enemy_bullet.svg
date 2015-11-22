@@ -15,7 +15,7 @@
    version="1.1"
    inkscape:version="0.48.4 r9939"
    sodipodi:docname="enemy_bullet.svg"
-   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/bullet.png"
+   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/enemy_bullet.png"
    inkscape:export-xdpi="27"
    inkscape:export-ydpi="27">
   <defs
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>

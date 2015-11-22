@@ -36,7 +36,13 @@ Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction, int y
 
 void Game_destroy_enemy(Game * game, Enemy * enemy);
 
+void Game_destroy_bullet(Game * game, Bullet * bullet);
+
 void Game_update(Game * game);
+
+void Game_update_enemies(Game * game);
+
+void Game_check_bullets_collision(Game * game);
 
 void Game_update_bullets(Game * game);
 
