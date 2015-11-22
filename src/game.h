@@ -23,6 +23,8 @@ typedef struct {
 	List * enemies;
 	Uint8 enemies_on_screen;
 	List * bullets;
+	SDL_Rect breathe_zone;
+	bool is_paused;
 
 	SDL_Window * window;
 	SDL_Surface * surface;
@@ -30,7 +32,7 @@ typedef struct {
 
 Game * Game_create(SDL_Window * window);
 
-void Game_destroy(Game * game);
+bool Game_is_player_breathing(Game * game);
 
 Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction, int y, float velocity_factor);
 
@@ -45,5 +47,7 @@ void Game_update_enemies(Game * game);
 void Game_check_bullets_collision(Game * game);
 
 void Game_update_bullets(Game * game);
+
+void Game_destroy(Game * game);
 
 #endif /* SRC_GAME_H_ */

@@ -24,14 +24,14 @@ Player * Player_create(SDL_Window * window, const char * filename,
 			player->rect->x = 0;
 			player->rect->y = 0;
 
-			player->rect->w = (int) (player->surface->w * 0.5);
+			player->rect->w = player->surface->w >> 1;
 			player->rect->h = player->surface->h;
 
 			player->look_dir = LEFT;
 
 			player->sprite_rect->x = 0;
 			player->sprite_rect->y = 0;
-			player->sprite_rect->w = (int) (player->surface->w * 0.5);
+			player->sprite_rect->w = player->surface->w >> 1;
 			player->sprite_rect->h = player->surface->h;
 
 			player->oxygen = 100;
@@ -68,10 +68,10 @@ void Player_render(Player * player, SDL_Surface * parent) {
 
 		case LEFT:
 			player->sprite_rect->x = 0;
-			player->sprite_rect->w = (int) (player->surface->w * 0.5);
+			player->sprite_rect->w = player->surface->w >> 1;
 			break;
 		case RIGHT:
-			player->sprite_rect->x = (int) (player->surface->w * 0.5);
+			player->sprite_rect->x = player->surface->w >> 1;
 			player->sprite_rect->w = player->surface->w;
 			break;
 	}

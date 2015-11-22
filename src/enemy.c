@@ -21,7 +21,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			enemy->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 			enemy->sprite_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-			enemy->rect->w = (int) (enemy->surface->w * 0.5);
+			enemy->rect->w = enemy->surface->w >> 1;
 			enemy->rect->h = enemy->surface->h;
 
 			enemy->rect->y = y;
@@ -36,13 +36,13 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			enemy->movement_factor = velocity_factor;
 
 			enemy->sprite_rect->y = 0;
-			enemy->sprite_rect->w = (int) (enemy->surface->w * 0.5);
+			enemy->sprite_rect->w = enemy->surface->w >> 1;
 			enemy->sprite_rect->h = enemy->surface->h;
 
 			if (direction == LEFT) {
 				enemy->sprite_rect->x = 0;
 			} else {
-				enemy->sprite_rect->x = (int) (enemy->surface->w * 0.5);
+				enemy->sprite_rect->x = enemy->surface->w >> 1;
 			}
 
 			enemy->type = type;
@@ -55,7 +55,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 				EnemySubmarine * enemy_submarine =
 						(EnemySubmarine *) enemy->real_enemy;
 
-				enemy_submarine->time_between_shots = time_between_shots * 2;
+				enemy_submarine->time_between_shots = time_between_shots << 1;
 				enemy_submarine->time_shot_counter =
 						enemy_submarine->time_between_shots;
 			}
@@ -73,10 +73,10 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 
 		case LEFT:
 			enemy->sprite_rect->x = 0;
-			enemy->sprite_rect->w = (int) (enemy->surface->w * 0.5);
+			enemy->sprite_rect->w = enemy->surface->w >> 1;
 			break;
 		case RIGHT:
-			enemy->sprite_rect->x = (int) (enemy->surface->w * 0.5);
+			enemy->sprite_rect->x = enemy->surface->w >> 1;
 			enemy->sprite_rect->w = enemy->surface->w;
 			break;
 	}
@@ -91,7 +91,7 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 
 		if (submarine->time_shot_counter >= submarine->time_between_shots) {
 
-			float random = (rand() * 1.0) / INT32_MAX;
+			float random = ((float) rand()) / INT32_MAX;
 
 			if (random < 0.01) {
 				int x = (enemy->rect->x + (enemy->rect->x + enemy->rect->w))

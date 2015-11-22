@@ -17,10 +17,24 @@ Game * Game_create(SDL_Window * window) {
 		game->bullets = List_create();
 		game->window = window;
 		game->enemies_on_screen = 0;
+		game->is_paused = false;
 		game->surface = SDL_GetWindowSurface(window);
+
+		SDL_Rect breathe_zone = { 0, 0, game->surface->w,
+				(game->surface->h >> 3) };
+
+		game->breathe_zone = breathe_zone;
 	}
 
 	return game;
+}
+
+bool Game_is_player_breathing(Game * game) {
+
+	SDL_Rect rect;
+	SDL_bool b = SDL_IntersectRect(&game->breathe_zone, game->player->rect, &rect);
+
+	return b? true: false;
 }
 
 bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
@@ -34,9 +48,6 @@ bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
 		SDL_bool b = SDL_IntersectRect(element_1, element_2, &rect);
 
 		is_colliding = b ? true : false;
-
-//		if (is_colliding)
-//			printf("mask1: %d mask2: %d\n", mask_1, mask_2);
 	}
 
 	return is_colliding;
@@ -83,6 +94,10 @@ void Game_update(Game * game) {
 			SDL_MapRGB(game->surface->format, 0x00, 0x66, 0xFF));
 
 	Player_render(game->player, game->surface);
+
+//	if(Game_is_player_breathing(game)) {
+//		printf("Player is breathing!\n");
+//	}
 
 	Game_update_enemies(game);
 	Game_update_bullets(game);
