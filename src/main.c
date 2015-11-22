@@ -60,6 +60,7 @@ bool init() {
 }
 
 void control_player(Player * player, const Uint8 *keystates) {
+
 	if (keystates[SDL_SCANCODE_UP]) {
 		VERTICAL_KEY_PRESSED = -1;
 	} else if (keystates[SDL_SCANCODE_DOWN]) {
@@ -86,6 +87,7 @@ void control_player(Player * player, const Uint8 *keystates) {
 
 	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
 			gScreenSurface->w, gScreenSurface->h);
+
 }
 
 void close() {
@@ -114,18 +116,28 @@ int main(int argc, char* args[]) {
 			if (SDL_PollEvent(&e) != 0) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
+				} else if (e.type == SDL_KEYUP) {
+
+					if (e.key.keysym.sym == SDLK_ESCAPE) {
+						game->is_paused = !game->is_paused;
+					}
 				}
 			}
 
-			control_player(player, keystates);
+			if (!game->is_paused) {
+				control_player(player, keystates);
 
-			float probability = ((float) rand()) / INT32_MAX;
+				float probability = ((float) rand()) / INT32_MAX;
 
-			if(probability < 0.01) {
-				EnemyType enemy_type = (rand() > (INT32_MAX >> 1))? SUBMARINE: SHARK;
-				Direction direction = (rand() > (INT32_MAX >> 1))? RIGHT: LEFT;
+				if (probability < 0.01) {
+					EnemyType enemy_type =
+							(rand() > (INT32_MAX >> 1)) ? SUBMARINE : SHARK;
+					Direction direction =
+							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
 
-				Game_spawn_enemy(game, enemy_type, direction, rand() % SCREEN_HEIGHT, 1.0 );
+					Game_spawn_enemy(game, enemy_type, direction,
+							rand() % SCREEN_HEIGHT, 1.0);
+				}
 			}
 
 			Game_update(game);

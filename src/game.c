@@ -33,9 +33,10 @@ Game * Game_create(SDL_Window * window) {
 bool Game_is_player_breathing(Game * game) {
 
 	SDL_Rect rect;
-	SDL_bool b = SDL_IntersectRect(&game->breathe_zone, game->player->rect, &rect);
+	SDL_bool b = SDL_IntersectRect(&game->breathe_zone, game->player->rect,
+			&rect);
 
-	return b? true: false;
+	return b ? true : false;
 }
 
 bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
@@ -96,13 +97,15 @@ void Game_update(Game * game) {
 
 	Player_render(game->player, game->surface);
 
-	if(!Game_is_player_breathing(game)) {
-		if(game->player->oxygen) {
-			game->player->oxygen--;
-		}
-	} else {
-		if(game->player->oxygen < 100) {
-			game->player->oxygen += 2;
+	if (!game->is_paused) {
+		if (!Game_is_player_breathing(game)) {
+			if (game->player->oxygen) {
+				game->player->oxygen--;
+			}
+		} else {
+			if (game->player->oxygen < 100) {
+				game->player->oxygen += 2;
+			}
 		}
 	}
 
@@ -126,7 +129,9 @@ void Game_update_enemies(Game * game) {
 
 			actual = prox;
 
-			Enemy_move(enemy);
+			if (!game->is_paused) {
+				Enemy_move(enemy);
+			}
 
 			if (Enemy_is_visible(enemy)) {
 				Enemy_render(enemy, game->surface, game->bullets);
@@ -148,7 +153,9 @@ void Game_update_bullets(Game * game) {
 
 		node = node->next;
 
-		Bullet_move(bullet);
+		if (!game->is_paused) {
+			Bullet_move(bullet);
+		}
 
 		if (Bullet_is_visible(bullet)) {
 			Bullet_render(bullet, game->surface);
@@ -161,34 +168,36 @@ void Game_update_bullets(Game * game) {
 
 void Game_check_bullets_collision(Game * game) {
 
-	Node * node = game->bullets->begin;
-	Node * aux = NULL;
+	if (!game->is_paused) {
 
-	while (node != NULL) {
-		aux = node->next;
+		Node * node = game->bullets->begin;
+		Node * aux = NULL;
 
-		Bullet * bullet = (Bullet *) node->value;
+		while (node != NULL) {
+			aux = node->next;
 
-		Node * node_enemy = game->enemies->begin;
-		Node * aux_enemy = NULL;
+			Bullet * bullet = (Bullet *) node->value;
 
-		while (node_enemy != NULL) {
-			aux_enemy = node_enemy->next;
+			Node * node_enemy = game->enemies->begin;
+			Node * aux_enemy = NULL;
 
-			Enemy * enemy = (Enemy *) node_enemy->value;
+			while (node_enemy != NULL) {
+				aux_enemy = node_enemy->next;
 
-			bool collision = collision_check(bullet->rect,
-					bullet->collision_mask, enemy->rect, enemy->collision_mask);
+				Enemy * enemy = (Enemy *) node_enemy->value;
 
-			if (collision) {
-				Game_destroy_enemy(game, enemy);
-				Game_destroy_bullet(game, bullet);
+				bool collision = collision_check(bullet->rect,
+						bullet->collision_mask, enemy->rect,
+						enemy->collision_mask);
+
+				if (collision) {
+					Game_destroy_enemy(game, enemy);
+					Game_destroy_bullet(game, bullet);
+				}
+				node_enemy = aux_enemy;
 			}
 
-			node_enemy = aux_enemy;
-		}
-
-		// TODO Adicionar verificação de colisão entre o jogador e os tiros
+			// TODO Adicionar verificação de colisão entre o jogador e os tiros
 
 //		bool collision = collision_check(bullet->rect, bullet->collision_mask,
 //				game->player->rect, game->player->collision_mask);
@@ -198,7 +207,8 @@ void Game_check_bullets_collision(Game * game) {
 //			Bullet_destroy(bullet);
 //		}
 
-		node = aux;
+			node = aux;
+		}
 	}
 }
 
