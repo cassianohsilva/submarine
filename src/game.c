@@ -95,9 +95,17 @@ void Game_update(Game * game) {
 
 	Player_render(game->player, game->surface);
 
-//	if(Game_is_player_breathing(game)) {
-//		printf("Player is breathing!\n");
-//	}
+	if(!Game_is_player_breathing(game)) {
+		if(game->player->oxygen) {
+			game->player->oxygen--;
+		}
+	} else {
+		if(game->player->oxygen < 100) {
+			game->player->oxygen += 2;
+		}
+	}
+
+//	printf("Player oxygen: %d\n", game->player->oxygen);
 
 	Game_update_enemies(game);
 	Game_update_bullets(game);
