@@ -25,6 +25,8 @@ Game * Game_create(SDL_Window * window) {
 
 		game->breathe_zone = breathe_zone;
 		game->timer = Timer_create();
+
+		Timer_start(game->timer);
 	}
 
 	return game;

@@ -87,7 +87,6 @@ void control_player(Player * player, const Uint8 *keystates) {
 
 	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
 			gScreenSurface->w, gScreenSurface->h);
-
 }
 
 void close() {
@@ -112,14 +111,26 @@ int main(int argc, char* args[]) {
 		const Uint8 *keystates = SDL_GetKeyboardState( NULL);
 
 		while (!quit) {
-
-			if (SDL_PollEvent(&e) != 0) {
+			if (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
 				} else if (e.type == SDL_KEYUP) {
-
 					if (e.key.keysym.sym == SDLK_ESCAPE) {
 						game->is_paused = !game->is_paused;
+
+						if (!game->is_paused) {
+							if (Timer_is_started(game->timer)) {
+								Timer_stop(game->timer);
+							} else {
+								Timer_start(game->timer);
+							}
+						} else {
+							if (Timer_is_paused(game->timer)) {
+								Timer_unpause(game->timer);
+							} else {
+								Timer_pause(game->timer);
+							}
+						}
 					}
 				}
 			}
