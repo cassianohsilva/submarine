@@ -6,9 +6,11 @@
  */
 
 #include "game.h"
+#include "oxygen_bar.h"
 
 Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
+	OxygenBar * OxygenBar_create(SDL_Window * window);
 
 	if (game != NULL) {
 		game->player = Player_create(window, RES_SUBMARINE, 2*MOVEMENT_FACTOR,
@@ -101,17 +103,19 @@ void Game_update(Game * game) {
 
 	if (!game->is_paused) {
 		if (!Game_is_player_breathing(game)) {
-			if (game->player->oxygen) {
-				game->player->oxygen--;
+			if (game->player->oxygen >= 0) {
+				game->player->oxygen-=0.05;
 			}
 		} else {
 			if (game->player->oxygen < 100) {
-				game->player->oxygen += 2;
+				game->player->oxygen += 0.1;
+				if(game->player->oxygen > 100)
+					game->player->oxygen = 100;
 			}
 		}
 	}
 
-//	printf("Player oxygen: %d\n", game->player->oxygen);
+//	printf("Player oxygen: %f\n", game->player->oxygen);
 
 	Game_update_enemies(game);
 	Game_update_bullets(game);
