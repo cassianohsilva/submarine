@@ -9,7 +9,6 @@ int HORIZONTAL_KEY_PRESSED = 0;
 int VERTICAL_KEY_PRESSED = 0;
 
 //int SPAWNED = 0;
-
 const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
@@ -111,6 +110,7 @@ int main(int argc, char* args[]) {
 		const Uint8 *keystates = SDL_GetKeyboardState( NULL);
 
 		while (!quit) {
+
 			if (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
@@ -152,6 +152,7 @@ int main(int argc, char* args[]) {
 			}
 
 			Game_update(game);
+			SDL_Delay(5);
 		}
 	}
 
