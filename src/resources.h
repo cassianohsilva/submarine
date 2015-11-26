@@ -13,6 +13,7 @@
 #define RES_SHARK "./res/shark.png"
 #define RES_BULLET "./res/bullet.png"
 #define RES_ENEMY_BULLET "./res/enemy_bullet.png"
+#define RES_DIVER "./res/diver.png"
 
 #define RES_EXPLOSION_SOUND "./res/bomb-02.wav"
 
