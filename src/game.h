@@ -28,7 +28,7 @@ typedef struct {
 	bool is_paused;
 	Timer * timer;
 
-	Mix_Music * explosion;
+	Mix_Chunk * explosion;
 
 	SDL_Window * window;
 	SDL_Surface * surface;
