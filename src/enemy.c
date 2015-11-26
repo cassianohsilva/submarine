@@ -135,6 +135,7 @@ bool Enemy_is_visible(Enemy * enemy) {
 
 void Enemy_destroy(Enemy * enemy) {
 	free(enemy->rect);
+	free(enemy->real_enemy);
 	SDL_FreeSurface(enemy->surface);
 	free(enemy);
 }

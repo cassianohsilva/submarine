@@ -26,7 +26,7 @@ Game * Game_create(SDL_Window * window) {
 		game->breathe_zone = breathe_zone;
 		game->timer = Timer_create();
 
-		game->explosion = Mix_LoadWAV(RES_EXPLOSION_SOUND);
+		game->explosion_sound = Mix_LoadWAV(RES_EXPLOSION_SOUND);
 
 		Timer_start(game->timer);
 	}
@@ -198,7 +198,7 @@ void Game_check_bullets_collision(Game * game) {
 				if (collision) {
 
 					if(enemy->type == SUBMARINE) {
-						Mix_PlayChannel(-1, game->explosion, 0);
+						Mix_PlayChannel(-1, game->explosion_sound, 0);
 					}
 
 					Game_destroy_enemy(game, enemy);
@@ -255,8 +255,10 @@ void Game_destroy(Game * game) {
 
 		List_destroy(game->enemies);
 		List_destroy(game->bullets);
+		Mix_FreeChunk(game->explosion_sound);
+		Timer_destroy(game->timer);
 		free(game);
 	}
 
-	Timer_destroy(game->timer);
+
 }
