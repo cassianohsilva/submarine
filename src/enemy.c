@@ -58,6 +58,8 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 				enemy_submarine->time_between_shots = time_between_shots << 1;
 				enemy_submarine->time_shot_counter =
 						enemy_submarine->time_between_shots;
+			} else {
+				enemy->real_enemy = NULL;
 			}
 
 		} else {
@@ -100,7 +102,8 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 						>> 1;
 
 				Bullet * bullet = Bullet_create(enemy->window, enemy->direction,
-						(enemy->movement_factor * 2.0), x, y, ENEMY_LAYER, RES_ENEMY_BULLET);
+						(enemy->movement_factor * 2.0), x, y, ENEMY_LAYER,
+						RES_ENEMY_BULLET);
 
 				List_insert(bullets, bullet);
 
@@ -135,7 +138,10 @@ bool Enemy_is_visible(Enemy * enemy) {
 
 void Enemy_destroy(Enemy * enemy) {
 	free(enemy->rect);
-	free(enemy->real_enemy);
+
+	if (enemy->real_enemy) {
+		free(enemy->real_enemy);
+	}
 	SDL_FreeSurface(enemy->surface);
 	free(enemy);
 }
