@@ -14,4 +14,6 @@ static char * RES_SHARK = "./res/shark.png";
 static char * RES_BULLET = "./res/bullet.png";
 static char * RES_ENEMY_BULLET = "./res/enemy_bullet.png";
 
+static char * RES_EXPLOSION_SOUND = "./res/bomb-02.wav";
+
 #endif /* SRC_RESOURCES_H_ */

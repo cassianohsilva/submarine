@@ -28,6 +28,8 @@ typedef struct {
 	bool is_paused;
 	Timer * timer;
 
+	Mix_Music * explosion;
+
 	SDL_Window * window;
 	SDL_Surface * surface;
 } Game;

@@ -1,5 +1,3 @@
-#include <time.h>
-
 #include "player.h"
 #include "enemy.h"
 #include "game.h"
@@ -16,7 +14,7 @@ Game * game = NULL;
 
 bool init();
 
-void close();
+void close_all();
 
 SDL_Window* gWindow = NULL;
 
@@ -26,15 +24,18 @@ SDL_Surface* gXOut = NULL;
 
 bool init() {
 
-	srand(time(NULL));
-
 	bool success = true;
 
-	if (SDL_Init( SDL_INIT_VIDEO) < 0 || SDL_Init( SDL_INIT_EVENTS) < 0) {
+	printf("asdfg\n");
+	fflush(stdout);
+
+	if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
+		fflush(stdout);
 		success = false;
 	} else {
-		atexit(SDL_Quit);
+
+		srand(time(NULL));
 
 		gWindow = SDL_CreateWindow("Submarine", SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
@@ -51,6 +52,12 @@ bool init() {
 				success = false;
 			} else {
 				gScreenSurface = SDL_GetWindowSurface(gWindow);
+			}
+
+			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0) {
+				printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n",
+						Mix_GetError());
+				success = false;
 			}
 		}
 	}
@@ -88,12 +95,20 @@ void control_player(Player * player, const Uint8 *keystates) {
 			gScreenSurface->w, gScreenSurface->h);
 }
 
-void close() {
+void MyAudioCallback(void *data, Uint8* stream, int len) {
+	return;
+}
+
+void close_all() {
 	SDL_FreeSurface(gXOut);
 	gXOut = NULL;
 
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
+
+	Mix_Quit();
+	IMG_Quit();
+	SDL_Quit();
 }
 
 int main(int argc, char* args[]) {
@@ -109,12 +124,20 @@ int main(int argc, char* args[]) {
 
 		const Uint8 *keystates = SDL_GetKeyboardState( NULL);
 
+//		Mix_Music * music = Mix_LoadMUS();
+//		Mix_Volume(1, MIX_MAX_VOLUME / 2);
+
 		while (!quit) {
 
 			if (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
 				} else if (e.type == SDL_KEYUP) {
+
+//					if (e.key.keysym.sym == SDLK_1) {
+//						Mix_PlayMusic(music, 0);
+//					}
+
 					if (e.key.keysym.sym == SDLK_ESCAPE) {
 						game->is_paused = !game->is_paused;
 
@@ -156,8 +179,7 @@ int main(int argc, char* args[]) {
 		}
 	}
 
-	close();
+	close_all();
 
 	return 0;
 }
-
