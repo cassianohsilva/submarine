@@ -8,12 +8,12 @@
 #ifndef SRC_RESOURCES_H_
 #define SRC_RESOURCES_H_
 
-static char * RES_SUBMARINE = "./res/submarine.png";
-static char * RES_ENEMY_SUBMARINE = "./res/enemy_submarine.png";
-static char * RES_SHARK = "./res/shark.png";
-static char * RES_BULLET = "./res/bullet.png";
-static char * RES_ENEMY_BULLET = "./res/enemy_bullet.png";
+#define RES_SUBMARINE "./res/submarine.png"
+#define RES_ENEMY_SUBMARINE "./res/enemy_submarine.png"
+#define RES_SHARK "./res/shark.png"
+#define RES_BULLET "./res/bullet.png"
+#define RES_ENEMY_BULLET "./res/enemy_bullet.png"
 
-static char * RES_EXPLOSION_SOUND = "./res/bomb-02.wav";
+#define RES_EXPLOSION_SOUND "./res/bomb-02.wav"
 
 #endif /* SRC_RESOURCES_H_ */

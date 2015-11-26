@@ -26,9 +26,6 @@ bool init() {
 
 	bool success = true;
 
-	printf("asdfg\n");
-	fflush(stdout);
-
 	if (SDL_Init( SDL_INIT_AUDIO | SDL_INIT_VIDEO) < 0) {
 		printf("SDL could not initialize! SDL_Error: %s\n", SDL_GetError());
 		fflush(stdout);
@@ -56,7 +53,7 @@ bool init() {
 
 			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0) {
 				printf("SDL_mixer could not initialize! SDL_mixer Error: %s\n",
-						Mix_GetError());
+				Mix_GetError());
 				success = false;
 			}
 		}
@@ -95,10 +92,6 @@ void control_player(Player * player, const Uint8 *keystates) {
 			gScreenSurface->w, gScreenSurface->h);
 }
 
-void MyAudioCallback(void *data, Uint8* stream, int len) {
-	return;
-}
-
 void close_all() {
 	SDL_FreeSurface(gXOut);
 	gXOut = NULL;
@@ -124,20 +117,12 @@ int main(int argc, char* args[]) {
 
 		const Uint8 *keystates = SDL_GetKeyboardState( NULL);
 
-//		Mix_Music * music = Mix_LoadMUS();
-//		Mix_Volume(1, MIX_MAX_VOLUME / 2);
-
 		while (!quit) {
 
 			if (SDL_PollEvent(&e)) {
 				if (e.type == SDL_QUIT) {
 					quit = true;
 				} else if (e.type == SDL_KEYUP) {
-
-//					if (e.key.keysym.sym == SDLK_1) {
-//						Mix_PlayMusic(music, 0);
-//					}
-
 					if (e.key.keysym.sym == SDLK_ESCAPE) {
 						game->is_paused = !game->is_paused;
 
