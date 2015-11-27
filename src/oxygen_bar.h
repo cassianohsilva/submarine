@@ -2,8 +2,8 @@
 
 typedef struct{
 	SDL_Window * window;
-	SDL_Rect rect;
-	SDL_Rect oxygen_rect;
+	SDL_Rect * rect;
+	SDL_Rect * oxygen_rect;
 	SDL_Surface * surface;
 
 }OxygenBar;
