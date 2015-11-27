@@ -13,6 +13,7 @@ OBJS += \
 ./bin/bullet.o \
 ./bin/linked_list.o \
 ./bin/timer.o \
+./bin/oxygen_bar.o \
 ./bin/main.o
 
 USER_OBJS += \
@@ -22,6 +23,7 @@ USER_OBJS += \
 ./src/bullet.c \
 ./src/linked_list.c \
 ./src/timer.c \
+./src/oxygen_bar.c \
 ./src/main.c
 
 all: Submarine

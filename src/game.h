@@ -11,6 +11,7 @@
 #include "timer.h"
 #include "resources.h"
 #include "linked_list.h"
+#include "oxygen_bar.h"
 
 #define MOVEMENT_FACTOR 1.0
 #define TIME_BETWEEN_SHOTS 50
@@ -27,6 +28,7 @@ typedef struct {
 	SDL_Rect breathe_zone;
 	bool is_paused;
 	Timer * timer;
+	OxygenBar * oxygen_bar;
 
 	Mix_Chunk * explosion_sound;
 
