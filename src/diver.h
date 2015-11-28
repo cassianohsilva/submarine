@@ -14,6 +14,7 @@ typedef struct {
 	SDL_Window * window;
 	SDL_Surface * surface;
 	SDL_Rect * rect;
+	SDL_Rect * sprite_rect;
 	float movement_factor;
 	Direction direction;
 
@@ -22,6 +23,8 @@ typedef struct {
 Diver * Diver_create(SDL_Window * window, float movement_factor, Direction direction, int y_position);
 
 void Diver_move(Diver * diver);
+
+bool Diver_is_visible(Diver * diver);
 
 void Diver_change_direction(Diver * diver);
 

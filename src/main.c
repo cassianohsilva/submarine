@@ -157,6 +157,16 @@ int main(int argc, char* args[]) {
 					Game_spawn_enemy(game, enemy_type, direction,
 							rand() % SCREEN_HEIGHT, 1.0);
 				}
+
+				probability = ((float) rand()) / INT32_MAX;
+
+				if (probability < 0.005) {
+					Direction direction =
+							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
+
+					Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
+							1.0);
+				}
 			}
 
 			Game_update(game);

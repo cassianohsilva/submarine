@@ -11,12 +11,14 @@ Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
 	if (game != NULL) {
-		game->player = Player_create(window, RES_SUBMARINE, 2*MOVEMENT_FACTOR,
+		game->player = Player_create(window, RES_SUBMARINE, 2 * MOVEMENT_FACTOR,
 		TIME_BETWEEN_SHOTS);
 		game->enemies = List_create();
 		game->bullets = List_create();
+		game->divers = List_create();
 		game->window = window;
 		game->enemies_on_screen = 0;
+		game->divers_on_screen = 0;
 		game->is_paused = false;
 		game->surface = SDL_GetWindowSurface(window);
 
@@ -94,6 +96,20 @@ void Game_destroy_bullet(Game * game, Bullet * bullet) {
 	Bullet_destroy(bullet);
 }
 
+Diver * Game_spawn_diver(Game * game, Direction direction, int y,
+		float movement_factor) {
+
+	Diver * diver = NULL;
+
+	if (game->divers_on_screen < MAX_DIVERS_ON_SCREEN) {
+		diver = Diver_create(game->window, movement_factor, direction, y);
+		List_insert(game->divers, diver);
+		game->divers_on_screen++;
+	}
+
+	return diver;
+}
+
 void Game_update(Game * game) {
 
 	SDL_FillRect(game->surface, NULL,
@@ -113,8 +129,7 @@ void Game_update(Game * game) {
 		}
 	}
 
-//	printf("Player oxygen: %d\n", game->player->oxygen);
-
+	Game_update_divers(game);
 	Game_update_enemies(game);
 	Game_update_bullets(game);
 
@@ -197,7 +212,7 @@ void Game_check_bullets_collision(Game * game) {
 
 				if (collision) {
 
-					if(enemy->type == SUBMARINE) {
+					if (enemy->type == SUBMARINE) {
 						Mix_PlayChannel(-1, game->explosion_sound, 0);
 					}
 
@@ -222,26 +237,104 @@ void Game_check_bullets_collision(Game * game) {
 	}
 }
 
+void Game_update_divers(Game * game) {
+	Node * actual = game->divers->begin;
+
+	while (actual != NULL) {
+
+		if (actual->value != NULL) {
+			Node * prox = actual->next;
+			Diver * diver = (Diver *) actual->value;
+
+			actual = prox;
+
+			if (!game->is_paused) {
+				Diver_move(diver);
+			}
+
+			if (Diver_is_visible(diver)) {
+				Diver_render(diver, game->surface);
+			} else {
+				Game_destroy_diver(game, diver);
+			}
+
+		} else {
+			actual = actual->next;
+		}
+	}
+}
+
+void Game_destroy_diver(Game * game, Diver * diver) {
+	List_remove(game->divers, (void *) diver);
+	Diver_destroy(diver);
+
+	game->divers_on_screen--;
+}
+
+void Game_destroy_divers(Game * game) {
+	Node * node = game->divers->begin;
+	Node * aux = NULL;
+
+	while (node != NULL) {
+		aux = node->next;
+
+		if (node->value != NULL) {
+			Diver_destroy((Diver *) node->value);
+		}
+
+		node = aux;
+	}
+
+	game->divers_on_screen = 0;
+
+	game->divers = NULL;
+}
+
+void Game_destroy_enemies(Game* game) {
+	Node* actual = game->enemies->begin;
+	Node * aux = NULL;
+	while (actual != NULL) {
+
+		aux = actual->next;
+
+		if (actual->value != NULL) {
+			Enemy_destroy((Enemy *) actual->value);
+		}
+		actual = aux;
+	}
+
+	game->enemies_on_screen = 0;
+
+	game->enemies = NULL;
+}
+
+void Game_destroy_bullets(Game* game) {
+	Node* actual = game->bullets->begin;
+	Node * aux = NULL;
+	while (actual != NULL) {
+
+		aux = actual->next;
+
+		if (actual->value != NULL) {
+			Bullet_destroy((Bullet *) actual->value);
+		}
+		actual = aux;
+	}
+
+	game->enemies = NULL;
+}
+
 void Game_destroy(Game * game) {
 
 	if (game != NULL) {
 
 		Player_destroy(game->player);
 
-		Node * actual = game->enemies->begin;
+		Game_destroy_enemies(game);
+		Game_destroy_bullets(game);
+		Game_destroy_divers(game);
+		Node * actual = game->bullets->begin;
 		Node * aux = NULL;
-
-		while (actual != NULL) {
-
-			aux = actual->next;
-
-			if (actual->value != NULL) {
-				Enemy_destroy((Enemy *) actual->value);
-			}
-			actual = aux;
-		}
-
-		actual = game->bullets->begin;
 
 		while (actual != NULL) {
 
@@ -252,13 +345,12 @@ void Game_destroy(Game * game) {
 			}
 			actual = aux;
 		}
-
 		List_destroy(game->enemies);
 		List_destroy(game->bullets);
+		List_destroy(game->divers);
 		Mix_FreeChunk(game->explosion_sound);
 		Timer_destroy(game->timer);
 		free(game);
 	}
-
 
 }
