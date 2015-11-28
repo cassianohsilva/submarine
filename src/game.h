@@ -35,6 +35,7 @@ typedef struct {
 	OxygenBar * oxygen_bar;
 
 	Mix_Chunk * explosion_sound;
+	Mix_Chunk * rescue_sound;
 
 	SDL_Window * window;
 	SDL_Surface * surface;

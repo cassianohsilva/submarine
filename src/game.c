@@ -30,6 +30,7 @@ Game * Game_create(SDL_Window * window) {
 		game->timer = Timer_create();
 
 		game->explosion_sound = Mix_LoadWAV(RES_EXPLOSION_SOUND);
+		game->rescue_sound = Mix_LoadWAV(RES_RESCUE_DIVER_SOUND);
 
 		Timer_start(game->timer);
 	}
@@ -165,6 +166,7 @@ void Game_check_divers_collision(Game * game) {
 
 				if (collision) {
 					Game_destroy_diver(game, diver);
+					Mix_PlayChannel(-1, game->rescue_sound, 0);
 					game->player->divers_rescued++;
 				}
 				node = aux;
@@ -384,6 +386,7 @@ void Game_destroy(Game * game) {
 		List_destroy(game->bullets);
 		List_destroy(game->divers);
 		Mix_FreeChunk(game->explosion_sound);
+		Mix_FreeChunk(game->rescue_sound);
 		Timer_destroy(game->timer);
 		free(game);
 	}
