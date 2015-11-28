@@ -13,6 +13,7 @@ OBJS += \
 ./bin/bullet.o \
 ./bin/linked_list.o \
 ./bin/timer.o \
+./bin/oxygen_bar.o \
 ./bin/diver.o \
 ./bin/main.o
 
@@ -23,6 +24,7 @@ USER_OBJS += \
 ./src/bullet.c \
 ./src/linked_list.c \
 ./src/timer.c \
+./src/oxygen_bar.c \
 ./src/diver.c \
 ./src/main.c
 
