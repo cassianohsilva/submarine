@@ -22,7 +22,7 @@ typedef enum {
 } Direction;
 
 typedef enum {
-	PLAYER_LAYER = 1, ENEMY_LAYER = 2
+	PLAYER_LAYER = 1, ENEMY_LAYER = 2, DIVER_LAYER = 4
 } CollisionMask;
 
 typedef enum {

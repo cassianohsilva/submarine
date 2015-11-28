@@ -68,6 +68,8 @@ void Game_destroy_bullets(Game* game);
 
 void Game_check_bullets_collision(Game * game);
 
+void Game_check_divers_collision(Game * game);
+
 void Game_update_bullets(Game * game);
 
 void Game_destroy(Game * game);

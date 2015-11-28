@@ -11,8 +11,8 @@ Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
 	if (game != NULL) {
-		game->oxygen_bar = OxygenBar_create(window);		
-		game->player = Player_create(window, RES_SUBMARINE, 2*MOVEMENT_FACTOR,
+		game->oxygen_bar = OxygenBar_create(window);
+		game->player = Player_create(window, RES_SUBMARINE, 2 * MOVEMENT_FACTOR,
 		TIME_BETWEEN_SHOTS);
 		game->enemies = List_create();
 		game->bullets = List_create();
@@ -137,101 +137,125 @@ void Game_update(Game * game) {
 		}
 	}
 
-	OxygenBar_render(game->oxygen_bar, game->surface);	
+	OxygenBar_render(game->oxygen_bar, game->surface);
 	Game_update_divers(game);
 	Game_update_enemies(game);
 	Game_update_bullets(game);
 
 	Game_check_bullets_collision(game);
+	Game_check_divers_collision(game);
 
 	SDL_UpdateWindowSurface(game->window);
 }
 
-void Game_update_enemies(Game * game) {
-	Node * actual = game->enemies->begin;
-
-	while (actual != NULL) {
-		if (actual->value != NULL) {
-			Node * prox = actual->next;
-			Enemy * enemy = (Enemy *) actual->value;
-
-			actual = prox;
-
-			if (!game->is_paused) {
-				Enemy_move(enemy);
-			}
-
-			if (Enemy_is_visible(enemy)) {
-				Enemy_render(enemy, game->surface, game->bullets);
-			} else {
-				Game_destroy_enemy(game, enemy);
-
-			}
-		} else {
-			actual = actual->next;
-		}
-	}
-}
-
-void Game_update_bullets(Game * game) {
-	Node * node = game->bullets->begin;
-
-	while (node != NULL) {
-
-		Bullet * bullet = (Bullet *) node->value;
-
-		node = node->next;
-
-		if (!game->is_paused) {
-			Bullet_move(bullet);
-		}
-
-		if (Bullet_is_visible(bullet)) {
-			Bullet_render(bullet, game->surface);
-		} else {
-			List_remove(game->bullets, bullet);
-			Bullet_destroy(bullet);
-		}
-	}
-}
-
-void Game_check_bullets_collision(Game * game) {
-
+void Game_check_divers_collision(Game * game) {
 	if (!game->is_paused) {
 
-		Node * node = game->bullets->begin;
+		Node * node = game->divers->begin;
 		Node * aux = NULL;
 
 		while (node != NULL) {
 			aux = node->next;
 
-			Bullet * bullet = (Bullet *) node->value;
+			Diver * diver = (Diver *) node->value;
 
-			Node * node_enemy = game->enemies->begin;
-			Node * aux_enemy = NULL;
+			bool collision = collision_check(diver->rect, diver->collision_mask,
+					game->player->rect, game->player->collision_mask);
 
-			while (node_enemy != NULL) {
-				aux_enemy = node_enemy->next;
-
-				Enemy * enemy = (Enemy *) node_enemy->value;
-
-				bool collision = collision_check(bullet->rect,
-						bullet->collision_mask, enemy->rect,
-						enemy->collision_mask);
-
-				if (collision) {
-
-					if (enemy->type == SUBMARINE) {
-						Mix_PlayChannel(-1, game->explosion_sound, 0);
-					}
-
-					Game_destroy_enemy(game, enemy);
-					Game_destroy_bullet(game, bullet);
-				}
-				node_enemy = aux_enemy;
+			if (collision) {
+				Game_destroy_diver(game, diver);
+				game->player->divers_rescued++;
 			}
+			node = aux;
+		}
+	}
+}
 
-			// TODO Adicionar verificação de colisão entre o jogador e os tiros
+
+void Game_update_enemies(Game * game) {
+Node * actual = game->enemies->begin;
+
+while (actual != NULL) {
+	if (actual->value != NULL) {
+		Node * prox = actual->next;
+		Enemy * enemy = (Enemy *) actual->value;
+
+		actual = prox;
+
+		if (!game->is_paused) {
+			Enemy_move(enemy);
+		}
+
+		if (Enemy_is_visible(enemy)) {
+			Enemy_render(enemy, game->surface, game->bullets);
+		} else {
+			Game_destroy_enemy(game, enemy);
+
+		}
+	} else {
+		actual = actual->next;
+	}
+}
+}
+
+void Game_update_bullets(Game * game) {
+Node * node = game->bullets->begin;
+
+while (node != NULL) {
+
+	Bullet * bullet = (Bullet *) node->value;
+
+	node = node->next;
+
+	if (!game->is_paused) {
+		Bullet_move(bullet);
+	}
+
+	if (Bullet_is_visible(bullet)) {
+		Bullet_render(bullet, game->surface);
+	} else {
+		List_remove(game->bullets, bullet);
+		Bullet_destroy(bullet);
+	}
+}
+}
+
+void Game_check_bullets_collision(Game * game) {
+
+if (!game->is_paused) {
+
+	Node * node = game->bullets->begin;
+	Node * aux = NULL;
+
+	while (node != NULL) {
+		aux = node->next;
+
+		Bullet * bullet = (Bullet *) node->value;
+
+		Node * node_enemy = game->enemies->begin;
+		Node * aux_enemy = NULL;
+
+		while (node_enemy != NULL) {
+			aux_enemy = node_enemy->next;
+
+			Enemy * enemy = (Enemy *) node_enemy->value;
+
+			bool collision = collision_check(bullet->rect,
+					bullet->collision_mask, enemy->rect, enemy->collision_mask);
+
+			if (collision) {
+
+				if (enemy->type == SUBMARINE) {
+					Mix_PlayChannel(-1, game->explosion_sound, 0);
+				}
+
+				Game_destroy_enemy(game, enemy);
+				Game_destroy_bullet(game, bullet);
+			}
+			node_enemy = aux_enemy;
+		}
+
+		// TODO Adicionar verificação de colisão entre o jogador e os tiros
 
 //		bool collision = collision_check(bullet->rect, bullet->collision_mask,
 //				game->player->rect, game->player->collision_mask);
@@ -241,85 +265,110 @@ void Game_check_bullets_collision(Game * game) {
 //			Bullet_destroy(bullet);
 //		}
 
-			node = aux;
-		}
+		node = aux;
 	}
+}
 }
 
 void Game_update_divers(Game * game) {
-	Node * actual = game->divers->begin;
+Node * actual = game->divers->begin;
 
-	while (actual != NULL) {
+while (actual != NULL) {
 
-		if (actual->value != NULL) {
-			Node * prox = actual->next;
-			Diver * diver = (Diver *) actual->value;
+	if (actual->value != NULL) {
+		Node * prox = actual->next;
+		Diver * diver = (Diver *) actual->value;
 
-			actual = prox;
+		actual = prox;
 
-			if (!game->is_paused) {
-				Diver_move(diver);
-			}
-
-			if (Diver_is_visible(diver)) {
-				Diver_render(diver, game->surface);
-			} else {
-				Game_destroy_diver(game, diver);
-			}
-
-		} else {
-			actual = actual->next;
+		if (!game->is_paused) {
+			Diver_move(diver);
 		}
+
+		if (Diver_is_visible(diver)) {
+			Diver_render(diver, game->surface);
+		} else {
+			Game_destroy_diver(game, diver);
+		}
+
+	} else {
+		actual = actual->next;
 	}
+}
 }
 
 void Game_destroy_diver(Game * game, Diver * diver) {
-	List_remove(game->divers, (void *) diver);
-	Diver_destroy(diver);
+List_remove(game->divers, (void *) diver);
+Diver_destroy(diver);
 
-	game->divers_on_screen--;
+game->divers_on_screen--;
 }
 
 void Game_destroy_divers(Game * game) {
-	Node * node = game->divers->begin;
-	Node * aux = NULL;
+Node * node = game->divers->begin;
+Node * aux = NULL;
 
-	while (node != NULL) {
-		aux = node->next;
+while (node != NULL) {
+	aux = node->next;
 
-		if (node->value != NULL) {
-			Diver_destroy((Diver *) node->value);
-		}
-
-		node = aux;
+	if (node->value != NULL) {
+		Diver_destroy((Diver *) node->value);
 	}
 
-	game->divers_on_screen = 0;
+	node = aux;
+}
 
-	game->divers = NULL;
+game->divers_on_screen = 0;
+
+game->divers = NULL;
 }
 
 void Game_destroy_enemies(Game* game) {
-	Node* actual = game->enemies->begin;
-	Node * aux = NULL;
-	while (actual != NULL) {
+Node* actual = game->enemies->begin;
+Node * aux = NULL;
+while (actual != NULL) {
 
-		aux = actual->next;
+	aux = actual->next;
 
-		if (actual->value != NULL) {
-			Enemy_destroy((Enemy *) actual->value);
-		}
-		actual = aux;
+	if (actual->value != NULL) {
+		Enemy_destroy((Enemy *) actual->value);
 	}
+	actual = aux;
+}
 
-	game->enemies_on_screen = 0;
+game->enemies_on_screen = 0;
 
-	game->enemies = NULL;
+game->enemies = NULL;
 }
 
 void Game_destroy_bullets(Game* game) {
-	Node* actual = game->bullets->begin;
+Node* actual = game->bullets->begin;
+Node * aux = NULL;
+while (actual != NULL) {
+
+	aux = actual->next;
+
+	if (actual->value != NULL) {
+		Bullet_destroy((Bullet *) actual->value);
+	}
+	actual = aux;
+}
+
+game->enemies = NULL;
+}
+
+void Game_destroy(Game * game) {
+
+if (game != NULL) {
+
+	Player_destroy(game->player);
+
+	Game_destroy_enemies(game);
+	Game_destroy_bullets(game);
+	Game_destroy_divers(game);
+	Node * actual = game->bullets->begin;
 	Node * aux = NULL;
+
 	while (actual != NULL) {
 
 		aux = actual->next;
@@ -329,37 +378,12 @@ void Game_destroy_bullets(Game* game) {
 		}
 		actual = aux;
 	}
-
-	game->enemies = NULL;
+	List_destroy(game->enemies);
+	List_destroy(game->bullets);
+	List_destroy(game->divers);
+	Mix_FreeChunk(game->explosion_sound);
+	Timer_destroy(game->timer);
+	free(game);
 }
-
-void Game_destroy(Game * game) {
-
-	if (game != NULL) {
-
-		Player_destroy(game->player);
-
-		Game_destroy_enemies(game);
-		Game_destroy_bullets(game);
-		Game_destroy_divers(game);
-		Node * actual = game->bullets->begin;
-		Node * aux = NULL;
-
-		while (actual != NULL) {
-
-			aux = actual->next;
-
-			if (actual->value != NULL) {
-				Bullet_destroy((Bullet *) actual->value);
-			}
-			actual = aux;
-		}
-		List_destroy(game->enemies);
-		List_destroy(game->bullets);
-		List_destroy(game->divers);
-		Mix_FreeChunk(game->explosion_sound);
-		Timer_destroy(game->timer);
-		free(game);
-	}
 
 }

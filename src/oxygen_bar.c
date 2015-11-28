@@ -10,9 +10,6 @@ OxygenBar * OxygenBar_create(SDL_Window * window) {
 	OxygenBar * oxygenbar = (OxygenBar *) malloc(sizeof(OxygenBar));
 
 	if (oxygenbar != NULL) {
-
-//		if (oxygenbar->surface != NULL) {
-
 		oxygenbar->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
 		oxygenbar->rect->x = 180;
@@ -32,7 +29,6 @@ OxygenBar * OxygenBar_create(SDL_Window * window) {
 
 		oxygenbar->oxygen_rect->w = 300;
 		oxygenbar->oxygen_rect->h = 20;
-		//printf("erro sdasdasd");
 		fflush(stdout);
 
 //		} else {
@@ -57,19 +53,10 @@ void OxygenBar_render(OxygenBar* oxygenbar, SDL_Surface * parent) {
 	SDL_FillRect(oxygenbar->surface, oxygenbar->oxygen_rect,
 			SDL_MapRGB(oxygenbar->surface->format, 0x13, 0x72, 10));
 
-//	printf(" na parada : %d\n", oxygenbar->oxygen_rect->w);
-
 	SDL_BlitSurface(oxygenbar->surface, NULL, parent, oxygenbar->rect);
 }
 
 void OxygenBar_set_oxygen(OxygenBar * oxygenbar, float oxygen) {
-
-	printf("antes: %d", oxygenbar->oxygen_rect->w);
-
 	oxygenbar->oxygen_rect->w = oxygenbar->rect->w * (oxygen / 100.0);
-
-	printf(" depois: %d\n", oxygenbar->oxygen_rect->w);
-//	SDL_FillRect(oxygenbar->surface, NULL,
-//			SDL_MapRGB(oxygenbar->surface->format, 0xFF, 0xFF, 0xFF));
 }
 

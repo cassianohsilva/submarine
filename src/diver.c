@@ -19,6 +19,7 @@ Diver * Diver_create(SDL_Window * window, float movement_factor,
 			diver->window = window;
 			diver->movement_factor = movement_factor;
 			diver->direction = direction;
+			diver->collision_mask = DIVER_LAYER;
 			diver->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 			diver->sprite_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 

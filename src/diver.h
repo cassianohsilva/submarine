@@ -18,6 +18,7 @@ typedef struct {
 	float movement_factor;
 	Direction direction;
 
+	CollisionMask collision_mask;
 } Diver;
 
 Diver * Diver_create(SDL_Window * window, float movement_factor, Direction direction, int y_position);
