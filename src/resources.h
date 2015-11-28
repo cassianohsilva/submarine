@@ -15,6 +15,7 @@
 #define RES_ENEMY_BULLET "./res/enemy_bullet.png"
 #define RES_DIVER "./res/diver.png"
 
-#define RES_EXPLOSION_SOUND "./res/bomb-02.wav"
+#define RES_EXPLOSION_SOUND "./res/bomb.wav"
+#define RES_EXPLOSION_SOUND "./res/pickup.wav"
 
 #endif /* SRC_RESOURCES_H_ */
