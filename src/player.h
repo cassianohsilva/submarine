@@ -9,6 +9,8 @@
 #include "bullet.h"
 #include "linked_list.h"
 
+#define MAX_DIVERS_FOR_RESCUE 5
+
 #ifndef SRC_PLAYER_H_
 #define SRC_PLAYER_H_
 
