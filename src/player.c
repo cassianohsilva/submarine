@@ -36,6 +36,7 @@ Player * Player_create(SDL_Window * window, const char * filename,
 
 			player->oxygen = 100;
 			player->divers_rescued = 0;
+			player->score = 0;
 			player->movement_factor = movement_factor;
 			player->time_between_shots = time_between_shots;
 			player->time_shot_counter = time_between_shots;

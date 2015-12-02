@@ -7,6 +7,8 @@
 
 #include "game.h"
 
+#define DIVER_RESCUE_SCORE 60
+
 Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
@@ -132,6 +134,11 @@ void Game_update(Game * game) {
 				game->player->oxygen += 0.15;
 				if (game->player->oxygen > 100)
 					game->player->oxygen = 100;
+			}
+
+			if(game->player->divers_rescued == MAX_DIVERS_FOR_RESCUE) {
+				game->player->divers_rescued = 0;
+				game->player->score += DIVER_RESCUE_SCORE;
 			}
 		}
 		OxygenBar_set_oxygen(game->oxygen_bar, game->player->oxygen);

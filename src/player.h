@@ -18,6 +18,7 @@ typedef struct _Player {
 	SDL_Window * window;
 	SDL_Rect * rect;
 	float oxygen;
+	int score;
 	Uint8 divers_rescued;
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
