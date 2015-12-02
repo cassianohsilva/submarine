@@ -7,8 +7,6 @@ int HORIZONTAL_KEY_PRESSED = 0;
 int VERTICAL_KEY_PRESSED = 0;
 
 //int SPAWNED = 0;
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
 
 Game * game = NULL;
 
@@ -35,7 +33,7 @@ bool init() {
 		srand(time(NULL));
 
 		gWindow = SDL_CreateWindow("Submarine", SDL_WINDOWPOS_UNDEFINED,
-		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+				SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n",
 					SDL_GetError());
@@ -49,6 +47,12 @@ bool init() {
 				success = false;
 			} else {
 				gScreenSurface = SDL_GetWindowSurface(gWindow);
+			}
+
+			if (TTF_Init() == -1) {
+				printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n",
+				TTF_GetError());
+				success = false;
 			}
 
 			if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 4096) < 0) {
@@ -99,6 +103,7 @@ void close_all() {
 	SDL_DestroyWindow(gWindow);
 	gWindow = NULL;
 
+	TTF_Quit();
 	Mix_Quit();
 	IMG_Quit();
 	SDL_Quit();
@@ -154,27 +159,27 @@ int main(int argc, char* args[]) {
 					Direction direction =
 							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
 
-					Game_spawn_enemy(game, enemy_type, direction,
-							rand() % SCREEN_HEIGHT, 1.0);
-				}
-
-				probability = ((float) rand()) / INT32_MAX;
-
-				if (probability < 0.005) {
-					Direction direction =
-							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
-
-					Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
-							1.0);
-				}
+				Game_spawn_enemy(game, enemy_type, direction,
+						rand() % SCREEN_HEIGHT, 1.0);
 			}
 
-			Game_update(game);
-			SDL_Delay(5);
+			probability = ((float) rand()) / INT32_MAX;
+
+			if (probability < 0.005) {
+				Direction direction =
+						(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
+
+			Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
+					1.0);
 		}
 	}
 
-	close_all();
+	Game_update(game);
+	SDL_Delay(5);
+}
+}
 
-	return 0;
+close_all();
+
+return 0;
 }

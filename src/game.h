@@ -19,6 +19,9 @@
 #define MAX_ENEMIES_ON_SCREEN 10
 #define MAX_DIVERS_ON_SCREEN 3
 
+#define SCREEN_WIDTH 640
+#define SCREEN_HEIGHT 480
+
 #ifndef SRC_GAME_H_
 #define SRC_GAME_H_
 
@@ -33,6 +36,11 @@ typedef struct {
 	bool is_paused;
 	Timer * timer;
 	OxygenBar * oxygen_bar;
+
+	SDL_Color score_color;
+	TTF_Font * font;
+	SDL_Rect * score_rect;
+	SDL_Surface * score_surface;
 
 	Mix_Chunk * explosion_sound;
 	Mix_Chunk * rescue_sound;
@@ -56,6 +64,8 @@ void Game_destroy_diver(Game * game, Diver * diver);
 void Game_destroy_bullet(Game * game, Bullet * bullet);
 
 void Game_update(Game * game);
+
+void Game_update_score_surface(Game * game);
 
 void Game_update_enemies(Game * game);
 

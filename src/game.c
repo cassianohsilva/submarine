@@ -8,6 +8,7 @@
 #include "game.h"
 
 #define DIVER_RESCUE_SCORE 60
+#define ENEMY_DESTROY_SCORE 60
 
 Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
@@ -25,6 +26,8 @@ Game * Game_create(SDL_Window * window) {
 		game->is_paused = false;
 		game->surface = SDL_GetWindowSurface(window);
 
+		game->score_color = (SDL_Color ) {0xFF, 0xFF, 00};
+
 		SDL_Rect breathe_zone = { 0, 0, game->surface->w,
 				(game->surface->h >> 3) };
 
@@ -35,8 +38,39 @@ Game * Game_create(SDL_Window * window) {
 		game->rescue_sound = Mix_LoadWAV(RES_RESCUE_DIVER_SOUND);
 
 		Timer_start(game->timer);
+
+		game->font = TTF_OpenFont(RES_DEFAULT_FONT, 28);
+
+		game->score_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
+
+		char temp[20];
+		sprintf(temp, "%d", game->player->score);
+
+		game->score_surface = TTF_RenderText_Solid(game->font, temp,
+				game->score_color);
+
+		if (game->score_rect) {
+			game->score_rect->x = (SCREEN_WIDTH - game->score_surface->w) / 2;
+			game->score_rect->y = 0;
+			game->score_rect->w = game->score_surface->w;
+			game->score_rect->h = game->score_surface->h;
+		}
 	}
 	return game;
+}
+
+void Game_update_score_surface(Game * game) {
+	char temp[20];
+	sprintf(temp, "%d", game->player->score);
+
+	SDL_FreeSurface(game->score_surface);
+
+	game->score_surface = TTF_RenderText_Solid(game->font, temp,
+			game->score_color);
+
+	game->score_rect->x = (SCREEN_WIDTH - game->score_surface->w) / 2;
+	game->score_rect->w = game->score_surface->w;
+	game->score_rect->h = game->score_surface->h;
 }
 
 bool Game_is_player_breathing(Game * game) {
@@ -136,9 +170,11 @@ void Game_update(Game * game) {
 					game->player->oxygen = 100;
 			}
 
-			if(game->player->divers_rescued == MAX_DIVERS_FOR_RESCUE) {
+			if (game->player->divers_rescued == MAX_DIVERS_FOR_RESCUE) {
 				game->player->divers_rescued = 0;
 				game->player->score += DIVER_RESCUE_SCORE;
+
+				Game_update_score_surface(game);
 			}
 		}
 		OxygenBar_set_oxygen(game->oxygen_bar, game->player->oxygen);
@@ -151,6 +187,8 @@ void Game_update(Game * game) {
 
 	Game_check_bullets_collision(game);
 	Game_check_divers_collision(game);
+
+	SDL_BlitSurface(game->score_surface, NULL, game->surface, game->score_rect);
 
 	SDL_UpdateWindowSurface(game->window);
 }
@@ -262,6 +300,9 @@ void Game_check_bullets_collision(Game * game) {
 
 					Game_destroy_enemy(game, enemy);
 					Game_destroy_bullet(game, bullet);
+
+					game->player->score += ENEMY_DESTROY_SCORE;
+					Game_update_score_surface(game);
 				}
 				node_enemy = aux_enemy;
 			}
@@ -392,6 +433,11 @@ void Game_destroy(Game * game) {
 		List_destroy(game->enemies);
 		List_destroy(game->bullets);
 		List_destroy(game->divers);
+
+		SDL_FreeSurface(game->score_surface);
+		free(game->score_rect);
+
+		TTF_CloseFont(game->font);
 		Mix_FreeChunk(game->explosion_sound);
 		Mix_FreeChunk(game->rescue_sound);
 		Timer_destroy(game->timer);
