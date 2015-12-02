@@ -34,6 +34,8 @@ typedef struct {
 	Timer * timer;
 	OxygenBar * oxygen_bar;
 
+	Mix_Music * background_music;
+
 	Mix_Chunk * explosion_sound;
 	Mix_Chunk * rescue_sound;
 

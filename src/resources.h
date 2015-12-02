@@ -18,4 +18,6 @@
 #define RES_EXPLOSION_SOUND "./res/bomb.wav"
 #define RES_RESCUE_DIVER_SOUND "./res/pickup.wav"
 
+#define RES_BACKGROUND_SOUND "./res/background.wav"
+
 #endif /* SRC_RESOURCES_H_ */
