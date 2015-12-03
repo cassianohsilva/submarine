@@ -33,7 +33,7 @@ bool init() {
 		srand(time(NULL));
 
 		gWindow = SDL_CreateWindow("Submarine", SDL_WINDOWPOS_UNDEFINED,
-				SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
+		SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN);
 		if (gWindow == NULL) {
 			printf("Window could not be created! SDL_Error: %s\n",
 					SDL_GetError());
@@ -151,35 +151,25 @@ int main(int argc, char* args[]) {
 			if (!game->is_paused) {
 				control_player(player, keystates);
 
+				Game_spawn_enemy(game);
+
 				float probability = ((float) rand()) / INT32_MAX;
 
-				if (probability < 0.01) {
-					EnemyType enemy_type =
-							(rand() > (INT32_MAX >> 1)) ? SUBMARINE : SHARK;
+				if (probability < 0.005) {
 					Direction direction =
 							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
 
-				Game_spawn_enemy(game, enemy_type, direction,
-						rand() % SCREEN_HEIGHT, 1.0);
+					Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
+							1.0);
+				}
 			}
 
-			probability = ((float) rand()) / INT32_MAX;
-
-			if (probability < 0.005) {
-				Direction direction =
-						(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
-
-			Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
-					1.0);
+			Game_update(game);
+			SDL_Delay(5);
 		}
 	}
 
-	Game_update(game);
-	SDL_Delay(5);
-}
-}
+	close_all();
 
-close_all();
-
-return 0;
+	return 0;
 }

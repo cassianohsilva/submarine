@@ -7,6 +7,8 @@
 
 #include "game.h"
 
+#define DEFAULT_VELOCITY_FACTOR 1.0
+
 #define DIVER_RESCUE_SCORE 60
 #define ENEMY_DESTROY_SCORE 60
 
@@ -33,6 +35,9 @@ Game * Game_create(SDL_Window * window) {
 
 		game->breathe_zone = breathe_zone;
 		game->timer = Timer_create();
+
+		game->spawn_zone_size = (SCREEN_HEIGHT - game->breathe_zone.h)
+				/ game->player->sprite_rect->h;
 
 		game->explosion_sound = Mix_LoadWAV(RES_EXPLOSION_SOUND);
 		game->rescue_sound = Mix_LoadWAV(RES_RESCUE_DIVER_SOUND);
@@ -98,23 +103,34 @@ bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
 	return is_colliding;
 }
 
-Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction,
-		int y, float velocity_factor) {
+Enemy * Game_spawn_enemy(Game * game) {
 
 	Enemy * enemy = NULL;
 
-	if (game->enemies_on_screen < MAX_ENEMIES_ON_SCREEN) {
-		if (type == SHARK) {
-			enemy = Enemy_create(game->window, RES_SHARK, type, direction, y,
-					velocity_factor, 0);
-		} else if (type == SUBMARINE) {
-			enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE, type,
-					direction, y, velocity_factor, TIME_BETWEEN_SHOTS);
-		}
+	float probability = ((float) rand()) / INT32_MAX;
 
-		if (enemy != NULL) {
-			List_insert(game->enemies, (void *) enemy);
-			game->enemies_on_screen++;
+	if (probability < 0.01) {
+		EnemyType enemy_type = (rand() > (INT32_MAX >> 1)) ? SUBMARINE : SHARK;
+		Direction direction = (rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
+
+		Uint8 zone = rand() % game->spawn_zone_size;
+
+		int y = game->player->surface->h * zone + game->breathe_zone.h;
+
+		if (game->enemies_on_screen < MAX_ENEMIES_ON_SCREEN) {
+			if (enemy_type == SHARK) {
+				enemy = Enemy_create(game->window, RES_SHARK, enemy_type,
+						direction, y, DEFAULT_VELOCITY_FACTOR, 0);
+			} else if (enemy_type == SUBMARINE) {
+				enemy = Enemy_create(game->window, RES_ENEMY_SUBMARINE,
+						enemy_type, direction, y, DEFAULT_VELOCITY_FACTOR,
+						TIME_BETWEEN_SHOTS);
+			}
+
+			if (enemy != NULL) {
+				List_insert(game->enemies, (void *) enemy);
+				game->enemies_on_screen++;
+			}
 		}
 	}
 

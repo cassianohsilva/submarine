@@ -34,6 +34,7 @@ typedef struct {
 	List * divers;
 	SDL_Rect breathe_zone;
 	bool is_paused;
+	Uint8 spawn_zone_size;
 	Timer * timer;
 	OxygenBar * oxygen_bar;
 
@@ -53,7 +54,7 @@ Game * Game_create(SDL_Window * window);
 
 bool Game_is_player_breathing(Game * game);
 
-Enemy * Game_spawn_enemy(Game * game, EnemyType type, Direction direction, int y, float velocity_factor);
+Enemy * Game_spawn_enemy(Game * game);
 
 Diver * Game_spawn_diver(Game * game, Direction direction, int y, float movement_factor);
 
