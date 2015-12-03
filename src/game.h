@@ -26,6 +26,7 @@
 #define SRC_GAME_H_
 
 typedef struct {
+	bool is_locked;
 	Uint8 enemies_number;
 	Direction direction;
 	EnemyType enemy_type;

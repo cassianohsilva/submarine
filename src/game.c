@@ -48,7 +48,7 @@ Game * Game_create(SDL_Window * window) {
 		int i;
 
 		for (i = 0; i < game->spawn_zone_size; i++) {
-			game->zone_lock[i] = (ZoneLock ) {0, 0, 0};
+			game->zone_lock[i] = (ZoneLock ) {false, 0, 0, 0};
 		}
 
 		game->explosion_sound = Mix_LoadWAV(RES_EXPLOSION_SOUND);
@@ -130,6 +130,7 @@ Enemy * Game_spawn_enemy(Game * game) {
 		int y = zone_to_screen(game, zone);
 
 		if (game->enemies_on_screen < MAX_ENEMIES_ON_SCREEN
+				&& !game->zone_lock[zone].is_locked
 				&& (game->zone_lock[zone].direction == 0
 						|| game->zone_lock[zone].direction == direction)) {
 			if (enemy_type == SHARK) {
@@ -147,7 +148,7 @@ Enemy * Game_spawn_enemy(Game * game) {
 			}
 
 			if (game->zone_lock[zone].enemies_number == 0) {
-				printf("1\n");
+				game->zone_lock[zone].is_locked = true;
 				game->zone_lock[zone].direction = direction;
 				game->zone_lock[zone].enemy_type = enemy_type;
 			}
@@ -164,6 +165,10 @@ void Game_destroy_enemy(Game * game, Enemy * enemy) {
 	int zone = screen_to_zone(game, enemy->rect->y);
 
 	game->zone_lock[zone].enemies_number--;
+
+	if (enemy->rect->x + enemy->rect->w >= SCREEN_WIDTH) {
+		game->zone_lock[zone].is_locked = false;
+	}
 
 	List_remove(game->enemies, (void *) enemy);
 	Enemy_destroy(enemy);
@@ -286,12 +291,17 @@ void Game_update_enemies(Game * game) {
 				Enemy_move(enemy);
 			}
 
+			if (enemy->rect->x + enemy->rect->w < SCREEN_WIDTH) {
+				game->zone_lock[screen_to_zone(game, enemy->rect->y)].is_locked =
+						false;
+			}
+
 			if (Enemy_is_visible(enemy)) {
 				Enemy_render(enemy, game->surface, game->bullets);
 			} else {
 				Game_destroy_enemy(game, enemy);
-
 			}
+
 		} else {
 			actual = actual->next;
 		}
