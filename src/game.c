@@ -12,6 +12,9 @@
 #define DIVER_RESCUE_SCORE 60
 #define ENEMY_DESTROY_SCORE 60
 
+int zone_to_screen(Game * game, int zone);
+int screen_to_zone(Game * game, int y);
+
 Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
@@ -38,6 +41,15 @@ Game * Game_create(SDL_Window * window) {
 
 		game->spawn_zone_size = (SCREEN_HEIGHT - game->breathe_zone.h)
 				/ game->player->sprite_rect->h;
+
+		game->zone_lock = (ZoneLock *) malloc(
+				game->spawn_zone_size * sizeof(ZoneLock));
+
+		int i;
+
+		for (i = 0; i < game->spawn_zone_size; i++) {
+			game->zone_lock[i] = (ZoneLock ) {0, 0, 0};
+		}
 
 		game->explosion_sound = Mix_LoadWAV(RES_EXPLOSION_SOUND);
 		game->rescue_sound = Mix_LoadWAV(RES_RESCUE_DIVER_SOUND);
@@ -115,9 +127,11 @@ Enemy * Game_spawn_enemy(Game * game) {
 
 		Uint8 zone = rand() % game->spawn_zone_size;
 
-		int y = game->player->surface->h * zone + game->breathe_zone.h;
+		int y = zone_to_screen(game, zone);
 
-		if (game->enemies_on_screen < MAX_ENEMIES_ON_SCREEN) {
+		if (game->enemies_on_screen < MAX_ENEMIES_ON_SCREEN
+				&& (game->zone_lock[zone].direction == 0
+						|| game->zone_lock[zone].direction == direction)) {
 			if (enemy_type == SHARK) {
 				enemy = Enemy_create(game->window, RES_SHARK, enemy_type,
 						direction, y, DEFAULT_VELOCITY_FACTOR, 0);
@@ -131,6 +145,14 @@ Enemy * Game_spawn_enemy(Game * game) {
 				List_insert(game->enemies, (void *) enemy);
 				game->enemies_on_screen++;
 			}
+
+			if (game->zone_lock[zone].enemies_number == 0) {
+				printf("1\n");
+				game->zone_lock[zone].direction = direction;
+				game->zone_lock[zone].enemy_type = enemy_type;
+			}
+
+			game->zone_lock[zone].enemies_number++;
 		}
 	}
 
@@ -138,6 +160,11 @@ Enemy * Game_spawn_enemy(Game * game) {
 }
 
 void Game_destroy_enemy(Game * game, Enemy * enemy) {
+
+	int zone = screen_to_zone(game, enemy->rect->y);
+
+	game->zone_lock[zone].enemies_number--;
+
 	List_remove(game->enemies, (void *) enemy);
 	Enemy_destroy(enemy);
 
@@ -159,10 +186,11 @@ Diver * Game_spawn_diver(Game * game) {
 
 		Uint8 zone = rand() % game->spawn_zone_size;
 
-		int y = game->player->surface->h * zone + game->breathe_zone.h + game->player->surface->h/4;
+		int y = zone_to_screen(game, zone) + game->player->surface->h / 4;
 
 		if (game->divers_on_screen < MAX_DIVERS_ON_SCREEN) {
-			diver = Diver_create(game->window, DEFAULT_VELOCITY_FACTOR, direction, y);
+			diver = Diver_create(game->window, DEFAULT_VELOCITY_FACTOR,
+					direction, y);
 			List_insert(game->divers, diver);
 			game->divers_on_screen++;
 		}
@@ -463,6 +491,7 @@ void Game_destroy(Game * game) {
 
 		SDL_FreeSurface(game->score_surface);
 		free(game->score_rect);
+		free(game->zone_lock);
 
 		TTF_CloseFont(game->font);
 		Mix_FreeChunk(game->explosion_sound);
@@ -470,5 +499,12 @@ void Game_destroy(Game * game) {
 		Timer_destroy(game->timer);
 		free(game);
 	}
+}
 
+int zone_to_screen(Game * game, int zone) {
+	return game->player->surface->h * zone + game->breathe_zone.h;
+}
+
+int screen_to_zone(Game * game, int y) {
+	return (y - game->breathe_zone.h) / game->player->surface->h;
 }

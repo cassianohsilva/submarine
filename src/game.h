@@ -26,6 +26,12 @@
 #define SRC_GAME_H_
 
 typedef struct {
+	Uint8 enemies_number;
+	Direction direction;
+	EnemyType enemy_type;
+} ZoneLock;
+
+typedef struct {
 	Player * player;
 	List * enemies;
 	Uint8 enemies_on_screen;
@@ -37,6 +43,8 @@ typedef struct {
 	Uint8 spawn_zone_size;
 	Timer * timer;
 	OxygenBar * oxygen_bar;
+
+	ZoneLock * zone_lock;
 
 	SDL_Color score_color;
 	TTF_Font * font;
