@@ -284,6 +284,7 @@ void Game_check_bullets_collision(Game * game) {
 			Node * aux_enemy = NULL;
 
 			while (node_enemy != NULL) {
+
 				aux_enemy = node_enemy->next;
 
 				Enemy * enemy = (Enemy *) node_enemy->value;
@@ -293,7 +294,6 @@ void Game_check_bullets_collision(Game * game) {
 						enemy->collision_mask);
 
 				if (collision) {
-
 					if (enemy->type == SUBMARINE) {
 						Mix_PlayChannel(-1, game->explosion_sound, 0);
 					}
@@ -302,7 +302,10 @@ void Game_check_bullets_collision(Game * game) {
 					Game_destroy_bullet(game, bullet);
 
 					game->player->score += ENEMY_DESTROY_SCORE;
+
 					Game_update_score_surface(game);
+
+					break;
 				}
 				node_enemy = aux_enemy;
 			}
