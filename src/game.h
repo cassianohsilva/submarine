@@ -56,7 +56,7 @@ bool Game_is_player_breathing(Game * game);
 
 Enemy * Game_spawn_enemy(Game * game);
 
-Diver * Game_spawn_diver(Game * game, Direction direction, int y, float movement_factor);
+Diver * Game_spawn_diver(Game * game);
 
 void Game_destroy_enemy(Game * game, Enemy * enemy);
 

@@ -152,16 +152,16 @@ int main(int argc, char* args[]) {
 				control_player(player, keystates);
 
 				Game_spawn_enemy(game);
-
-				float probability = ((float) rand()) / INT32_MAX;
-
-				if (probability < 0.005) {
-					Direction direction =
-							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
-
-					Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
-							1.0);
-				}
+				Game_spawn_diver(game);
+//				float probability = ((float) rand()) / INT32_MAX;
+//
+//				if (probability < 0.005) {
+//					Direction direction =
+//							(rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
+//
+//					Game_spawn_diver(game, direction, rand() % SCREEN_HEIGHT,
+//							1.0);
+//				}
 			}
 
 			Game_update(game);

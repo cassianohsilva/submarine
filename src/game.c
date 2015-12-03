@@ -149,15 +149,23 @@ void Game_destroy_bullet(Game * game, Bullet * bullet) {
 	Bullet_destroy(bullet);
 }
 
-Diver * Game_spawn_diver(Game * game, Direction direction, int y,
-		float movement_factor) {
+Diver * Game_spawn_diver(Game * game) {
 
 	Diver * diver = NULL;
+	float probability = ((float) rand()) / INT32_MAX;
 
-	if (game->divers_on_screen < MAX_DIVERS_ON_SCREEN) {
-		diver = Diver_create(game->window, movement_factor, direction, y);
-		List_insert(game->divers, diver);
-		game->divers_on_screen++;
+	if (probability < 0.005) {
+		Direction direction = (rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
+
+		Uint8 zone = rand() % game->spawn_zone_size;
+
+		int y = game->player->surface->h * zone + game->breathe_zone.h + game->player->surface->h/4;
+
+		if (game->divers_on_screen < MAX_DIVERS_ON_SCREEN) {
+			diver = Diver_create(game->window, DEFAULT_VELOCITY_FACTOR, direction, y);
+			List_insert(game->divers, diver);
+			game->divers_on_screen++;
+		}
 	}
 
 	return diver;
