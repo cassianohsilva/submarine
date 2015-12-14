@@ -97,10 +97,10 @@ Game * Game_create(SDL_Window * window) {
 			Button * quit_button = Button_create(window, RES_QUIT,
 					on_click_quit);
 
-			Button_set_postition(resume_button, SCREEN_WIDTH / 2,
-			SCREEN_HEIGHT / 2);
-			Button_set_postition(quit_button, SCREEN_WIDTH / 2,
-			SCREEN_HEIGHT / 2 + 70);
+			Button_set_postition(resume_button, (SCREEN_WIDTH - resume_button->rect->w) / 2,
+			(int) (SCREEN_HEIGHT / 2 - resume_button->rect->w * 1.2));
+			Button_set_postition(quit_button, (SCREEN_WIDTH - quit_button->rect->w) / 2,
+					(int) (SCREEN_HEIGHT / 2 + quit_button->rect->w * 1.2));
 
 			Menu_add_button(game->pause_menu, resume_button);
 			Menu_add_button(game->pause_menu, quit_button);
