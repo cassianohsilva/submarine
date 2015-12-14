@@ -78,6 +78,18 @@ Game * Game_create(SDL_Window * window) {
 		SDL_Color color = {0x33, 0x33, 0x33, 0xFF / 2};
 
 		game->pause_menu = Menu_create(window, NULL, color);
+
+		if(game->pause_menu) {
+
+			Button * resume_button = Button_create(window, RES_RESUME);
+			Button * quit_button = Button_create(window, RES_QUIT);
+
+			Button_set_postition(resume_button, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+			Button_set_postition(quit_button, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 70);
+
+			Menu_add_button(game->pause_menu, resume_button);
+			Menu_add_button(game->pause_menu, quit_button);
+		}
 	}
 	return game;
 }
@@ -529,6 +541,7 @@ void Game_destroy(Game * game) {
 		Mix_FreeChunk(game->rescue_sound);
 		Mix_FreeMusic(game->background_music);
 		Timer_destroy(game->timer);
+		Menu_destroy(game->pause_menu);
 		free(game);
 	}
 }

@@ -15,6 +15,9 @@
 #define RES_ENEMY_BULLET "./res/enemy_bullet.png"
 #define RES_DIVER "./res/diver.png"
 
+#define RES_RESUME "./res/resume.png"
+#define RES_QUIT "./res/quit.png"
+
 #define RES_EXPLOSION_SOUND "./res/bomb.wav"
 #define RES_RESCUE_DIVER_SOUND "./res/pickup.wav"
 
