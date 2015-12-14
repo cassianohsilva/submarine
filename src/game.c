@@ -54,6 +54,8 @@ Game * Game_create(SDL_Window * window) {
 		game->explosion_sound = Mix_LoadWAV(RES_EXPLOSION_SOUND);
 		game->rescue_sound = Mix_LoadWAV(RES_RESCUE_DIVER_SOUND);
 
+		game->background_music = Mix_LoadMUS(RES_BACKGROUND_SOUND);
+
 		Timer_start(game->timer);
 
 		game->font = TTF_OpenFont(RES_DEFAULT_FONT, 28);
@@ -220,6 +222,7 @@ void Game_update(Game * game) {
 					game->player->oxygen = 0.0;
 				}
 			}
+
 		} else {
 			if (game->player->oxygen < 100) {
 				game->player->oxygen += 0.15;
@@ -235,6 +238,16 @@ void Game_update(Game * game) {
 			}
 		}
 		OxygenBar_set_oxygen(game->oxygen_bar, game->player->oxygen);
+
+		if (!Mix_PlayingMusic()) {
+			Mix_PlayMusic(game->background_music, -1);
+		} else if (Mix_PausedMusic()) {
+			Mix_ResumeMusic();
+		}
+	} else {
+		if (Mix_PlayingMusic()) {
+			Mix_PauseMusic();
+		}
 	}
 
 	OxygenBar_render(game->oxygen_bar, game->surface);
@@ -506,6 +519,7 @@ void Game_destroy(Game * game) {
 		TTF_CloseFont(game->font);
 		Mix_FreeChunk(game->explosion_sound);
 		Mix_FreeChunk(game->rescue_sound);
+		Mix_FreeMusic(game->background_music);
 		Timer_destroy(game->timer);
 		free(game);
 	}
