@@ -20,8 +20,15 @@ Menu * Menu_create(SDL_Window * window, SDL_Rect * size,
 		} else {
 			SDL_Surface * surface = SDL_GetWindowSurface(window);
 
+		    Uint32 rmask, gmask, bmask, amask;
+
+		    rmask = 0xff000000;
+		    gmask = 0x00ff0000;
+		    bmask = 0x0000ff00;
+		    amask = 0x000000ff;
+
 			menu->surface = SDL_CreateRGBSurface(0, surface->w, surface->h, 32,
-					0, 0, 0, 0);
+					rmask, gmask, bmask, amask);
 		}
 
 		if (menu->surface != NULL) {
@@ -58,6 +65,7 @@ void Menu_add_button(Menu * menu, Button * button) {
 
 void Menu_render(Menu * menu, SDL_Surface* parent) {
 	if (menu) {
+
 		SDL_FillRect(menu->surface, NULL,
 				SDL_MapRGBA(menu->surface->format, menu->background_color.r,
 						menu->background_color.g, menu->background_color.b,

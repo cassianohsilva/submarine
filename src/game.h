@@ -13,6 +13,7 @@
 #include "resources.h"
 #include "linked_list.h"
 #include "oxygen_bar.h"
+#include "menu.h"
 
 #define MOVEMENT_FACTOR 1.0
 #define TIME_BETWEEN_SHOTS 50
@@ -44,6 +45,8 @@ typedef struct {
 	Uint8 spawn_zone_size;
 	Timer * timer;
 	OxygenBar * oxygen_bar;
+
+	Menu * pause_menu;
 
 	Mix_Music * background_music;
 

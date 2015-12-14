@@ -74,6 +74,10 @@ Game * Game_create(SDL_Window * window) {
 			game->score_rect->w = game->score_surface->w;
 			game->score_rect->h = game->score_surface->h;
 		}
+
+		SDL_Color color = {0x33, 0x33, 0x33, 0xFF / 2};
+
+		game->pause_menu = Menu_create(window, NULL, color);
 	}
 	return game;
 }
@@ -250,15 +254,19 @@ void Game_update(Game * game) {
 		}
 	}
 
-	OxygenBar_render(game->oxygen_bar, game->surface);
 	Game_update_divers(game);
 	Game_update_enemies(game);
 	Game_update_bullets(game);
+	OxygenBar_render(game->oxygen_bar, game->surface);
+
+	SDL_BlitSurface(game->score_surface, NULL, game->surface, game->score_rect);
+
+	if(game->is_paused) {
+		Menu_render(game->pause_menu, game->surface);
+	}
 
 	Game_check_bullets_collision(game);
 	Game_check_divers_collision(game);
-
-	SDL_BlitSurface(game->score_surface, NULL, game->surface, game->score_rect);
 
 	SDL_UpdateWindowSurface(game->window);
 }
