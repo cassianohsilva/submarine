@@ -18,6 +18,7 @@
 #define RES_EXPLOSION_SOUND "./res/bomb.wav"
 #define RES_RESCUE_DIVER_SOUND "./res/pickup.wav"
 
+#define RES_BACKGROUND_SOUND "./res/background.wav"
 #define RES_DEFAULT_FONT "./res/8-bit wonder.ttf"
 
 #endif /* SRC_RESOURCES_H_ */

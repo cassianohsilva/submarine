@@ -37,6 +37,8 @@ typedef struct {
 	Timer * timer;
 	OxygenBar * oxygen_bar;
 
+	Mix_Music * background_music;
+
 	SDL_Color score_color;
 	TTF_Font * font;
 	SDL_Rect * score_rect;
