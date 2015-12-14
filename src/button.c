@@ -10,26 +10,26 @@
 Button * Button_create(SDL_Window * window, const char * filename) {
 	Button * button = (Button *) malloc(sizeof(Button));
 
-		if (button != NULL) {
-			button->window = window;
-			button->surface = IMG_Load(filename);
+	if (button != NULL) {
+		button->window = window;
+		button->surface = IMG_Load(filename);
 
-			if (button->surface != NULL) {
+		if (button->surface != NULL) {
 
-				button->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
+			button->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-				button->rect->x = 0;
-				button->rect->y = 0;
+			button->rect->x = 0;
+			button->rect->y = 0;
 
-				button->rect->w = button->surface->w;
-				button->rect->h = button->surface->h;
-			} else {
-				printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
-				IMG_GetError());
-			}
+			button->rect->w = button->surface->w;
+			button->rect->h = button->surface->h;
+		} else {
+			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
+			IMG_GetError());
 		}
+	}
 
-		return button;
+	return button;
 }
 
 void Button_set_postition(Button * button, int x, int y) {

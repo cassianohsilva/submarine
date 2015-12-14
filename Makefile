@@ -15,6 +15,8 @@ OBJS += \
 ./bin/timer.o \
 ./bin/oxygen_bar.o \
 ./bin/diver.o \
+./bin/button.o \
+./bin/menu.o \
 ./bin/main.o
 
 USER_OBJS += \
@@ -26,6 +28,8 @@ USER_OBJS += \
 ./src/timer.c \
 ./src/oxygen_bar.c \
 ./src/diver.c \
+./src/button.c \
+./src/menu.c \
 ./src/main.c
 
 all: Submarine
