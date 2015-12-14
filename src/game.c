@@ -15,6 +15,17 @@
 int zone_to_screen(Game * game, int zone);
 int screen_to_zone(Game * game, int y);
 
+void on_click_resume(void * data) {
+	if (data) {
+		Game * game = (Game *) data;
+		game->is_paused = false;
+	}
+}
+
+void on_click_quit(void * data) {
+	exit(0);
+}
+
 Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
@@ -75,17 +86,21 @@ Game * Game_create(SDL_Window * window) {
 			game->score_rect->h = game->score_surface->h;
 		}
 
-		SDL_Color color = {0x33, 0x33, 0x33, 0xFF / 2};
+		SDL_Color color = { 0x33, 0x33, 0x33, 0xFF / 2 };
 
 		game->pause_menu = Menu_create(window, NULL, color);
 
-		if(game->pause_menu) {
+		if (game->pause_menu) {
 
-			Button * resume_button = Button_create(window, RES_RESUME);
-			Button * quit_button = Button_create(window, RES_QUIT);
+			Button * resume_button = Button_create(window, RES_RESUME,
+					on_click_resume);
+			Button * quit_button = Button_create(window, RES_QUIT,
+					on_click_quit);
 
-			Button_set_postition(resume_button, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-			Button_set_postition(quit_button, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2 + 70);
+			Button_set_postition(resume_button, SCREEN_WIDTH / 2,
+			SCREEN_HEIGHT / 2);
+			Button_set_postition(quit_button, SCREEN_WIDTH / 2,
+			SCREEN_HEIGHT / 2 + 70);
 
 			Menu_add_button(game->pause_menu, resume_button);
 			Menu_add_button(game->pause_menu, quit_button);
@@ -273,7 +288,7 @@ void Game_update(Game * game) {
 
 	SDL_BlitSurface(game->score_surface, NULL, game->surface, game->score_rect);
 
-	if(game->is_paused) {
+	if (game->is_paused) {
 		Menu_render(game->pause_menu, game->surface);
 	}
 

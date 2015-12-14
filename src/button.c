@@ -7,7 +7,7 @@
 
 #include "button.h"
 
-Button * Button_create(SDL_Window * window, const char * filename) {
+Button * Button_create(SDL_Window * window, const char * filename, void (* on_click)(void * data)) {
 	Button * button = (Button *) malloc(sizeof(Button));
 
 	if (button != NULL) {
@@ -23,6 +23,8 @@ Button * Button_create(SDL_Window * window, const char * filename) {
 
 			button->rect->w = button->surface->w;
 			button->rect->h = button->surface->h;
+
+			button->on_click = on_click;
 		} else {
 			printf("Erro ao carregar a imagem \'%s\': %s\n", filename,
 			IMG_GetError());
@@ -37,6 +39,23 @@ void Button_set_postition(Button * button, int x, int y) {
 		button->rect->x = x;
 		button->rect->y = y;
 	}
+}
+
+void Button_on_click(Button * button, void * data) {
+	if(button && button->on_click) {
+		(* button->on_click)(data);
+	}
+}
+
+bool Button_was_click(Button * button, int x, int y) {
+
+	if(button) {
+		if((x > button->rect->x && x < button->rect->x + button->rect->w) && (y > button->rect->y && y < button->rect->y + button->rect->h)) {
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void Button_render(Button * button, SDL_Surface* parent) {
