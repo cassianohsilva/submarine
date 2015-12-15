@@ -31,7 +31,7 @@ void on_click_resume(void * data) {
 
 void on_click_quit(void * data) {
 
-	if(data) {
+	if (data) {
 		Game_destroy((Game *) data);
 	}
 
@@ -41,6 +41,7 @@ void on_click_quit(void * data) {
 void on_click_exit(void * data) {
 	if (data) {
 		Game_stop((Game *) data);
+		Game_reset((Game *) data);
 	}
 }
 
@@ -148,6 +149,24 @@ Game * Game_create(SDL_Window * window) {
 		}
 	}
 	return game;
+}
+
+void Game_reset(Game * game) {
+	if (game) {
+		game->enemies_on_screen = 0;
+		game->divers_on_screen = 0;
+		game->player->score = 0;
+
+		int i;
+
+		for (i = 0; i < game->spawn_zone_size; i++) {
+			game->zone_lock[i] = (ZoneLock ) {false, 0, 0, 0};
+		}
+
+		Game_destroy_bullets(game);
+		Game_destroy_enemies(game);
+		Game_destroy_divers(game);
+	}
 }
 
 void Game_update_score_surface(Game * game) {
@@ -339,8 +358,10 @@ void Game_update(Game * game) {
 
 		Game_update_divers(game);
 		Game_update_enemies(game);
+
 		Game_update_bullets(game);
 		OxygenBar_render(game->oxygen_bar, game->surface);
+
 
 		SDL_BlitSurface(game->score_surface, NULL, game->surface,
 				game->score_rect);
@@ -543,9 +564,9 @@ void Game_destroy_divers(Game * game) {
 		node = aux;
 	}
 
-	game->divers_on_screen = 0;
+	game->divers->begin = NULL;
 
-	game->divers = NULL;
+	game->divers_on_screen = 0;
 }
 
 void Game_destroy_enemies(Game* game) {
@@ -561,9 +582,9 @@ void Game_destroy_enemies(Game* game) {
 		actual = aux;
 	}
 
-	game->enemies_on_screen = 0;
+	game->enemies->begin = NULL;
 
-	game->enemies = NULL;
+	game->enemies_on_screen = 0;
 }
 
 void Game_destroy_bullets(Game* game) {
@@ -579,13 +600,12 @@ void Game_destroy_bullets(Game* game) {
 		actual = aux;
 	}
 
-	game->enemies = NULL;
+	game->bullets->begin = NULL;
 }
 
 void Game_destroy(Game * game) {
 
 	if (game != NULL) {
-
 		Player_destroy(game->player);
 
 		Game_destroy_enemies(game);

@@ -70,6 +70,8 @@ Game * Game_create(SDL_Window * window);
 
 bool Game_is_player_breathing(Game * game);
 
+void Game_reset(Game * game);
+
 void Game_start(Game * game);
 
 void Game_stop(Game * game);
