@@ -17,6 +17,7 @@ OBJS += \
 ./bin/diver.o \
 ./bin/button.o \
 ./bin/menu.o \
+./bin/input.o \
 ./bin/main.o
 
 USER_OBJS += \
@@ -30,6 +31,7 @@ USER_OBJS += \
 ./src/diver.c \
 ./src/button.c \
 ./src/menu.c \
+./src/input.c \
 ./src/main.c
 
 all: Submarine

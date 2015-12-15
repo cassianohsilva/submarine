@@ -39,8 +39,17 @@ void on_click_quit(void * data) {
 
 void on_click_exit(void * data) {
 	if (data) {
-		Game_stop((Game *) data);
-		Game_reset((Game *) data);
+
+		Game * game = (Game *) data;
+
+		Game_stop(game);
+		Game_reset(game);
+
+		SDL_StartTextInput();
+		SDL_SetTextInputRect(game->input->rect);
+
+// TODO Adicionar verificação de pontuação aqui
+		game->is_editing = true;
 	}
 }
 
@@ -49,8 +58,10 @@ Game * Game_create(SDL_Window * window) {
 
 	if (game != NULL) {
 		game->oxygen_bar = OxygenBar_create(window);
-		game->player = Player_create(window, RES_SUBMARINE, (SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2, 2 * MOVEMENT_FACTOR,
-		TIME_BETWEEN_SHOTS);
+		game->player = Player_create(window, RES_SUBMARINE,
+				(SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2,
+				2 * MOVEMENT_FACTOR,
+				TIME_BETWEEN_SHOTS);
 		game->enemies = List_create();
 		game->bullets = List_create();
 		game->divers = List_create();
@@ -92,6 +103,7 @@ Game * Game_create(SDL_Window * window) {
 		game->score_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
 		game->is_started = false;
+		game->is_editing = false;
 
 		char temp[20];
 		sprintf(temp, "%d", game->player->score);
@@ -146,6 +158,13 @@ Game * Game_create(SDL_Window * window) {
 			Menu_add_button(game->main_menu, start_button);
 			Menu_add_button(game->main_menu, quit_button);
 		}
+
+		color = (SDL_Color ) {0x33, 0x33, 0x33, 0xFF / 2};
+
+		SDL_Rect rect = (SDL_Rect ) {(SCREEN_WIDTH - 200) / 2, 10, 200, 50};
+
+		game->input = Input_create(window, TTF_OpenFont(RES_DEFAULT_FONT, 28),
+				&rect, color, game->score_color);
 	}
 	return game;
 }
@@ -156,7 +175,8 @@ void Game_reset(Game * game) {
 		game->divers_on_screen = 0;
 		game->player->score = 0;
 
-		Player_set_position(game->player, (SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2);
+		Player_set_position(game->player, (SCREEN_WIDTH - 15) / 2,
+				(SCREEN_HEIGHT - 64) / 2);
 
 		int i;
 
@@ -311,6 +331,14 @@ void Game_stop(Game * game) {
 	}
 }
 
+void Game_show_input_name(Game * game, bool show) {
+	if (show) {
+		SDL_StartTextInput();
+	} else {
+		SDL_StopTextInput();
+	}
+}
+
 void Game_update(Game * game) {
 
 	SDL_FillRect(game->surface, NULL,
@@ -363,7 +391,6 @@ void Game_update(Game * game) {
 		Game_update_bullets(game);
 		OxygenBar_render(game->oxygen_bar, game->surface);
 
-
 		SDL_BlitSurface(game->score_surface, NULL, game->surface,
 				game->score_rect);
 
@@ -375,6 +402,19 @@ void Game_update(Game * game) {
 		Game_check_divers_collision(game);
 	} else {
 		Menu_render(game->main_menu, game->surface);
+
+		if (game->is_editing) {
+
+			SDL_Event e;
+
+			if (SDL_PollEvent(&e)) {
+				if (e.type == SDL_TEXTINPUT) {
+					Input_insert_text(game->input, e.text.text);
+				}
+			}
+
+			Input_render(game->input, game->surface);
+		}
 	}
 
 	SDL_UpdateWindowSurface(game->window);

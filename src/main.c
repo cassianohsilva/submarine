@@ -117,6 +117,8 @@ int main(int argc, char* args[]) {
 
 		SDL_Event e;
 
+		SDL_StartTextInput();
+
 		game = Game_create(gWindow);
 		Player * player = game->player;
 
@@ -196,6 +198,8 @@ int main(int argc, char* args[]) {
 			SDL_Delay(5);
 		}
 	}
+
+	SDL_StopTextInput();
 
 	close_all();
 

@@ -14,6 +14,7 @@
 #include "linked_list.h"
 #include "oxygen_bar.h"
 #include "menu.h"
+#include "input.h"
 
 #define MOVEMENT_FACTOR 1.0
 #define TIME_BETWEEN_SHOTS 50
@@ -43,12 +44,16 @@ typedef struct {
 	SDL_Rect breathe_zone;
 	bool is_started;
 	bool is_paused;
+	bool is_editing;
 	Uint8 spawn_zone_size;
 	Timer * timer;
 	OxygenBar * oxygen_bar;
 
+	// Menus
 	Menu * pause_menu;
 	Menu * main_menu;
+
+	Input * input;
 
 	Mix_Music * background_music;
 
@@ -73,6 +78,8 @@ bool Game_is_player_breathing(Game * game);
 void Game_reset(Game * game);
 
 void Game_start(Game * game);
+
+void Game_show_input_name(Game * game, bool show);
 
 void Game_stop(Game * game);
 
