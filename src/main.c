@@ -146,22 +146,40 @@ int main(int argc, char* args[]) {
 						}
 					}
 				} else if (e.type == SDL_MOUSEBUTTONUP) {
-					if (game->is_paused && e.button.button == SDL_BUTTON_LEFT) {
+					if (e.button.button == SDL_BUTTON_LEFT) {
+						if (game->is_paused) {
 
-						int x, y;
-						SDL_GetMouseState(&x, &y);
+							int x, y;
+							SDL_GetMouseState(&x, &y);
 
-						Node * node = game->pause_menu->buttons->begin;
+							Node * node = game->pause_menu->buttons->begin;
 
-						while (node != NULL) {
-							Button * button = (Button *) node->value;
+							while (node != NULL) {
+								Button * button = (Button *) node->value;
 
-							if (Button_was_click(button, x, y)) {
-								Button_on_click(button, game);
-								break;
+								if (Button_was_click(button, x, y)) {
+									Button_on_click(button, game);
+									break;
+								}
+
+								node = node->next;
 							}
+						} else if (!game->is_started) {
+							int x, y;
+							SDL_GetMouseState(&x, &y);
 
-							node = node->next;
+							Node * node = game->main_menu->buttons->begin;
+
+							while (node != NULL) {
+								Button * button = (Button *) node->value;
+
+								if (Button_was_click(button, x, y)) {
+									Button_on_click(button, game);
+									break;
+								}
+
+								node = node->next;
+							}
 						}
 					}
 				}

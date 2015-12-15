@@ -41,12 +41,14 @@ typedef struct {
 	List * bullets;
 	List * divers;
 	SDL_Rect breathe_zone;
+	bool is_started;
 	bool is_paused;
 	Uint8 spawn_zone_size;
 	Timer * timer;
 	OxygenBar * oxygen_bar;
 
 	Menu * pause_menu;
+	Menu * main_menu;
 
 	Mix_Music * background_music;
 
@@ -67,6 +69,10 @@ typedef struct {
 Game * Game_create(SDL_Window * window);
 
 bool Game_is_player_breathing(Game * game);
+
+void Game_start(Game * game);
+
+void Game_stop(Game * game);
 
 Enemy * Game_spawn_enemy(Game * game);
 

@@ -15,6 +15,13 @@
 int zone_to_screen(Game * game, int zone);
 int screen_to_zone(Game * game, int y);
 
+void on_click_start(void * data) {
+	if (data) {
+		Game * game = (Game *) data;
+		Game_start(game);
+	}
+}
+
 void on_click_resume(void * data) {
 	if (data) {
 		Game * game = (Game *) data;
@@ -23,7 +30,18 @@ void on_click_resume(void * data) {
 }
 
 void on_click_quit(void * data) {
+
+	if(data) {
+		Game_destroy((Game *) data);
+	}
+
 	exit(0);
+}
+
+void on_click_exit(void * data) {
+	if (data) {
+		Game_stop((Game *) data);
+	}
 }
 
 Game * Game_create(SDL_Window * window) {
@@ -73,6 +91,8 @@ Game * Game_create(SDL_Window * window) {
 
 		game->score_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
+		game->is_started = false;
+
 		char temp[20];
 		sprintf(temp, "%d", game->player->score);
 
@@ -89,21 +109,42 @@ Game * Game_create(SDL_Window * window) {
 		SDL_Color color = { 0x33, 0x33, 0x33, 0xFF / 2 };
 
 		game->pause_menu = Menu_create(window, NULL, color);
+		game->main_menu = Menu_create(window, NULL, color);
 
 		if (game->pause_menu) {
 
 			Button * resume_button = Button_create(window, RES_RESUME,
 					on_click_resume);
 			Button * quit_button = Button_create(window, RES_QUIT,
-					on_click_quit);
+					on_click_exit);
 
-			Button_set_postition(resume_button, (SCREEN_WIDTH - resume_button->rect->w) / 2,
-			(int) (SCREEN_HEIGHT / 2 - resume_button->rect->w * 1.2));
-			Button_set_postition(quit_button, (SCREEN_WIDTH - quit_button->rect->w) / 2,
+			Button_set_postition(resume_button,
+					(SCREEN_WIDTH - resume_button->rect->w) / 2,
+					(int) (SCREEN_HEIGHT / 2 - resume_button->rect->w * 1.2));
+			Button_set_postition(quit_button,
+					(SCREEN_WIDTH - quit_button->rect->w) / 2,
 					(int) (SCREEN_HEIGHT / 2 + quit_button->rect->w * 1.2));
 
 			Menu_add_button(game->pause_menu, resume_button);
 			Menu_add_button(game->pause_menu, quit_button);
+		}
+
+		if (game->main_menu) {
+
+			Button * start_button = Button_create(window, RES_RESUME,
+					on_click_start);
+			Button * quit_button = Button_create(window, RES_QUIT,
+					on_click_quit);
+
+			Button_set_postition(start_button,
+					(SCREEN_WIDTH - start_button->rect->w) / 2,
+					(int) (SCREEN_HEIGHT / 2 - start_button->rect->w * 1.2));
+			Button_set_postition(quit_button,
+					(SCREEN_WIDTH - quit_button->rect->w) / 2,
+					(int) (SCREEN_HEIGHT / 2 + quit_button->rect->w * 1.2));
+
+			Menu_add_button(game->main_menu, start_button);
+			Menu_add_button(game->main_menu, quit_button);
 		}
 	}
 	return game;
@@ -237,63 +278,82 @@ Diver * Game_spawn_diver(Game * game) {
 	return diver;
 }
 
+void Game_start(Game * game) {
+	if (game) {
+		game->is_started = true;
+	}
+}
+
+void Game_stop(Game * game) {
+	if (game) {
+		game->is_started = false;
+		game->is_paused = false;
+	}
+}
+
 void Game_update(Game * game) {
 
 	SDL_FillRect(game->surface, NULL,
 			SDL_MapRGB(game->surface->format, 0x00, 0x66, 0xFF));
 
-	Player_render(game->player, game->surface);
+	if (game->is_started) {
 
-	if (!game->is_paused) {
-		if (!Game_is_player_breathing(game)) {
-			if (game->player->oxygen >= 0) {
-				game->player->oxygen -= 0.04;
+		Player_render(game->player, game->surface);
 
-				if (game->player->oxygen <= 0) {
-					game->player->oxygen = 0.0;
+		if (!game->is_paused) {
+			if (!Game_is_player_breathing(game)) {
+				if (game->player->oxygen >= 0) {
+					game->player->oxygen -= 0.04;
+
+					if (game->player->oxygen <= 0) {
+						game->player->oxygen = 0.0;
+					}
+				}
+
+			} else {
+				if (game->player->oxygen < 100) {
+					game->player->oxygen += 0.15;
+					if (game->player->oxygen > 100)
+						game->player->oxygen = 100;
+				}
+
+				if (game->player->divers_rescued == MAX_DIVERS_FOR_RESCUE) {
+					game->player->divers_rescued = 0;
+					game->player->score += DIVER_RESCUE_SCORE;
+
+					Game_update_score_surface(game);
 				}
 			}
+			OxygenBar_set_oxygen(game->oxygen_bar, game->player->oxygen);
 
+			if (!Mix_PlayingMusic()) {
+				Mix_PlayMusic(game->background_music, -1);
+			} else if (Mix_PausedMusic()) {
+				Mix_ResumeMusic();
+			}
 		} else {
-			if (game->player->oxygen < 100) {
-				game->player->oxygen += 0.15;
-				if (game->player->oxygen > 100)
-					game->player->oxygen = 100;
-			}
-
-			if (game->player->divers_rescued == MAX_DIVERS_FOR_RESCUE) {
-				game->player->divers_rescued = 0;
-				game->player->score += DIVER_RESCUE_SCORE;
-
-				Game_update_score_surface(game);
+			if (Mix_PlayingMusic()) {
+				Mix_PauseMusic();
 			}
 		}
-		OxygenBar_set_oxygen(game->oxygen_bar, game->player->oxygen);
 
-		if (!Mix_PlayingMusic()) {
-			Mix_PlayMusic(game->background_music, -1);
-		} else if (Mix_PausedMusic()) {
-			Mix_ResumeMusic();
+		Game_update_divers(game);
+		Game_update_enemies(game);
+		Game_update_bullets(game);
+		OxygenBar_render(game->oxygen_bar, game->surface);
+
+		SDL_BlitSurface(game->score_surface, NULL, game->surface,
+				game->score_rect);
+
+		if (game->is_paused) {
+			Menu_render(game->pause_menu, game->surface);
 		}
+
+		Game_check_bullets_collision(game);
+		Game_check_divers_collision(game);
 	} else {
-		if (Mix_PlayingMusic()) {
-			Mix_PauseMusic();
-		}
+		Menu_render(game->main_menu, game->surface);
 	}
-
-	Game_update_divers(game);
-	Game_update_enemies(game);
-	Game_update_bullets(game);
-	OxygenBar_render(game->oxygen_bar, game->surface);
-
-	SDL_BlitSurface(game->score_surface, NULL, game->surface, game->score_rect);
-
-	if (game->is_paused) {
-		Menu_render(game->pause_menu, game->surface);
-	}
-
-	Game_check_bullets_collision(game);
-	Game_check_divers_collision(game);
 
 	SDL_UpdateWindowSurface(game->window);
 }
@@ -557,6 +617,7 @@ void Game_destroy(Game * game) {
 		Mix_FreeMusic(game->background_music);
 		Timer_destroy(game->timer);
 		Menu_destroy(game->pause_menu);
+		Menu_destroy(game->main_menu);
 		free(game);
 	}
 }
