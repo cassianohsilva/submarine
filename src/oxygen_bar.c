@@ -6,17 +6,17 @@
  */
 #include "oxygen_bar.h"
 
-OxygenBar * OxygenBar_create(SDL_Window * window) {
+OxygenBar * OxygenBar_create(SDL_Window * window, int x, int y, int w, int h) {
 	OxygenBar * oxygenbar = (OxygenBar *) malloc(sizeof(OxygenBar));
 
 	if (oxygenbar != NULL) {
 		oxygenbar->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-		oxygenbar->rect->x = 180;
-		oxygenbar->rect->y = 455;
+		oxygenbar->rect->x = x;
+		oxygenbar->rect->y = y;
 
-		oxygenbar->rect->w = 300;
-		oxygenbar->rect->h = 20;
+		oxygenbar->rect->w = w;
+		oxygenbar->rect->h = h;
 
 		oxygenbar->window = window;
 		oxygenbar->surface = SDL_CreateRGBSurface(0, oxygenbar->rect->w,
@@ -27,8 +27,8 @@ OxygenBar * OxygenBar_create(SDL_Window * window) {
 		oxygenbar->oxygen_rect->x = 0;
 		oxygenbar->oxygen_rect->y = 0;
 
-		oxygenbar->oxygen_rect->w = 300;
-		oxygenbar->oxygen_rect->h = 20;
+		oxygenbar->oxygen_rect->w = w;
+		oxygenbar->oxygen_rect->h = h;
 		fflush(stdout);
 
 //		} else {

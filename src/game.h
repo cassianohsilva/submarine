@@ -47,6 +47,9 @@ typedef struct {
 	bool is_editing;
 	Uint8 spawn_zone_size;
 	Timer * timer;
+
+	// Ground
+	SDL_Rect ground_rect;
 	OxygenBar * oxygen_bar;
 
 	// Menus
@@ -59,11 +62,13 @@ typedef struct {
 
 	ZoneLock * zone_lock;
 
+	// Score
 	SDL_Color score_color;
 	TTF_Font * font;
 	SDL_Rect * score_rect;
 	SDL_Surface * score_surface;
 
+	// Sounds
 	Mix_Chunk * explosion_sound;
 	Mix_Chunk * rescue_sound;
 

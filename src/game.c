@@ -57,7 +57,7 @@ Game * Game_create(SDL_Window * window) {
 	Game * game = (Game *) malloc(sizeof(Game));
 
 	if (game != NULL) {
-		game->oxygen_bar = OxygenBar_create(window);
+
 		game->player = Player_create(window, RES_SUBMARINE,
 				(SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2,
 				2 * MOVEMENT_FACTOR,
@@ -73,8 +73,8 @@ Game * Game_create(SDL_Window * window) {
 
 		game->score_color = (SDL_Color ) {0xFF, 0xFF, 00};
 
-		SDL_Rect breathe_zone = { 0, 0, game->surface->w,
-				(game->surface->h >> 3) };
+		SDL_Rect breathe_zone =
+				{ 0, 0, game->surface->w, (game->surface->h / 6) };
 
 		game->breathe_zone = breathe_zone;
 		game->timer = Timer_create();
@@ -111,12 +111,23 @@ Game * Game_create(SDL_Window * window) {
 		game->score_surface = TTF_RenderText_Solid(game->font, temp,
 				game->score_color);
 
-		if (game->score_rect) {
+		if (game->score_surface) {
 			game->score_rect->x = (SCREEN_WIDTH - game->score_surface->w) / 2;
 			game->score_rect->y = 0;
 			game->score_rect->w = game->score_surface->w;
 			game->score_rect->h = game->score_surface->h;
 		}
+
+		game->ground_rect.x = 0;
+		game->ground_rect.y = (5 * SCREEN_HEIGHT) / 6;
+		game->ground_rect.w = SCREEN_WIDTH;
+		game->ground_rect.h = SCREEN_HEIGHT / 6;
+
+		int x, y;
+		x = (SCREEN_WIDTH - 300) / 2;
+		y = (5 * SCREEN_HEIGHT) / 6 + (game->ground_rect.h - 20) / 2;
+
+		game->oxygen_bar = OxygenBar_create(window, x, y, 300, 20);
 
 		SDL_Color color = { 0x33, 0x33, 0x33, 0xFF / 2 };
 
@@ -165,7 +176,9 @@ Game * Game_create(SDL_Window * window) {
 
 		game->input = Input_create(window, TTF_OpenFont(RES_DEFAULT_FONT, 28),
 				&rect, color, game->score_color);
+
 	}
+
 	return game;
 }
 
@@ -344,6 +357,9 @@ void Game_update(Game * game) {
 	SDL_FillRect(game->surface, NULL,
 			SDL_MapRGB(game->surface->format, 0x00, 0x66, 0xFF));
 
+	SDL_FillRect(game->surface, &game->breathe_zone,
+			SDL_MapRGB(game->surface->format, 0x33, 0x33, 0xCC));
+
 	if (game->is_started) {
 
 		Player_render(game->player, game->surface);
@@ -389,6 +405,10 @@ void Game_update(Game * game) {
 		Game_update_enemies(game);
 
 		Game_update_bullets(game);
+
+		SDL_FillRect(game->surface, &game->ground_rect,
+				SDL_MapRGB(game->surface->format, 0x00, 0xCC, 0x66));
+
 		OxygenBar_render(game->oxygen_bar, game->surface);
 
 		SDL_BlitSurface(game->score_surface, NULL, game->surface,
@@ -677,8 +697,10 @@ void Game_destroy(Game * game) {
 		Mix_FreeChunk(game->rescue_sound);
 		Mix_FreeMusic(game->background_music);
 		Timer_destroy(game->timer);
+
 		Menu_destroy(game->pause_menu);
 		Menu_destroy(game->main_menu);
+
 		free(game);
 	}
 }

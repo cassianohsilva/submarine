@@ -8,7 +8,7 @@ typedef struct{
 
 }OxygenBar;
 
-OxygenBar * OxygenBar_create(SDL_Window * window);
+OxygenBar * OxygenBar_create(SDL_Window * window, int x, int y, int w, int h);
 
 void OxygenBar_destroy(OxygenBar * oxygenbar);
 
