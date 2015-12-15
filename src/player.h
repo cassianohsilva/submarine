@@ -33,7 +33,8 @@ typedef struct _Player {
 /**
  * Cria um jogador carregando uma imagem na posição (0, 0)
  */
-Player * Player_create(SDL_Window * window, const char * filename, float movement_factor, Uint32 time_between_shots);
+Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
+		float movement_factor, Uint32 time_between_shots);
 
 /**
  * Renderiza o player na SDL_Surface pai
@@ -46,6 +47,8 @@ void Player_shot(Player* player, List * bullets);
  * Move o player na horizontal e na vertical
  */
 void Player_move(Player * player, int h, int v, int x_max, int y_max);
+
+void Player_set_position(Player * player, int x, int y);
 
 void Player_destroy(Player * player);
 

@@ -30,7 +30,6 @@ void on_click_resume(void * data) {
 }
 
 void on_click_quit(void * data) {
-
 	if (data) {
 		Game_destroy((Game *) data);
 	}
@@ -50,7 +49,7 @@ Game * Game_create(SDL_Window * window) {
 
 	if (game != NULL) {
 		game->oxygen_bar = OxygenBar_create(window);
-		game->player = Player_create(window, RES_SUBMARINE, 2 * MOVEMENT_FACTOR,
+		game->player = Player_create(window, RES_SUBMARINE, (SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2, 2 * MOVEMENT_FACTOR,
 		TIME_BETWEEN_SHOTS);
 		game->enemies = List_create();
 		game->bullets = List_create();
@@ -156,6 +155,8 @@ void Game_reset(Game * game) {
 		game->enemies_on_screen = 0;
 		game->divers_on_screen = 0;
 		game->player->score = 0;
+
+		Player_set_position(game->player, (SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2);
 
 		int i;
 

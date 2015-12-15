@@ -7,7 +7,7 @@
 
 #include "player.h"
 
-Player * Player_create(SDL_Window * window, const char * filename,
+Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 		float movement_factor, Uint32 time_between_shots) {
 
 	Player *player = (Player *) malloc(sizeof(Player));
@@ -21,8 +21,8 @@ Player * Player_create(SDL_Window * window, const char * filename,
 			player->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 			player->sprite_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-			player->rect->x = 0;
-			player->rect->y = 0;
+			player->rect->x = x;
+			player->rect->y = y;
 
 			player->rect->w = player->surface->w >> 1;
 			player->rect->h = player->surface->h;
@@ -83,6 +83,13 @@ void Player_render(Player * player, SDL_Surface * parent) {
 	}
 
 	SDL_BlitSurface(player->surface, player->sprite_rect, parent, player->rect);
+}
+
+void Player_set_position(Player * player, int x, int y) {
+	if (player) {
+		player->rect->x = x;
+		player->rect->y = y;
+	}
 }
 
 void Player_move(Player * player, int h, int v, int x_max, int y_max) {
