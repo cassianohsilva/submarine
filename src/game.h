@@ -16,6 +16,9 @@
 #include "menu.h"
 #include "input.h"
 
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 600
+
 #ifndef SRC_GAME_H_
 #define SRC_GAME_H_
 

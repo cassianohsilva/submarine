@@ -9,13 +9,10 @@
 
 #define MOVEMENT_FACTOR 1.0
 #define TIME_BETWEEN_SHOTS 50
-#define MAX_ENEMIES_ON_SCREEN 10
+#define MAX_ENEMIES_ON_SCREEN 20
 #define MAX_DIVERS_ON_SCREEN 3
 
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-
-#define DEFAULT_VELOCITY_FACTOR 1.25
+#define DEFAULT_VELOCITY_FACTOR 1.5
 
 #define DIVER_RESCUE_SCORE 60
 #define ENEMY_DESTROY_SCORE 60
@@ -384,7 +381,7 @@ void Game_update(Game * game) {
 
 			} else {
 				if (game->player->oxygen < 100) {
-					game->player->oxygen += 0.15;
+					game->player->oxygen += 0.25;
 					if (game->player->oxygen > 100)
 						game->player->oxygen = 100;
 				}
@@ -409,10 +406,9 @@ void Game_update(Game * game) {
 			}
 		}
 
+		Game_update_bullets(game);
 		Game_update_divers(game);
 		Game_update_enemies(game);
-
-		Game_update_bullets(game);
 
 		SDL_FillRect(game->surface, &game->ground_rect,
 				SDL_MapRGB(game->surface->format, 0x00, 0xCC, 0x66));
