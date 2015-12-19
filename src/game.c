@@ -486,10 +486,12 @@ void Game_update_enemies(Game * game) {
 						false;
 			}
 
-			if (Enemy_is_visible(enemy)) {
-				Enemy_render(enemy, game->surface, game->bullets);
-			} else {
-				Game_destroy_enemy(game, enemy);
+			if (Enemy_is_entered_on_screen(enemy)) {
+				if (Enemy_is_visible(enemy)) {
+					Enemy_render(enemy, game->surface, game->bullets);
+				} else {
+					Game_destroy_enemy(game, enemy);
+				}
 			}
 
 		} else {

@@ -32,6 +32,17 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 				enemy->rect->x = 0;
 			}
 
+			enemy->default_x = enemy->rect->x;
+			enemy->aux_x = enemy->rect->x;
+
+			if (enemy->rect->x >= 0
+					&& enemy->rect->x
+							<= SDL_GetWindowSurface(enemy->window)->w) {
+				enemy->entred_on_screen = true;
+			} else {
+				enemy->entred_on_screen = false;
+			}
+
 			enemy->direction = direction;
 			enemy->movement_factor = velocity_factor;
 
@@ -117,7 +128,13 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 
 void Enemy_move(Enemy * enemy) {
 	if (enemy != NULL) {
-		enemy->rect->x += (int) (enemy->direction * enemy->movement_factor);
+		enemy->aux_x += (int) (enemy->direction * enemy->movement_factor);
+		enemy->rect->x = enemy->aux_x;
+
+		if (enemy->aux_x < 0) {
+			enemy->sprite_rect->x = enemy->default_x - enemy->aux_x;
+			enemy->sprite_rect->w = (enemy->surface->w >> 1) + enemy->aux_x;
+		}
 	}
 }
 
@@ -128,12 +145,21 @@ bool Enemy_is_visible(Enemy * enemy) {
 	SDL_Rect * enemy_rect = enemy->rect;
 	SDL_Rect screen_rect = { 0, 0, surface->w, surface->h };
 
-	if (enemy_rect->x < 0 || enemy_rect->x > screen_rect.w || enemy_rect->y < 0
-			|| enemy_rect->y > screen_rect.h) {
+	if (enemy_rect->x > screen_rect.w || enemy_rect->y < 0
+			|| enemy_rect->y > screen_rect.h || (enemy->sprite_rect->w <= 0)) {
+
 		is_visible = false;
 	}
 
 	return is_visible;
+}
+
+bool Enemy_is_entered_on_screen(Enemy * enemy) {
+	if (enemy) {
+		return enemy->entred_on_screen;
+	}
+
+	return false;
 }
 
 void Enemy_destroy(Enemy * enemy) {
