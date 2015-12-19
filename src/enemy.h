@@ -19,7 +19,7 @@ typedef struct {
 	SDL_Rect * rect;
 	SDL_Rect * sprite_rect;
 	int default_x;
-	int aux_x;
+	float aux_x;
 	SDL_Surface * surface;
 	bool entered_on_screen;
 	Direction direction;

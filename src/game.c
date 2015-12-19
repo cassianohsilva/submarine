@@ -15,7 +15,7 @@
 #define SCREEN_WIDTH 640
 #define SCREEN_HEIGHT 480
 
-#define DEFAULT_VELOCITY_FACTOR 1.0
+#define DEFAULT_VELOCITY_FACTOR 1.25
 
 #define DIVER_RESCUE_SCORE 60
 #define ENEMY_DESTROY_SCORE 60
@@ -87,8 +87,13 @@ Game * Game_create(SDL_Window * window) {
 		game->breathe_zone = breathe_zone;
 		game->timer = Timer_create();
 
-		game->spawn_zone_size = (SCREEN_HEIGHT - game->breathe_zone.h)
-				/ game->player->sprite_rect->h;
+		game->ground_rect.x = 0;
+		game->ground_rect.y = (5 * SCREEN_HEIGHT) / 6;
+		game->ground_rect.w = SCREEN_WIDTH;
+		game->ground_rect.h = SCREEN_HEIGHT / 6;
+
+		game->spawn_zone_size = (SCREEN_HEIGHT - game->breathe_zone.h
+				- game->ground_rect.h) / game->player->sprite_rect->h;
 
 		game->zone_lock = (ZoneLock *) malloc(
 				game->spawn_zone_size * sizeof(ZoneLock));
@@ -125,11 +130,6 @@ Game * Game_create(SDL_Window * window) {
 			game->score_rect->w = game->score_surface->w;
 			game->score_rect->h = game->score_surface->h;
 		}
-
-		game->ground_rect.x = 0;
-		game->ground_rect.y = (5 * SCREEN_HEIGHT) / 6;
-		game->ground_rect.w = SCREEN_WIDTH;
-		game->ground_rect.h = SCREEN_HEIGHT / 6;
 
 		int x, y;
 		x = (SCREEN_WIDTH - 300) / 2;

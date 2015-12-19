@@ -130,12 +130,12 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 
 void Enemy_move(Enemy * enemy) {
 	if (enemy != NULL) {
-		enemy->aux_x += (int) (enemy->direction * enemy->movement_factor);
+		enemy->aux_x += (enemy->direction * enemy->movement_factor);
 		enemy->rect->x = enemy->aux_x;
 
 		if (enemy->aux_x < 0) {
-			enemy->sprite_rect->x = enemy->default_x - enemy->aux_x;
-			enemy->sprite_rect->w = (enemy->surface->w >> 1) + enemy->aux_x;
+			enemy->sprite_rect->x = enemy->default_x - (int) enemy->aux_x;
+			enemy->sprite_rect->w = (enemy->surface->w >> 1) + (int) enemy->aux_x;
 		}
 
 		if(enemy->aux_x > -((enemy->surface->w >> 1))) {
