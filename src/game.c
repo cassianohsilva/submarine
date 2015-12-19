@@ -362,10 +362,10 @@ void Game_update(Game * game) {
 	SDL_FillRect(game->surface, NULL,
 			SDL_MapRGB(game->surface->format, 0x00, 0x66, 0xFF));
 
-	SDL_FillRect(game->surface, &game->breathe_zone,
-			SDL_MapRGB(game->surface->format, 0x33, 0x33, 0xCC));
-
 	if (game->is_started) {
+
+		SDL_FillRect(game->surface, &game->breathe_zone,
+				SDL_MapRGB(game->surface->format, 0x33, 0x33, 0xCC));
 
 		Player_render(game->player, game->surface);
 
@@ -596,6 +596,17 @@ void Game_update_divers(Game * game) {
 
 			if (!game->is_paused) {
 				Diver_move(diver);
+
+				ZoneLock zone = game->zone_lock[screen_to_zone(game,
+						diver->rect->x)];
+
+				if (zone.enemies_number && zone.direction != diver->direction) {
+					float r = ((float) rand()) / RAND_MAX;
+
+					if (r < 0.005) {
+						Diver_change_direction(diver);
+					}
+				}
 			}
 
 			if (Diver_is_visible(diver)) {
