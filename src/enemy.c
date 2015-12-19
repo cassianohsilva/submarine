@@ -34,7 +34,7 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 				enemy->rect->x = -(enemy->surface->w >> 1) + 1;
 			}
 
-			enemy->aux_x = enemy->rect->x;
+			enemy->real_x = enemy->rect->x;
 
 			if (enemy->rect->x >= 0
 					&& enemy->rect->x
@@ -54,8 +54,8 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			if (direction == LEFT) {
 				enemy->sprite_rect->x = 0;
 			} else {
-				enemy->sprite_rect->x = enemy->default_x - enemy->aux_x;
-				enemy->sprite_rect->w = (enemy->surface->w >> 1) + enemy->aux_x;
+				enemy->sprite_rect->x = enemy->default_x - enemy->real_x;
+				enemy->sprite_rect->w = (enemy->surface->w >> 1) + enemy->real_x;
 			}
 
 			enemy->type = type;
@@ -130,15 +130,15 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 
 void Enemy_move(Enemy * enemy) {
 	if (enemy != NULL) {
-		enemy->aux_x += (enemy->direction * enemy->movement_factor);
-		enemy->rect->x = enemy->aux_x;
+		enemy->real_x += (enemy->direction * enemy->movement_factor);
+		enemy->rect->x = enemy->real_x;
 
-		if (enemy->aux_x < 0) {
-			enemy->sprite_rect->x = enemy->default_x - (int) enemy->aux_x;
-			enemy->sprite_rect->w = (enemy->surface->w >> 1) + (int) enemy->aux_x;
+		if (enemy->real_x < 0) {
+			enemy->sprite_rect->x = enemy->default_x - (int) enemy->real_x;
+			enemy->sprite_rect->w = (enemy->surface->w >> 1) + (int) enemy->real_x;
 		}
 
-		if(enemy->aux_x > -((enemy->surface->w >> 1))) {
+		if(enemy->real_x > -((enemy->surface->w >> 1))) {
 			enemy->entered_on_screen = true;
 		}
 	}

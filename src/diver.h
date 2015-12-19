@@ -15,6 +15,7 @@ typedef struct {
 	SDL_Surface * surface;
 	SDL_Rect * rect;
 	SDL_Rect * sprite_rect;
+	float real_x;
 	float movement_factor;
 	Direction direction;
 

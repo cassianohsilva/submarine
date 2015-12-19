@@ -42,6 +42,8 @@ Diver * Diver_create(SDL_Window * window, float movement_factor,
 				diver->rect->y = y_position;
 				diver->rect->w = diver->surface->w >> 1;
 				diver->rect->h = diver->surface->h;
+
+				diver->real_x = (float) diver->rect->x;
 			}
 		}
 	}
@@ -66,7 +68,8 @@ bool Diver_is_visible(Diver * diver) {
 
 void Diver_move(Diver * diver) {
 	if (diver != NULL) {
-		diver->rect->x += (int) (diver->direction * diver->movement_factor);
+		diver->real_x += diver->direction * diver->movement_factor;
+		diver->rect->x = (int) diver->real_x;
 	}
 }
 

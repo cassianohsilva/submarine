@@ -13,6 +13,7 @@
 #define MAX_DIVERS_ON_SCREEN 3
 
 #define DEFAULT_VELOCITY_FACTOR 1.5
+#define DEFAULT_DIVER_VELOCITY_FACTOR 1.0
 
 #define DIVER_RESCUE_SCORE 60
 #define ENEMY_DESTROY_SCORE 60
@@ -326,7 +327,7 @@ Diver * Game_spawn_diver(Game * game) {
 		int y = zone_to_screen(game, zone) + game->player->surface->h / 4;
 
 		if (game->divers_on_screen < MAX_DIVERS_ON_SCREEN) {
-			diver = Diver_create(game->window, DEFAULT_VELOCITY_FACTOR,
+			diver = Diver_create(game->window, DEFAULT_DIVER_VELOCITY_FACTOR,
 					direction, y);
 			List_insert(game->divers, diver);
 			game->divers_on_screen++;
@@ -597,14 +598,41 @@ void Game_update_divers(Game * game) {
 			if (!game->is_paused) {
 				Diver_move(diver);
 
-				ZoneLock zone = game->zone_lock[screen_to_zone(game,
-						diver->rect->x)];
+				Uint8 zone_number = screen_to_zone(game, diver->rect->y);
+				ZoneLock zone = game->zone_lock[zone_number];
 
-				if (zone.enemies_number && zone.direction != diver->direction) {
-					float r = ((float) rand()) / RAND_MAX;
+				if (zone.enemies_number != 0) { //&& zone.direction != diver->direction) {
+//					float r = ((float) rand()) / RAND_MAX;
+//
+//					if (r < 0.005) {
+//						Diver_change_direction(diver);
+//					}
 
-					if (r < 0.005) {
-						Diver_change_direction(diver);
+					Node * enemy_actual = game->enemies->begin;
+
+					while (enemy_actual) {
+						Node * enemy_prox = enemy_actual->next;
+						Enemy * enemy = (Enemy *) enemy_actual->value;
+
+						if (screen_to_zone(game, enemy->rect->y)
+								== zone_number) {
+
+							bool is_colliding = collision_check(diver->rect,
+									diver->collision_mask, enemy->rect,
+									enemy->collision_mask);
+
+							if (is_colliding) {
+								if (diver->direction != enemy->direction) {
+									Diver_change_direction(diver);
+								}
+
+								diver->movement_factor = enemy->movement_factor;
+
+								break;
+							}
+						}
+
+						enemy_actual = enemy_prox;
 					}
 				}
 			}
