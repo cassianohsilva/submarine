@@ -16,14 +16,6 @@
 #include "menu.h"
 #include "input.h"
 
-#define MOVEMENT_FACTOR 1.0
-#define TIME_BETWEEN_SHOTS 50
-#define MAX_ENEMIES_ON_SCREEN 10
-#define MAX_DIVERS_ON_SCREEN 3
-
-#define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 480
-
 #ifndef SRC_GAME_H_
 #define SRC_GAME_H_
 

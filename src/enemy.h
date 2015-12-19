@@ -21,7 +21,7 @@ typedef struct {
 	int default_x;
 	int aux_x;
 	SDL_Surface * surface;
-	bool entred_on_screen;
+	bool entered_on_screen;
 	Direction direction;
 	float movement_factor;
 

@@ -28,19 +28,20 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 
 			if (direction == LEFT) {
 				enemy->rect->x = SDL_GetWindowSurface(enemy->window)->w;
+				enemy->default_x = enemy->rect->x;
 			} else {
-				enemy->rect->x = 0;
+				enemy->default_x = 0;
+				enemy->rect->x = -(enemy->surface->w >> 1) + 1;
 			}
 
-			enemy->default_x = enemy->rect->x;
 			enemy->aux_x = enemy->rect->x;
 
 			if (enemy->rect->x >= 0
 					&& enemy->rect->x
 							<= SDL_GetWindowSurface(enemy->window)->w) {
-				enemy->entred_on_screen = true;
+				enemy->entered_on_screen = true;
 			} else {
-				enemy->entred_on_screen = false;
+				enemy->entered_on_screen = false;
 			}
 
 			enemy->direction = direction;
@@ -53,7 +54,8 @@ Enemy * Enemy_create(SDL_Window * window, const char * filename, EnemyType type,
 			if (direction == LEFT) {
 				enemy->sprite_rect->x = 0;
 			} else {
-				enemy->sprite_rect->x = enemy->surface->w >> 1;
+				enemy->sprite_rect->x = enemy->default_x - enemy->aux_x;
+				enemy->sprite_rect->w = (enemy->surface->w >> 1) + enemy->aux_x;
 			}
 
 			enemy->type = type;
@@ -135,6 +137,10 @@ void Enemy_move(Enemy * enemy) {
 			enemy->sprite_rect->x = enemy->default_x - enemy->aux_x;
 			enemy->sprite_rect->w = (enemy->surface->w >> 1) + enemy->aux_x;
 		}
+
+		if(enemy->aux_x > -((enemy->surface->w >> 1))) {
+			enemy->entered_on_screen = true;
+		}
 	}
 }
 
@@ -147,7 +153,6 @@ bool Enemy_is_visible(Enemy * enemy) {
 
 	if (enemy_rect->x > screen_rect.w || enemy_rect->y < 0
 			|| enemy_rect->y > screen_rect.h || (enemy->sprite_rect->w <= 0)) {
-
 		is_visible = false;
 	}
 
@@ -156,7 +161,7 @@ bool Enemy_is_visible(Enemy * enemy) {
 
 bool Enemy_is_entered_on_screen(Enemy * enemy) {
 	if (enemy) {
-		return enemy->entred_on_screen;
+		return enemy->entered_on_screen;
 	}
 
 	return false;
