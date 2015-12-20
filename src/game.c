@@ -265,7 +265,7 @@ bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
 }
 
 void Game_spawn_enemy_on_surface(Game * game) {
-	game->enemy_on_surface = Enemy_create(game->window, RES_SUBMARINE, SUBMARINE,
+	game->enemy_on_surface = Enemy_create(game->window, RES_ENEMY_SUBMARINE, SUBMARINE,
 			LEFT, 0, DEFAULT_DIVER_VELOCITY_FACTOR, 0);
 
 	game->enemy_on_surface->rect->y = game->breathe_zone.h
