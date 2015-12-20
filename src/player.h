@@ -46,7 +46,7 @@ void Player_shot(Player* player, List * bullets);
 /**
  * Move o player na horizontal e na vertical
  */
-void Player_move(Player * player, int h, int v, int x_max, int y_max);
+void Player_move(Player * player, int h, int v, int x_max, int y_min, int y_max);
 
 void Player_set_position(Player * player, int x, int y);
 

@@ -12,8 +12,8 @@
 #define MAX_ENEMIES_ON_SCREEN 20
 #define MAX_DIVERS_ON_SCREEN 3
 
-#define DEFAULT_VELOCITY_FACTOR 1.5
-#define DEFAULT_DIVER_VELOCITY_FACTOR 1.0
+#define DEFAULT_VELOCITY_FACTOR 1.75
+#define DEFAULT_DIVER_VELOCITY_FACTOR 0.75
 
 #define DIVER_RESCUE_SCORE 60
 #define ENEMY_DESTROY_SCORE 60
@@ -254,7 +254,7 @@ Enemy * Game_spawn_enemy(Game * game) {
 
 	float probability = ((float) rand()) / INT32_MAX;
 
-	if (probability < 0.01) {
+	if (probability < 0.025) {
 		EnemyType enemy_type = (rand() > (INT32_MAX >> 1)) ? SUBMARINE : SHARK;
 		Direction direction = (rand() > (INT32_MAX >> 1)) ? RIGHT : LEFT;
 
@@ -368,8 +368,6 @@ void Game_update(Game * game) {
 		SDL_FillRect(game->surface, &game->breathe_zone,
 				SDL_MapRGB(game->surface->format, 0x33, 0x33, 0xCC));
 
-		Player_render(game->player, game->surface);
-
 		if (!game->is_paused) {
 			if (!Game_is_player_breathing(game)) {
 				if (game->player->oxygen >= 0) {
@@ -410,6 +408,8 @@ void Game_update(Game * game) {
 		Game_update_bullets(game);
 		Game_update_divers(game);
 		Game_update_enemies(game);
+
+		Player_render(game->player, game->surface);
 
 		SDL_FillRect(game->surface, &game->ground_rect,
 				SDL_MapRGB(game->surface->format, 0x00, 0xCC, 0x66));
@@ -608,6 +608,8 @@ void Game_update_divers(Game * game) {
 //						Diver_change_direction(diver);
 //					}
 
+					bool is_colliding = false;
+
 					Node * enemy_actual = game->enemies->begin;
 
 					while (enemy_actual) {
@@ -617,7 +619,7 @@ void Game_update_divers(Game * game) {
 						if (screen_to_zone(game, enemy->rect->y)
 								== zone_number) {
 
-							bool is_colliding = collision_check(diver->rect,
+							is_colliding = collision_check(diver->rect,
 									diver->collision_mask, enemy->rect,
 									enemy->collision_mask);
 
@@ -633,6 +635,10 @@ void Game_update_divers(Game * game) {
 						}
 
 						enemy_actual = enemy_prox;
+					}
+
+					if(!is_colliding) {
+						diver->movement_factor = DEFAULT_DIVER_VELOCITY_FACTOR;
 					}
 				}
 			}

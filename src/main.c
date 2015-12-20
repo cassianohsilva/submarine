@@ -66,7 +66,7 @@ bool init() {
 	return success;
 }
 
-void control_player(Player * player, const Uint8 *keystates) {
+void control_player(Game * game, const Uint8 *keystates) {
 
 	if (keystates[SDL_SCANCODE_UP]) {
 		VERTICAL_KEY_PRESSED = -1;
@@ -85,15 +85,15 @@ void control_player(Player * player, const Uint8 *keystates) {
 	}
 
 	if (keystates[SDL_SCANCODE_SPACE]) {
-		Player_shot(player, game->bullets);
+		Player_shot(game->player, game->bullets);
 //		if(!SPAWNED) {
 //			Game_spawn_enemy(game, SUBMARINE, LEFT, rand()%SCREEN_HEIGHT, 1.0);
 //			SPAWNED = 1;
 //		}
 	}
 
-	Player_move(player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
-			gScreenSurface->w, gScreenSurface->h);
+	Player_move(game->player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
+			gScreenSurface->w, game->breathe_zone.h - (game->player->surface->h / 2), game->ground_rect.y);
 }
 
 void close_all() {
@@ -120,7 +120,6 @@ int main(int argc, char* args[]) {
 		SDL_StartTextInput();
 
 		game = Game_create(gWindow);
-		Player * player = game->player;
 
 		const Uint8 *keystates = SDL_GetKeyboardState( NULL);
 
@@ -188,14 +187,14 @@ int main(int argc, char* args[]) {
 			}
 
 			if (!game->is_paused) {
-				control_player(player, keystates);
+				control_player(game, keystates);
 
 				Game_spawn_enemy(game);
 				Game_spawn_diver(game);
 			}
 
 			Game_update(game);
-			SDL_Delay(5);
+			SDL_Delay(4);
 		}
 	}
 

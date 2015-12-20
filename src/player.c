@@ -92,7 +92,7 @@ void Player_set_position(Player * player, int x, int y) {
 	}
 }
 
-void Player_move(Player * player, int h, int v, int x_max, int y_max) {
+void Player_move(Player * player, int h, int v, int x_max, int y_min, int y_max) {
 	if (player != NULL) {
 
 		SDL_Rect * r = player->rect;
@@ -140,7 +140,7 @@ void Player_move(Player * player, int h, int v, int x_max, int y_max) {
 					r->y += rest;
 				}
 			} else {
-				int rest = -r->y;
+				int rest = y_min -r->y;
 
 				if (rest <= v_move) {
 					r->y += v_move;
