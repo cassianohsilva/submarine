@@ -47,6 +47,10 @@ typedef struct {
 	SDL_Rect ground_rect;
 	OxygenBar * oxygen_bar;
 
+	// Divers
+	SDL_Surface * diver_icon;
+	SDL_Rect diver_icon_rect;
+
 	// Menus
 	Menu * pause_menu;
 	Menu * main_menu;

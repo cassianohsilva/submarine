@@ -14,6 +14,7 @@
 #define RES_BULLET "./res/bullet.png"
 #define RES_ENEMY_BULLET "./res/enemy_bullet.png"
 #define RES_DIVER "./res/diver.png"
+#define RES_DIVER_ICON "./res/diver_icon.png"
 
 #define RES_RESUME "./res/resume.png"
 #define RES_QUIT "./res/quit.png"

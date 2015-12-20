@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="320"
+   height="120"
+   viewBox="0 0 320 120"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="diver_icon.svg"
+   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/diver_icon.png"
+   inkscape:export-xdpi="9"
+   inkscape:export-ydpi="9">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient5190"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop5192" />
+    </linearGradient>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.98994949"
+     inkscape:cx="426.2052"
+     inkscape:cy="17.347529"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     fit-margin-top="100"
+     inkscape:window-width="1280"
+     inkscape:window-height="750"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-932.36216)">
+    <g
+       id="g3089"
+       transform="matrix(1.293724,0,0,1.5059502,-8.4708975,-469.50416)"
+       style="fill:#000080">
+      <path
+         transform="translate(-28.284271,904.38247)"
+         d="m 80.812204,66.662415 c 0,10.320999 -8.366823,18.687822 -18.687822,18.687822 -10.320999,0 -18.687822,-8.366823 -18.687822,-18.687822 0,-10.321 8.366823,-18.687823 18.687822,-18.687823 10.320999,0 18.687822,8.366823 18.687822,18.687823 z"
+         sodipodi:ry="18.687822"
+         sodipodi:rx="18.687822"
+         sodipodi:cy="66.662415"
+         sodipodi:cx="62.124382"
+         id="path3011"
+         style="fill:#000080;stroke:none"
+         sodipodi:type="arc" />
+      <rect
+         transform="translate(0,902.36216)"
+         y="63.126881"
+         x="45.456863"
+         height="10.101525"
+         width="154.55334"
+         id="rect3013"
+         style="fill:#000080;stroke:none" />
+      <rect
+         transform="matrix(0.84217149,0.53920977,-0.53920977,0.84217149,0,0)"
+         y="768.66248"
+         x="588.93445"
+         height="10.101525"
+         width="57.578701"
+         id="rect3013-2"
+         style="fill:#000080;stroke:none" />
+      <rect
+         transform="matrix(0.84217149,0.53920977,-0.53920977,0.84217149,0,0)"
+         y="761.40442"
+         x="545.90448"
+         height="10.101525"
+         width="57.578701"
+         id="rect3013-2-5"
+         style="fill:#000080;stroke:none" />
+      <rect
+         transform="matrix(0.84217149,0.53920977,-0.53920977,0.84217149,0,0)"
+         y="706.87457"
+         x="687.31207"
+         height="10.101525"
+         width="57.578701"
+         id="rect3013-2-5-6"
+         style="fill:#000080;stroke:none" />
+      <rect
+         transform="matrix(0.84217149,-0.53920977,-0.53920977,-0.84217149,0,0)"
+         y="-928.8512"
+         x="-358.90408"
+         height="10.101525"
+         width="57.578701"
+         id="rect3013-2-5-1"
+         style="fill:#000080;stroke:none" />
+    </g>
+  </g>
+</svg>

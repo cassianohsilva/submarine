@@ -180,6 +180,20 @@ Game * Game_create(SDL_Window * window) {
 
 		SDL_Rect rect = (SDL_Rect ) {(SCREEN_WIDTH - 200) / 2, 10, 200, 50};
 
+		game->diver_icon = IMG_Load(RES_DIVER_ICON);
+
+		int diver_w = game->diver_icon->w * MAX_DIVERS_FOR_RESCUE;
+		int diver_y =
+				game->oxygen_bar->rect->y + game->oxygen_bar->rect->h
+						+ (SCREEN_HEIGHT
+								- (game->oxygen_bar->rect->y
+										+ game->oxygen_bar->rect->h)
+								- game->diver_icon->h) / 2;
+
+		int diver_x = (SCREEN_WIDTH - diver_w) / 2;
+
+		game->diver_icon_rect = (SDL_Rect ) {diver_x, diver_y, diver_w, game->diver_icon->h};
+
 		game->input = Input_create(window, TTF_OpenFont(RES_DEFAULT_FONT, 28),
 				&rect, color, game->score_color);
 
@@ -416,6 +430,17 @@ void Game_update(Game * game) {
 
 		OxygenBar_render(game->oxygen_bar, game->surface);
 
+		Uint8 i;
+		SDL_Rect diver_rect_temp = game->diver_icon_rect;
+		diver_rect_temp.w /= MAX_DIVERS_FOR_RESCUE;
+
+		for (i = 0; i < game->player->divers_rescued; ++i) {
+			diver_rect_temp.x = game->diver_icon_rect.x + i * diver_rect_temp.w;
+
+			SDL_BlitSurface(game->diver_icon, NULL, game->surface,
+					&diver_rect_temp);
+		}
+
 		SDL_BlitSurface(game->score_surface, NULL, game->surface,
 				game->score_rect);
 
@@ -637,7 +662,7 @@ void Game_update_divers(Game * game) {
 						enemy_actual = enemy_prox;
 					}
 
-					if(!is_colliding) {
+					if (!is_colliding) {
 						diver->movement_factor = DEFAULT_DIVER_VELOCITY_FACTOR;
 					}
 				}
@@ -742,6 +767,8 @@ void Game_destroy(Game * game) {
 		SDL_FreeSurface(game->score_surface);
 		free(game->score_rect);
 		free(game->zone_lock);
+
+		SDL_FreeSurface(game->diver_icon);
 
 		TTF_CloseFont(game->font);
 		Mix_FreeChunk(game->explosion_sound);
