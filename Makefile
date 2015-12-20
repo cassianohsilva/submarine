@@ -18,6 +18,7 @@ OBJS += \
 ./bin/button.o \
 ./bin/menu.o \
 ./bin/input.o \
+./bin/score.o \
 ./bin/main.o
 
 USER_OBJS += \
@@ -32,6 +33,7 @@ USER_OBJS += \
 ./src/button.c \
 ./src/menu.c \
 ./src/input.c \
+./src/score.c \
 ./src/main.c
 
 all: Submarine

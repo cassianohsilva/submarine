@@ -15,6 +15,7 @@
 #include "oxygen_bar.h"
 #include "menu.h"
 #include "input.h"
+#include "score.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
