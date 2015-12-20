@@ -104,7 +104,7 @@ void Enemy_render(const Enemy * enemy, SDL_Surface * parent, List * bullets) {
 			submarine->time_shot_counter++;
 		}
 
-		if (submarine->time_shot_counter >= submarine->time_between_shots) {
+		if (submarine->time_shot_counter >= submarine->time_between_shots && submarine->time_between_shots) {
 
 			float random = ((float) rand()) / INT32_MAX;
 

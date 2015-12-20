@@ -82,6 +82,8 @@ Game * Game_create(SDL_Window * window) {
 		SDL_Rect breathe_zone =
 				{ 0, 0, game->surface->w, (game->surface->h / 6) };
 
+		game->enemy_on_surface = NULL;
+
 		game->breathe_zone = breathe_zone;
 		game->timer = Timer_create();
 
@@ -262,6 +264,14 @@ bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
 	return is_colliding;
 }
 
+void Game_spawn_enemy_on_surface(Game * game) {
+	game->enemy_on_surface = Enemy_create(game->window, RES_SUBMARINE, SUBMARINE,
+			LEFT, 0, DEFAULT_DIVER_VELOCITY_FACTOR, 0);
+
+	game->enemy_on_surface->rect->y = game->breathe_zone.h
+			- (game->enemy_on_surface->rect->h / 2);
+}
+
 Enemy * Game_spawn_enemy(Game * game) {
 
 	Enemy * enemy = NULL;
@@ -309,18 +319,23 @@ Enemy * Game_spawn_enemy(Game * game) {
 
 void Game_destroy_enemy(Game * game, Enemy * enemy) {
 
-	int zone = screen_to_zone(game, enemy->rect->y);
+	if (enemy != game->enemy_on_surface) {
+		int zone = screen_to_zone(game, enemy->rect->y);
 
-	game->zone_lock[zone].enemies_number--;
+		game->zone_lock[zone].enemies_number--;
 
-	if (enemy->rect->x + enemy->rect->w >= SCREEN_WIDTH) {
-		game->zone_lock[zone].is_locked = false;
+		if (enemy->rect->x + enemy->rect->w >= SCREEN_WIDTH) {
+			game->zone_lock[zone].is_locked = false;
+		}
+
+		List_remove(game->enemies, (void *) enemy);
+		Enemy_destroy(enemy);
+
+		game->enemies_on_screen--;
+	} else {
+		Enemy_destroy(enemy);
+		game->enemy_on_surface = NULL;
 	}
-
-	List_remove(game->enemies, (void *) enemy);
-	Enemy_destroy(enemy);
-
-	game->enemies_on_screen--;
 }
 
 void Game_destroy_bullet(Game * game, Bullet * bullet) {
@@ -526,6 +541,18 @@ void Game_update_enemies(Game * game) {
 
 		} else {
 			actual = actual->next;
+		}
+	}
+
+	if (game->enemy_on_surface) {
+
+		Enemy_move(game->enemy_on_surface);
+
+		if (Enemy_is_visible(game->enemy_on_surface)) {
+			Enemy_render(game->enemy_on_surface, game->surface, NULL);
+		} else {
+			Game_destroy_enemy(game, game->enemy_on_surface);
+			game->enemy_on_surface = NULL;
 		}
 	}
 }
@@ -746,6 +773,7 @@ void Game_destroy(Game * game) {
 		Player_destroy(game->player);
 
 		Game_destroy_enemies(game);
+		Enemy_destroy(game->enemy_on_surface);
 		Game_destroy_bullets(game);
 		Game_destroy_divers(game);
 		Node * actual = game->bullets->begin;

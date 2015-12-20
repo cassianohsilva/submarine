@@ -93,7 +93,9 @@ void control_player(Game * game, const Uint8 *keystates) {
 	}
 
 	Player_move(game->player, HORIZONTAL_KEY_PRESSED, VERTICAL_KEY_PRESSED,
-			gScreenSurface->w, game->breathe_zone.h - (game->player->surface->h / 2), game->ground_rect.y);
+			gScreenSurface->w,
+			game->breathe_zone.h - (game->player->surface->h / 2),
+			game->ground_rect.y);
 }
 
 void close_all() {
@@ -191,6 +193,14 @@ int main(int argc, char* args[]) {
 
 				Game_spawn_enemy(game);
 				Game_spawn_diver(game);
+
+				if (!game->enemy_on_surface) {
+					float r = ((float) rand()) / INT32_MAX;
+
+					if (r < 0.005) {
+						Game_spawn_enemy_on_surface(game);
+					}
+				}
 			}
 
 			Game_update(game);

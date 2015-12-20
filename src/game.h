@@ -31,6 +31,7 @@ typedef struct {
 
 typedef struct {
 	Player * player;
+	Enemy * enemy_on_surface;
 	List * enemies;
 	Uint8 enemies_on_screen;
 	Uint8 divers_on_screen;
@@ -88,6 +89,8 @@ void Game_show_input_name(Game * game, bool show);
 void Game_stop(Game * game);
 
 Enemy * Game_spawn_enemy(Game * game);
+
+void Game_spawn_enemy_on_surface(Game * game);
 
 Diver * Game_spawn_diver(Game * game);
 
