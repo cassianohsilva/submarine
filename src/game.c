@@ -128,7 +128,7 @@ Game * Game_create(SDL_Window * window) {
 
 		game->spawn_zone_size = (SCREEN_HEIGHT
 				- (game->breathe_zone.h + game->player->surface->h / 2)
-				- game->ground_rect.h) / game->player->sprite_rect->h;
+				- game->ground_rect.h) / (game->player->sprite_rect->h + 20);
 
 		game->zone_lock = (ZoneLock *) malloc(
 				game->spawn_zone_size * sizeof(ZoneLock));
@@ -413,15 +413,16 @@ Enemy * Game_spawn_enemy(Game * game) {
 			if (enemy != NULL) {
 				List_insert(game->enemies, (void *) enemy);
 				game->enemies_on_screen++;
-			}
 
-			if (game->zone_lock[zone].enemies_number == 0) {
 				game->zone_lock[zone].is_locked = true;
-				game->zone_lock[zone].direction = direction;
-				game->zone_lock[zone].enemy_type = enemy_type;
-			}
 
-			game->zone_lock[zone].enemies_number++;
+				if (game->zone_lock[zone].enemies_number == 0) {
+					game->zone_lock[zone].direction = direction;
+					game->zone_lock[zone].enemy_type = enemy_type;
+				}
+
+				game->zone_lock[zone].enemies_number++;
+			}
 		}
 	}
 
@@ -429,18 +430,41 @@ Enemy * Game_spawn_enemy(Game * game) {
 }
 
 void Game_destroy_enemy(Game * game, Enemy * enemy) {
-
 	if (enemy != game->enemy_on_surface) {
 		int zone = screen_to_zone(game, enemy->rect->y);
 
 		game->zone_lock[zone].enemies_number--;
 
-		if (enemy->rect->x + enemy->rect->w >= SCREEN_WIDTH) {
-			game->zone_lock[zone].is_locked = false;
+		bool locked_zone[game->spawn_zone_size];
+
+		int i;
+		for (i = 0; i < game->spawn_zone_size; ++i) {
+			locked_zone[i] = false;
 		}
 
 		List_remove(game->enemies, (void *) enemy);
 		Enemy_destroy(enemy);
+
+		Node * actual = game->enemies->begin;
+
+		while (actual != NULL) {
+			if (actual->value != NULL) {
+				Node * prox = actual->next;
+				Enemy * e = (Enemy *) actual->value;
+
+				int zone = screen_to_zone(game, e->rect->y);
+
+				if (e->rect->w < e->surface->w) {
+					locked_zone[zone] = true;
+				}
+
+				actual = prox;
+			}
+		}
+
+		for (i = 0; i < game->spawn_zone_size; ++i) {
+			game->zone_lock[i].is_locked = locked_zone[i];
+		}
 
 		game->enemies_on_screen--;
 	} else {
@@ -513,7 +537,8 @@ void Game_update(Game * game) {
 						game->player->oxygen = 0.0;
 
 						Player_die(game->player);
-						LifeSurface_set_lifes(game->life_surface, game->player->lifes);
+						LifeSurface_set_lifes(game->life_surface,
+								game->player->lifes);
 
 						if (Player_is_dead(game->player)) {
 							Game_stop(game);
@@ -698,6 +723,13 @@ void Game_check_enemies_collision(Game * game) {
 void Game_update_enemies(Game * game) {
 	Node * actual = game->enemies->begin;
 
+	bool locked_zone[game->spawn_zone_size];
+
+	int i;
+	for (i = 0; i < game->spawn_zone_size; ++i) {
+		locked_zone[i] = false;
+	}
+
 	while (actual != NULL) {
 		if (actual->value != NULL) {
 			Node * prox = actual->next;
@@ -709,14 +741,32 @@ void Game_update_enemies(Game * game) {
 				Enemy_move(enemy);
 			}
 
-			if (enemy->rect->x + enemy->rect->w < SCREEN_WIDTH) {
-				game->zone_lock[screen_to_zone(game, enemy->rect->y)].is_locked =
-						false;
-			}
+//			int zone = screen_to_zone(game, enemy->rect->y);
+//
+//			//if (enemy->rect->x + enemy->rect->w < SCREEN_WIDTH) {
+//			if (enemy->real_x
+//					> 0|| (enemy->real_x + enemy->surface->w) < SCREEN_WIDTH) {
+//				locked_zone[zone] |= false;
+//				/*
+//				if (game->zone_lock[zone].enemies_number >= 1) {
+//					game->zone_lock[zone].is_locked |= false;
+//				} else {
+//					game->zone_lock[zone].is_locked = false;
+//				}
+//				*/
+//			} else {
+//				locked_zone[zone] |= true;
+//			}
 
 			if (Enemy_is_entered_on_screen(enemy)) {
 				if (Enemy_is_visible(enemy)) {
 					Enemy_render(enemy, game->surface, game->bullets);
+
+					int zone = screen_to_zone(game, enemy->rect->y);
+
+					if (enemy->sprite_rect->w < enemy->surface->w) {
+						locked_zone[zone] = true;
+					}
 				} else {
 					Game_destroy_enemy(game, enemy);
 				}
@@ -724,6 +774,10 @@ void Game_update_enemies(Game * game) {
 		} else {
 			actual = actual->next;
 		}
+	}
+
+	for (i = 0; i < game->spawn_zone_size; ++i) {
+		game->zone_lock[i].is_locked = locked_zone[i];
 	}
 
 	if (game->enemy_on_surface) {
@@ -1008,11 +1062,11 @@ void Game_destroy(Game * game) {
 }
 
 int zone_to_screen(Game * game, int zone) {
-	return (game->player->surface->h * zone + game->breathe_zone.h)
+	return ((game->player->surface->h + 20) * zone + game->breathe_zone.h)
 			+ (game->player->surface->h / 2);
 }
 
 int screen_to_zone(Game * game, int y) {
 	return (y - game->breathe_zone.h + (game->player->surface->h / 2))
-			/ game->player->surface->h;
+			/ (game->player->surface->h + 20);
 }
