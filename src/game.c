@@ -92,7 +92,7 @@ Game * Game_create(SDL_Window * window) {
 		game->ground_rect.w = SCREEN_WIDTH;
 		game->ground_rect.h = SCREEN_HEIGHT / 6;
 
-		game->spawn_zone_size = (SCREEN_HEIGHT - game->breathe_zone.h
+		game->spawn_zone_size = (SCREEN_HEIGHT - (game->breathe_zone.h + game->player->surface->h / 2)
 				- game->ground_rect.h) / game->player->sprite_rect->h;
 
 		game->zone_lock = (ZoneLock *) malloc(
@@ -861,9 +861,9 @@ void Game_destroy(Game * game) {
 }
 
 int zone_to_screen(Game * game, int zone) {
-	return game->player->surface->h * zone + game->breathe_zone.h;
+	return (game->player->surface->h * zone + game->breathe_zone.h) + (game->player->surface->h / 2);
 }
 
 int screen_to_zone(Game * game, int y) {
-	return (y - game->breathe_zone.h) / game->player->surface->h;
+	return (y - game->breathe_zone.h + (game->player->surface->h / 2)) / game->player->surface->h;
 }
