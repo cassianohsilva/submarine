@@ -465,6 +465,7 @@ void Game_update(Game * game) {
 
 		Game_check_bullets_collision(game);
 		Game_check_divers_collision(game);
+		Game_check_enemies_collision(game);
 	} else {
 		Menu_render(game->main_menu, game->surface);
 
@@ -512,6 +513,50 @@ void Game_check_divers_collision(Game * game) {
 	}
 }
 
+void Game_check_enemies_collision(Game * game) {
+	if (!game->is_paused) {
+
+		bool collision = false;
+
+		Node * node = game->enemies->begin;
+		Node * aux = NULL;
+
+		while (node != NULL) {
+			aux = node->next;
+
+			Enemy * enemy = (Enemy *) node->value;
+
+			collision = collision_check(enemy->rect, enemy->collision_mask,
+					game->player->rect, game->player->collision_mask);
+
+			if (collision) {
+				Game_destroy_enemy(game, enemy);
+				Mix_PlayChannel(-1, game->explosion_sound, 0);
+				// TODO Adicionar efeito da colisão aqui
+				break;
+			}
+			node = aux;
+		}
+
+		if (!collision) {
+
+			if (game->enemy_on_surface) {
+				collision = collision_check(game->enemy_on_surface->rect,
+						game->enemy_on_surface->collision_mask,
+						game->player->rect, game->player->collision_mask);
+
+				if (collision) {
+					Game_destroy_enemy(game, game->enemy_on_surface);
+					Mix_PlayChannel(-1, game->explosion_sound, 0);
+
+					game->enemy_on_surface = NULL;
+					// TODO Adicionar efeito da colisão aqui
+				}
+			}
+		}
+	}
+}
+
 void Game_update_enemies(Game * game) {
 	Node * actual = game->enemies->begin;
 
@@ -538,7 +583,6 @@ void Game_update_enemies(Game * game) {
 					Game_destroy_enemy(game, enemy);
 				}
 			}
-
 		} else {
 			actual = actual->next;
 		}
@@ -588,6 +632,8 @@ void Game_check_bullets_collision(Game * game) {
 		Node * node = game->bullets->begin;
 		Node * aux = NULL;
 
+		Player * player = game->player;
+
 		while (node != NULL) {
 			aux = node->next;
 
@@ -614,7 +660,10 @@ void Game_check_bullets_collision(Game * game) {
 					Game_destroy_enemy(game, enemy);
 					Game_destroy_bullet(game, bullet);
 
-					game->player->score += ENEMY_DESTROY_SCORE;
+					bullet = NULL;
+					enemy = NULL;
+
+					player->score += ENEMY_DESTROY_SCORE;
 
 					Game_update_score_surface(game);
 
@@ -623,15 +672,13 @@ void Game_check_bullets_collision(Game * game) {
 				node_enemy = aux_enemy;
 			}
 
-			// TODO Adicionar verificação de colisão entre o jogador e os tiros
-
-//		bool collision = collision_check(bullet->rect, bullet->collision_mask,
-//				game->player->rect, game->player->collision_mask);
-
-//		if (collision) {
-//			Enemy_destroy(enemy);
-//			Bullet_destroy(bullet);
-//		}
+			if (bullet
+					&& collision_check(bullet->rect, bullet->collision_mask,
+							player->rect, player->collision_mask)) {
+				Game_destroy_bullet(game, bullet);
+				Mix_PlayChannel(-1, game->explosion_sound, 0);
+				// TODO Adicionar efeito da colisão aqui
+			}
 
 			node = aux;
 		}
