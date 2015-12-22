@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="570"
+   width="435"
    height="150"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="resume2.svg"
-   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/resume.png"
+   sodipodi:docname="start.svg"
+   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/start.png"
    inkscape:export-xdpi="30"
    inkscape:export-ydpi="30">
   <defs
@@ -58,14 +58,14 @@
     <text
        xml:space="preserve"
        style="font-size:125.10289001px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffbc00;fill-opacity:1;stroke:none;font-family:'8BIT WONDER';-inkscape-font-specification:'8BIT WONDER'"
-       x="4.2468829"
+       x="2.0032439"
        y="749.44934"
        id="text2984"
        sodipodi:linespacing="125%"
        transform="scale(0.71312728,1.4022742)"><tspan
          sodipodi:role="line"
          id="tspan2986"
-         x="4.2468829"
-         y="749.44934">RESUME</tspan></text>
+         x="2.0032439"
+         y="749.44934">STARt</tspan></text>
   </g>
 </svg>

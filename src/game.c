@@ -151,10 +151,9 @@ Game * Game_create(SDL_Window * window) {
 		game->new_record_menu = Menu_create(window, NULL, color);
 
 		if (game->pause_menu) {
-
 			Button * resume_button = Button_create(window, RES_RESUME,
 					on_click_resume);
-			Button * quit_button = Button_create(window, RES_QUIT,
+			Button * quit_button = Button_create(window, RES_EXIT,
 					on_click_exit);
 
 			Button_set_postition(resume_button,
@@ -169,8 +168,7 @@ Game * Game_create(SDL_Window * window) {
 		}
 
 		if (game->main_menu) {
-
-			Button * start_button = Button_create(window, RES_RESUME,
+			Button * start_button = Button_create(window, RES_START,
 					on_click_start);
 			Button * quit_button = Button_create(window, RES_QUIT,
 					on_click_quit);

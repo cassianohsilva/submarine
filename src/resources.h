@@ -17,7 +17,9 @@
 #define RES_DIVER_ICON "./res/diver_icon.png"
 #define RES_PLAYER_ICON "./res/submarine_icon.png"
 
+#define RES_START "./res/start.png"
 #define RES_RESUME "./res/resume.png"
+#define RES_EXIT "./res/exit.png"
 #define RES_QUIT "./res/quit.png"
 
 #define RES_EXPLOSION_SOUND "./res/bomb.wav"
