@@ -38,6 +38,8 @@ Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 			player->divers_rescued = 0;
 			player->score = 0;
 			player->is_dead = false;
+			player->is_blinking = false;
+			player->blink_count = 0;
 			player->lifes = MAX_LIFES;
 
 			player->movement_factor = movement_factor;
@@ -59,6 +61,8 @@ void Player_die(Player * player) {
 			player->is_dead = true;
 		} else {
 			--player->lifes;
+			player->oxygen = 100;
+			player->is_blinking = true;
 		}
 	}
 }
@@ -87,23 +91,36 @@ void Player_shot(Player* player, List * bullets) {
 
 void Player_render(Player * player, SDL_Surface * parent) {
 
-	switch (player->look_dir) {
+	if (!player->is_blinking
+			|| (player->is_blinking && (player->blink_count % 10) < 5)) {
+		switch (player->look_dir) {
 
-		case LEFT:
-			player->sprite_rect->x = 0;
-			player->sprite_rect->w = player->surface->w >> 1;
-			break;
-		case RIGHT:
-			player->sprite_rect->x = player->surface->w >> 1;
-			player->sprite_rect->w = player->surface->w;
-			break;
+			case LEFT:
+				player->sprite_rect->x = 0;
+				player->sprite_rect->w = player->surface->w >> 1;
+				break;
+			case RIGHT:
+				player->sprite_rect->x = player->surface->w >> 1;
+				player->sprite_rect->w = player->surface->w;
+				break;
+		}
+
+		if (player->time_shot_counter < player->time_between_shots) {
+			player->time_shot_counter++;
+		}
+
+		SDL_BlitSurface(player->surface, player->sprite_rect, parent,
+				player->rect);
 	}
 
-	if (player->time_shot_counter < player->time_between_shots) {
-		player->time_shot_counter++;
-	}
+	if (player->is_blinking) {
+		player->blink_count++;
 
-	SDL_BlitSurface(player->surface, player->sprite_rect, parent, player->rect);
+		if (player->blink_count > (MAX_BLINK * 10)) {
+			player->blink_count = 1;
+			player->is_blinking = false;
+		}
+	}
 }
 
 void Player_set_position(Player * player, int x, int y) {

@@ -511,6 +511,14 @@ void Game_update(Game * game) {
 
 					if (game->player->oxygen <= 0) {
 						game->player->oxygen = 0.0;
+
+						Player_die(game->player);
+						LifeSurface_set_lifes(game->life_surface, game->player->lifes);
+
+						if (Player_is_dead(game->player)) {
+							Game_stop(game);
+							on_click_exit(game);
+						}
 					}
 				}
 			} else {

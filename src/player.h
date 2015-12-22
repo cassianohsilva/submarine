@@ -11,6 +11,7 @@
 
 #define MAX_DIVERS_FOR_RESCUE 5
 #define MAX_LIFES 3
+#define MAX_BLINK 10
 
 #ifndef SRC_PLAYER_H_
 #define SRC_PLAYER_H_
@@ -23,6 +24,8 @@ typedef struct _Player {
 
 	bool is_dead;
 	Uint8 lifes;
+	bool is_blinking;
+	Uint8 blink_count;
 
 	Uint8 divers_rescued;
 	SDL_Rect * sprite_rect;
