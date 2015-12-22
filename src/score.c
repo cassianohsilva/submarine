@@ -43,15 +43,15 @@ bool file_exist() {
 	return false;
 }
 
-Score create_score(char * name, int score) {
+Score Score_create(const char name[MAX_NAME_SIZE], const int score) {
 	Score s;
-	strncpy(s.name, name, 19);
+	strncpy(s.name, name, MAX_NAME_SIZE - 1);
 	s.value = score;
 
 	return s;
 }
 
-void save_score(char * name, int score) {
+void Score_save(const Score score) {
 
 	FILE * file;
 
@@ -65,10 +65,8 @@ void save_score(char * name, int score) {
 
 		Score scores[size + 1];
 
-		char n[20];
+		char n[MAX_NAME_SIZE];
 		int s;
-
-		scores[size] = create_score(name, score);
 
 		printf("%d\n", size);
 
@@ -86,7 +84,7 @@ void save_score(char * name, int score) {
 
 		FILE * file = fopen(FILENAME, "w");
 
-		scores[size] = create_score(name, score);
+		scores[size] = Score_create(score.name, score.value);
 
 		fprintf(file, "%d\n", (size < MAX_SCORE_SIZE) ? ++size : size);
 
@@ -104,13 +102,13 @@ void save_score(char * name, int score) {
 		FILE * file = fopen(FILENAME, "w");
 
 		fprintf(file, "%d\n", 1);
-		fprintf(file, PATTERN, name, score);
+		fprintf(file, PATTERN, score.name, score.value);
 
 		fclose(file);
 	}
 }
 
-Score * load_scores(int * size) {
+Score * Score_load(int * size) {
 
 	FILE * file = fopen(FILENAME, "r+");
 	Score * scores = NULL;
@@ -122,7 +120,7 @@ Score * load_scores(int * size) {
 
 		scores = malloc(*size * sizeof(Score));
 
-		char n[20];
+		char n[MAX_NAME_SIZE];
 		int s;
 
 		printf("%d\n", *size);
@@ -146,7 +144,7 @@ Score * load_scores(int * size) {
 	return scores;
 }
 
-bool is_new_record(int score) {
+bool Score_is_new_record(const int score) {
 
 	FILE * file = fopen(FILENAME, "r+");
 
@@ -157,7 +155,7 @@ bool is_new_record(int score) {
 	if (file_exist()) {
 		fscanf(file, "%d\n", &size);
 
-		char n[20];
+		char n[MAX_NAME_SIZE];
 		int s;
 
 		printf("%d\n", size);
