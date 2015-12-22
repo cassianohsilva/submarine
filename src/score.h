@@ -12,8 +12,10 @@
 
 typedef struct {
 	char name[20];
-	int score;
+	int value;
 } Score;
+
+Score create_score(char * name, int score);
 
 void save_score(char * name, int score);
 
