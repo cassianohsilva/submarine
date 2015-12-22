@@ -16,6 +16,7 @@
 #include "menu.h"
 #include "input.h"
 #include "score.h"
+#include "life_surface.h"
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 600
@@ -44,6 +45,8 @@ typedef struct {
 	bool is_editing;
 	Uint8 spawn_zone_size;
 	Timer * timer;
+
+	LifeSurface * life_surface;
 
 	// Ground
 	SDL_Rect ground_rect;

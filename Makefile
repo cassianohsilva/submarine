@@ -19,6 +19,8 @@ OBJS += \
 ./bin/menu.o \
 ./bin/input.o \
 ./bin/score.o \
+./bin/life_surface.o \
+./bin/label.o \
 ./bin/main.o
 
 USER_OBJS += \
@@ -34,6 +36,8 @@ USER_OBJS += \
 ./src/menu.c \
 ./src/input.c \
 ./src/score.c \
+./src/life_surface.c \
+./src/label.c \
 ./src/main.c
 
 all: Submarine

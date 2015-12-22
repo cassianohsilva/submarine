@@ -8,13 +8,14 @@
 #ifndef SRC_RESOURCES_H_
 #define SRC_RESOURCES_H_
 
-#define RES_SUBMARINE "./res/submarine.png"
+#define RES_PLAYER "./res/submarine.png"
 #define RES_ENEMY_SUBMARINE "./res/enemy_submarine.png"
 #define RES_SHARK "./res/shark.png"
 #define RES_BULLET "./res/bullet.png"
 #define RES_ENEMY_BULLET "./res/enemy_bullet.png"
 #define RES_DIVER "./res/diver.png"
 #define RES_DIVER_ICON "./res/diver_icon.png"
+#define RES_PLAYER_ICON "./res/submarine_icon.png"
 
 #define RES_RESUME "./res/resume.png"
 #define RES_QUIT "./res/quit.png"

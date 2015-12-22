@@ -68,7 +68,7 @@ Game * Game_create(SDL_Window * window) {
 
 	if (game != NULL) {
 
-		game->player = Player_create(window, RES_SUBMARINE,
+		game->player = Player_create(window, RES_PLAYER,
 				(SCREEN_WIDTH - 15) / 2, (SCREEN_HEIGHT - 64) / 2,
 				2 * MOVEMENT_FACTOR,
 				TIME_BETWEEN_SHOTS);
@@ -85,6 +85,8 @@ Game * Game_create(SDL_Window * window) {
 
 		SDL_Rect breathe_zone =
 				{ 0, 0, game->surface->w, (game->surface->h / 6) };
+
+		game->life_surface = LifeSurface_create(window, RES_PLAYER_ICON, 0, 0);
 
 		game->enemy_on_surface = NULL;
 
@@ -391,7 +393,7 @@ void Game_stop(Game * game) {
 		game->is_started = false;
 		game->is_paused = false;
 
-		if(Mix_PlayingMusic()) {
+		if (Mix_PlayingMusic()) {
 			Mix_HaltMusic();
 		}
 	}
@@ -470,6 +472,8 @@ void Game_update(Game * game) {
 		SDL_BlitSurface(game->score_surface, NULL, game->surface,
 				game->score_rect);
 
+		LifeSurface_render(game->life_surface, game->surface);
+
 		if (game->is_paused) {
 			Menu_render(game->pause_menu, game->surface);
 		}
@@ -547,6 +551,7 @@ void Game_check_enemies_collision(Game * game) {
 				Mix_PlayChannel(-1, game->explosion_sound, 0);
 				// TODO Adicionar efeito da colisão aqui
 				Player_die(game->player);
+				LifeSurface_set_lifes(game->life_surface, game->player->lifes);
 
 				if (Player_is_dead(game->player)) {
 					Game_stop(game);
@@ -572,6 +577,7 @@ void Game_check_enemies_collision(Game * game) {
 					game->enemy_on_surface = NULL;
 					// TODO Adicionar efeito da colisão aqui
 					Player_die(game->player);
+					LifeSurface_set_lifes(game->life_surface, game->player->lifes);
 
 					if (Player_is_dead(game->player)) {
 						Game_stop(game);
@@ -705,6 +711,7 @@ void Game_check_bullets_collision(Game * game) {
 				Mix_PlayChannel(-1, game->explosion_sound, 0);
 				// TODO Adicionar efeito da colisão aqui
 				Player_die(player);
+				LifeSurface_set_lifes(game->life_surface, game->player->lifes);
 
 				if (Player_is_dead(player)) {
 					Game_stop(game);
@@ -888,6 +895,8 @@ void Game_destroy(Game * game) {
 		Menu_destroy(game->pause_menu);
 		Menu_destroy(game->main_menu);
 		Menu_destroy(game->new_record_menu);
+
+		LifeSurface_destroy(game->life_surface);
 
 		free(game);
 	}
