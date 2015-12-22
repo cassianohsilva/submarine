@@ -7,8 +7,6 @@
 
 #include "player.h"
 
-#define MAX_LIFES 3
-
 Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 		float movement_factor, Uint32 time_between_shots) {
 
@@ -55,8 +53,18 @@ Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 	return player;
 }
 
+void Player_die(Player * player) {
+	if (player) {
+		if (player->lifes == 0) {
+			player->is_dead = true;
+		} else {
+			--player->lifes;
+		}
+	}
+}
+
 bool Player_is_dead(Player * player) {
-	if(player) {
+	if (player) {
 		return player->is_dead;
 	}
 

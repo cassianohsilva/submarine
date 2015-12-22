@@ -10,6 +10,7 @@
 #include "linked_list.h"
 
 #define MAX_DIVERS_FOR_RESCUE 5
+#define MAX_LIFES 3
 
 #ifndef SRC_PLAYER_H_
 #define SRC_PLAYER_H_
@@ -55,6 +56,8 @@ void Player_move(Player * player, int h, int v, int x_max, int y_min, int y_max)
 void Player_set_position(Player * player, int x, int y);
 
 bool Player_is_dead(Player * player);
+
+void Player_die(Player * player);
 
 void Player_destroy(Player * player);
 

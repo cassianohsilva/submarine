@@ -96,7 +96,8 @@ Game * Game_create(SDL_Window * window) {
 		game->ground_rect.w = SCREEN_WIDTH;
 		game->ground_rect.h = SCREEN_HEIGHT / 6;
 
-		game->spawn_zone_size = (SCREEN_HEIGHT - (game->breathe_zone.h + game->player->surface->h / 2)
+		game->spawn_zone_size = (SCREEN_HEIGHT
+				- (game->breathe_zone.h + game->player->surface->h / 2)
 				- game->ground_rect.h) / game->player->sprite_rect->h;
 
 		game->zone_lock = (ZoneLock *) malloc(
@@ -218,6 +219,8 @@ void Game_reset(Game * game) {
 		game->enemies_on_screen = 0;
 		game->divers_on_screen = 0;
 		game->player->score = 0;
+		game->player->lifes = MAX_LIFES;
+		game->player->is_dead = false;
 
 		Player_set_position(game->player, (SCREEN_WIDTH - 15) / 2,
 				(SCREEN_HEIGHT - 64) / 2);
@@ -231,6 +234,8 @@ void Game_reset(Game * game) {
 		Game_destroy_bullets(game);
 		Game_destroy_enemies(game);
 		Game_destroy_divers(game);
+
+		Game_destroy_enemy(game, game->enemy_on_surface);
 	}
 }
 
@@ -385,14 +390,10 @@ void Game_stop(Game * game) {
 	if (game) {
 		game->is_started = false;
 		game->is_paused = false;
-	}
-}
 
-void Game_show_input_name(Game * game, bool show) {
-	if (show) {
-		SDL_StartTextInput();
-	} else {
-		SDL_StopTextInput();
+		if(Mix_PlayingMusic()) {
+			Mix_HaltMusic();
+		}
 	}
 }
 
@@ -446,7 +447,9 @@ void Game_update(Game * game) {
 		Game_update_divers(game);
 		Game_update_enemies(game);
 
-		Player_render(game->player, game->surface);
+		if (!Player_is_dead(game->player)) {
+			Player_render(game->player, game->surface);
+		}
 
 		SDL_FillRect(game->surface, &game->ground_rect,
 				SDL_MapRGB(game->surface->format, 0x00, 0xCC, 0x66));
@@ -543,6 +546,13 @@ void Game_check_enemies_collision(Game * game) {
 				Game_destroy_enemy(game, enemy);
 				Mix_PlayChannel(-1, game->explosion_sound, 0);
 				// TODO Adicionar efeito da colisão aqui
+				Player_die(game->player);
+
+				if (Player_is_dead(game->player)) {
+					Game_stop(game);
+					on_click_exit(game);
+				}
+
 				break;
 			}
 			node = aux;
@@ -561,6 +571,12 @@ void Game_check_enemies_collision(Game * game) {
 
 					game->enemy_on_surface = NULL;
 					// TODO Adicionar efeito da colisão aqui
+					Player_die(game->player);
+
+					if (Player_is_dead(game->player)) {
+						Game_stop(game);
+						on_click_exit(game);
+					}
 				}
 			}
 		}
@@ -688,6 +704,12 @@ void Game_check_bullets_collision(Game * game) {
 				Game_destroy_bullet(game, bullet);
 				Mix_PlayChannel(-1, game->explosion_sound, 0);
 				// TODO Adicionar efeito da colisão aqui
+				Player_die(player);
+
+				if (Player_is_dead(player)) {
+					Game_stop(game);
+					on_click_exit(game);
+				}
 			}
 
 			node = aux;
@@ -872,9 +894,11 @@ void Game_destroy(Game * game) {
 }
 
 int zone_to_screen(Game * game, int zone) {
-	return (game->player->surface->h * zone + game->breathe_zone.h) + (game->player->surface->h / 2);
+	return (game->player->surface->h * zone + game->breathe_zone.h)
+			+ (game->player->surface->h / 2);
 }
 
 int screen_to_zone(Game * game, int y) {
-	return (y - game->breathe_zone.h + (game->player->surface->h / 2)) / game->player->surface->h;
+	return (y - game->breathe_zone.h + (game->player->surface->h / 2))
+			/ game->player->surface->h;
 }
