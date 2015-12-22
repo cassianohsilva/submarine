@@ -10,7 +10,7 @@
 #ifndef SRC_SCORE_H_
 #define SRC_SCORE_H_
 
-#define MAX_NAME_SIZE 21
+#define MAX_NAME_SIZE 11
 
 typedef struct {
 	char name[MAX_NAME_SIZE];

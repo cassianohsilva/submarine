@@ -6,8 +6,7 @@
  */
 
 #include "input.h"
-
-#define MAX_INPUT_SIZE 6
+#include "score.h"
 
 Input * Input_create(SDL_Window * window, TTF_Font * font, SDL_Rect * rect,
 		SDL_Color background_color, SDL_Color input_color) {
@@ -52,7 +51,7 @@ Input * Input_create(SDL_Window * window, TTF_Font * font, SDL_Rect * rect,
 			input->font = font;
 			input->background_color = background_color;
 			input->input_color = input_color;
-			input->text = (char *) malloc(MAX_INPUT_SIZE * sizeof(char));
+			input->text = (char *) malloc(MAX_NAME_SIZE * sizeof(char));
 
 			strcpy(input->text, "");
 
@@ -68,13 +67,13 @@ Input * Input_create(SDL_Window * window, TTF_Font * font, SDL_Rect * rect,
 
 void Input_set_text(Input * input, char * text) {
 	if (input) {
-		strncpy(input->text, text, MAX_INPUT_SIZE - 1);
+		strncpy(input->text, text, MAX_NAME_SIZE - 1);
 	}
 }
 
 void Input_insert_text(Input * input, char * text) {
 	if (input && text) {
-		strncat(input->text, text, MAX_INPUT_SIZE - strlen(input->text) - 1);
+		strncat(input->text, text, MAX_NAME_SIZE - strlen(input->text) - 1);
 	}
 }
 

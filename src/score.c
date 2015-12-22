@@ -52,7 +52,6 @@ Score Score_create(const char name[MAX_NAME_SIZE], const int score) {
 }
 
 void Score_save(const Score score) {
-
 	FILE * file;
 
 	file = fopen(FILENAME, "r+");
@@ -60,7 +59,6 @@ void Score_save(const Score score) {
 	int i, size;
 
 	if (file_exist()) {
-
 		fscanf(file, "%d\n", &size);
 
 		Score scores[size + 1];
@@ -95,8 +93,9 @@ void Score_save(const Score score) {
 		fclose(file);
 
 	} else {
-		fclose(file);
-
+		if (file) {
+			fclose(file);
+		}
 		FILE * file = fopen(FILENAME, "w");
 
 		fprintf(file, "%d\n", 1);
@@ -164,7 +163,7 @@ bool Score_is_new_record(const int score) {
 			++i;
 		}
 
-		if(!is_new_record && size < MAX_SCORE_SIZE && score > 0) {
+		if (!is_new_record && size < MAX_SCORE_SIZE && score > 0) {
 			is_new_record = true;
 		}
 

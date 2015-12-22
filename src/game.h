@@ -42,7 +42,7 @@ typedef struct {
 	SDL_Rect breathe_zone;
 	bool is_started;
 	bool is_paused;
-	bool is_editing;
+	bool is_editing_new_record;
 	bool is_displaying_records;
 	Uint8 spawn_zone_size;
 	Timer * timer;

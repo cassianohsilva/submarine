@@ -23,6 +23,7 @@
 #define RES_QUIT "./res/quit.png"
 #define RES_RECORDS "./res/records.png"
 #define RES_BACK "./res/back.png"
+#define RES_OK "./res/ok.png"
 
 #define RES_EXPLOSION_SOUND "./res/bomb.wav"
 #define RES_RESCUE_DIVER_SOUND "./res/pickup.wav"

@@ -30,7 +30,6 @@ void on_click_start(void * data) {
 
 void on_click_records(void * data) {
 	if (data) {
-		// TODO Implementar isso
 		Game * game = (Game *) data;
 		Game_display_records(game);
 	}
@@ -50,6 +49,22 @@ void on_click_back(void * data) {
 	}
 }
 
+void on_click_ok(void * data) {
+	if (data) {
+		Game * game = (Game *) data;
+
+		Input * input = (Input *) game->new_record_menu->inputs->begin->value;
+
+		if (strlen(input->text) > 0) {
+			SDL_StopTextInput();
+
+			const Score s = Score_create(input->text, game->player->score);
+			Score_save(s);
+			game->is_editing_new_record = false;
+		}
+	}
+}
+
 void on_click_quit(void * data) {
 	if (data) {
 		Game_destroy((Game *) data);
@@ -60,21 +75,19 @@ void on_click_quit(void * data) {
 
 void on_click_exit(void * data) {
 	if (data) {
-
 		Game * game = (Game *) data;
 
 		Game_stop(game);
 
-		SDL_StartTextInput();
-		SDL_SetTextInputRect(
-				((Input *) (game->new_record_menu->inputs->begin->value))->rect);
-
 		if (Score_is_new_record(game->player->score)) {
-			game->is_editing = true;
-		}
+			SDL_StartTextInput();
+			SDL_SetTextInputRect(
+					((Input *) (game->new_record_menu->inputs->begin->value))->rect);
 
-		// TODO Reposicionar ese comando
-//		Game_reset(game);
+			game->is_editing_new_record = true;
+		} else {
+			Game_reset(game);
+		}
 	}
 }
 
@@ -138,7 +151,7 @@ Game * Game_create(SDL_Window * window) {
 		game->score_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
 		game->is_started = false;
-		game->is_editing = false;
+		game->is_editing_new_record = false;
 		game->is_displaying_records = false;
 
 		char temp[20];
@@ -221,8 +234,6 @@ Game * Game_create(SDL_Window * window) {
 
 		color = (SDL_Color ) {0x33, 0x33, 0x33, 0xFF / 2};
 
-		SDL_Rect rect = (SDL_Rect ) {(SCREEN_WIDTH - 200) / 2, 10, 200, 50};
-
 		game->diver_icon = IMG_Load(RES_DIVER_ICON);
 
 		int diver_w = game->diver_icon->w * MAX_DIVERS_FOR_RESCUE;
@@ -237,12 +248,29 @@ Game * Game_create(SDL_Window * window) {
 
 		game->diver_icon_rect = (SDL_Rect ) {diver_x, diver_y, diver_w, game->diver_icon->h};
 
+		SDL_Rect rect = (SDL_Rect ) {(SCREEN_WIDTH - 400) / 2, 0, 400, 50};
+
 		if (game->new_record_menu) {
 			Input * input = Input_create(window,
 					TTF_OpenFont(RES_DEFAULT_FONT, 28), &rect, color,
 					game->score_color);
 
+			Label * label = Label_create(window,
+					TTF_OpenFont(RES_DEFAULT_FONT, 35), "YOUR NAME", 0, 0);
+
+			Button * ok_button = Button_create(window, RES_OK, on_click_ok);
+
+			input->rect->y = (SCREEN_HEIGHT >> 1) - 10 - input->rect->h;
+			label->rect.y = input->rect->y - label->rect.h - 40;
+			label->rect.x = (SCREEN_WIDTH - label->rect.w) >> 1;
+
+			Button_set_postition(ok_button,
+					(SCREEN_WIDTH - ok_button->rect->w) >> 1,
+					(SCREEN_HEIGHT >> 1) + 10);
+
 			Menu_add_input(game->new_record_menu, input);
+			Menu_add_label(game->new_record_menu, label);
+			Menu_add_button(game->new_record_menu, ok_button);
 		}
 	}
 
@@ -549,7 +577,7 @@ void Game_update(Game * game) {
 		Game_check_divers_collision(game);
 		Game_check_enemies_collision(game);
 	} else {
-		if (game->is_editing) {
+		if (game->is_editing_new_record) {
 			Menu_render(game->new_record_menu, game->surface);
 
 			SDL_Event e;
@@ -618,7 +646,7 @@ void Game_check_enemies_collision(Game * game) {
 			if (collision) {
 				Game_destroy_enemy(game, enemy);
 				Mix_PlayChannel(-1, game->explosion_sound, 0);
-				// TODO Adicionar efeito da colisão aqui
+
 				Player_die(game->player);
 				LifeSurface_set_lifes(game->life_surface, game->player->lifes);
 
@@ -779,7 +807,6 @@ void Game_check_bullets_collision(Game * game) {
 							player->rect, player->collision_mask)) {
 				Game_destroy_bullet(game, bullet);
 				Mix_PlayChannel(-1, game->explosion_sound, 0);
-				// TODO Adicionar efeito da colisão aqui
 				Player_die(player);
 				LifeSurface_set_lifes(game->life_surface, game->player->lifes);
 

@@ -9,13 +9,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="350"
+   width="170"
    height="150"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.4 r9939"
-   sodipodi:docname="back.svg"
-   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/back.png"
+   sodipodi:docname="ok.svg"
+   inkscape:export-filename="/home/cassiano/workspace-cpp/Submarino/res/ok.png"
    inkscape:export-xdpi="30"
    inkscape:export-ydpi="30">
   <defs
@@ -46,7 +46,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -66,6 +66,6 @@
          sodipodi:role="line"
          id="tspan2986"
          x="5.2284741"
-         y="749.44934">BACK</tspan></text>
+         y="749.44934">oK</tspan></text>
   </g>
 </svg>
