@@ -96,7 +96,7 @@ Game * Game_create(SDL_Window * window) {
 		game->ground_rect.w = SCREEN_WIDTH;
 		game->ground_rect.h = SCREEN_HEIGHT / 6;
 
-		game->spawn_zone_size = (SCREEN_HEIGHT - game->breathe_zone.h
+		game->spawn_zone_size = (SCREEN_HEIGHT - (game->breathe_zone.h + game->player->surface->h / 2)
 				- game->ground_rect.h) / game->player->sprite_rect->h;
 
 		game->zone_lock = (ZoneLock *) malloc(
@@ -473,6 +473,7 @@ void Game_update(Game * game) {
 
 		Game_check_bullets_collision(game);
 		Game_check_divers_collision(game);
+		Game_check_enemies_collision(game);
 	} else {
 		if (game->is_editing) {
 			Menu_render(game->new_record_menu, game->surface);
@@ -522,6 +523,50 @@ void Game_check_divers_collision(Game * game) {
 	}
 }
 
+void Game_check_enemies_collision(Game * game) {
+	if (!game->is_paused) {
+
+		bool collision = false;
+
+		Node * node = game->enemies->begin;
+		Node * aux = NULL;
+
+		while (node != NULL) {
+			aux = node->next;
+
+			Enemy * enemy = (Enemy *) node->value;
+
+			collision = collision_check(enemy->rect, enemy->collision_mask,
+					game->player->rect, game->player->collision_mask);
+
+			if (collision) {
+				Game_destroy_enemy(game, enemy);
+				Mix_PlayChannel(-1, game->explosion_sound, 0);
+				// TODO Adicionar efeito da colisão aqui
+				break;
+			}
+			node = aux;
+		}
+
+		if (!collision) {
+
+			if (game->enemy_on_surface) {
+				collision = collision_check(game->enemy_on_surface->rect,
+						game->enemy_on_surface->collision_mask,
+						game->player->rect, game->player->collision_mask);
+
+				if (collision) {
+					Game_destroy_enemy(game, game->enemy_on_surface);
+					Mix_PlayChannel(-1, game->explosion_sound, 0);
+
+					game->enemy_on_surface = NULL;
+					// TODO Adicionar efeito da colisão aqui
+				}
+			}
+		}
+	}
+}
+
 void Game_update_enemies(Game * game) {
 	Node * actual = game->enemies->begin;
 
@@ -548,7 +593,6 @@ void Game_update_enemies(Game * game) {
 					Game_destroy_enemy(game, enemy);
 				}
 			}
-
 		} else {
 			actual = actual->next;
 		}
@@ -556,7 +600,9 @@ void Game_update_enemies(Game * game) {
 
 	if (game->enemy_on_surface) {
 
-		Enemy_move(game->enemy_on_surface);
+		if (!game->is_paused) {
+			Enemy_move(game->enemy_on_surface);
+		}
 
 		if (Enemy_is_visible(game->enemy_on_surface)) {
 			Enemy_render(game->enemy_on_surface, game->surface, NULL);
@@ -596,6 +642,8 @@ void Game_check_bullets_collision(Game * game) {
 		Node * node = game->bullets->begin;
 		Node * aux = NULL;
 
+		Player * player = game->player;
+
 		while (node != NULL) {
 			aux = node->next;
 
@@ -622,7 +670,10 @@ void Game_check_bullets_collision(Game * game) {
 					Game_destroy_enemy(game, enemy);
 					Game_destroy_bullet(game, bullet);
 
-					game->player->score += ENEMY_DESTROY_SCORE;
+					bullet = NULL;
+					enemy = NULL;
+
+					player->score += ENEMY_DESTROY_SCORE;
 
 					Game_update_score_surface(game);
 
@@ -631,15 +682,13 @@ void Game_check_bullets_collision(Game * game) {
 				node_enemy = aux_enemy;
 			}
 
-			// TODO Adicionar verificação de colisão entre o jogador e os tiros
-
-//		bool collision = collision_check(bullet->rect, bullet->collision_mask,
-//				game->player->rect, game->player->collision_mask);
-
-//		if (collision) {
-//			Enemy_destroy(enemy);
-//			Bullet_destroy(bullet);
-//		}
+			if (bullet
+					&& collision_check(bullet->rect, bullet->collision_mask,
+							player->rect, player->collision_mask)) {
+				Game_destroy_bullet(game, bullet);
+				Mix_PlayChannel(-1, game->explosion_sound, 0);
+				// TODO Adicionar efeito da colisão aqui
+			}
 
 			node = aux;
 		}
@@ -823,9 +872,9 @@ void Game_destroy(Game * game) {
 }
 
 int zone_to_screen(Game * game, int zone) {
-	return game->player->surface->h * zone + game->breathe_zone.h;
+	return (game->player->surface->h * zone + game->breathe_zone.h) + (game->player->surface->h / 2);
 }
 
 int screen_to_zone(Game * game, int y) {
-	return (y - game->breathe_zone.h) / game->player->surface->h;
+	return (y - game->breathe_zone.h + (game->player->surface->h / 2)) / game->player->surface->h;
 }
