@@ -167,6 +167,22 @@ int main(int argc, char* args[]) {
 
 								node = node->next;
 							}
+						} else if (game->is_displaying_records) {
+							int x, y;
+							SDL_GetMouseState(&x, &y);
+
+							Node * node = game->records_menu->buttons->begin;
+
+							while (node != NULL) {
+								Button * button = (Button *) node->value;
+
+								if (Button_was_click(button, x, y)) {
+									Button_on_click(button, game);
+									break;
+								}
+
+								node = node->next;
+							}
 						} else if (!game->is_started) {
 							int x, y;
 							SDL_GetMouseState(&x, &y);

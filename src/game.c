@@ -28,10 +28,25 @@ void on_click_start(void * data) {
 	}
 }
 
+void on_click_records(void * data) {
+	if (data) {
+		// TODO Implementar isso
+		Game * game = (Game *) data;
+		Game_display_records(game);
+	}
+}
+
 void on_click_resume(void * data) {
 	if (data) {
 		Game * game = (Game *) data;
 		game->is_paused = false;
+	}
+}
+
+void on_click_back(void * data) {
+	if (data) {
+		Game * game = (Game *) data;
+		game->is_displaying_records = false;
 	}
 }
 
@@ -124,6 +139,7 @@ Game * Game_create(SDL_Window * window) {
 
 		game->is_started = false;
 		game->is_editing = false;
+		game->is_displaying_records = false;
 
 		char temp[20];
 		sprintf(temp, "%d", game->player->score);
@@ -149,6 +165,7 @@ Game * Game_create(SDL_Window * window) {
 		game->pause_menu = Menu_create(window, NULL, color);
 		game->main_menu = Menu_create(window, NULL, color);
 		game->new_record_menu = Menu_create(window, NULL, color);
+		game->records_menu = Menu_create(window, NULL, color);
 
 		if (game->pause_menu) {
 			Button * resume_button = Button_create(window, RES_RESUME,
@@ -172,16 +189,34 @@ Game * Game_create(SDL_Window * window) {
 					on_click_start);
 			Button * quit_button = Button_create(window, RES_QUIT,
 					on_click_quit);
+			Button * records_button = Button_create(window, RES_RECORDS,
+					on_click_records);
 
 			Button_set_postition(start_button,
-					(SCREEN_WIDTH - start_button->rect->w) / 2,
-					(int) (SCREEN_HEIGHT / 2 - start_button->rect->w * 1.2));
+					(SCREEN_WIDTH - start_button->rect->w) >> 1,
+					(int) ((SCREEN_HEIGHT >> 1) - start_button->rect->w * 1.2));
+
 			Button_set_postition(quit_button,
-					(SCREEN_WIDTH - quit_button->rect->w) / 2,
-					(int) (SCREEN_HEIGHT / 2 + quit_button->rect->w * 1.2));
+					(SCREEN_WIDTH - quit_button->rect->w) >> 1,
+					(int) ((SCREEN_HEIGHT >> 1) + quit_button->rect->w * 1.2));
+
+			Button_set_postition(records_button,
+					(SCREEN_WIDTH - records_button->rect->w) >> 1,
+					(SCREEN_HEIGHT - records_button->rect->h) >> 1);
 
 			Menu_add_button(game->main_menu, start_button);
 			Menu_add_button(game->main_menu, quit_button);
+			Menu_add_button(game->main_menu, records_button);
+		}
+
+		if (game->records_menu) {
+			Button * back_button = Button_create(window, RES_BACK,
+					on_click_back);
+
+			Button_set_postition(back_button, 50,
+			SCREEN_HEIGHT - 50 - back_button->surface->h);
+
+			Menu_add_button(game->records_menu, back_button);
 		}
 
 		color = (SDL_Color ) {0x33, 0x33, 0x33, 0xFF / 2};
@@ -212,6 +247,40 @@ Game * Game_create(SDL_Window * window) {
 	}
 
 	return game;
+}
+
+void Game_display_records(Game * game) {
+	if (game) {
+		if (!game->is_displaying_records) {
+			game->is_displaying_records = true;
+
+			int i, size, y = 50;
+			Score * scores = Score_load(&size);
+
+			TTF_Font * font = TTF_OpenFont(RES_DEFAULT_FONT, 20);
+
+			Menu_destroy_labels(game->records_menu);
+
+			for (i = 0; i < size; ++i) {
+				Label * name_label = Label_create(game->window, font,
+						scores[i].name, 50, y);
+
+				char temp[30];
+				sprintf(temp, "%d", scores[i].value);
+
+				Label * score_label = Label_create(game->window, font, temp, 0,
+						y);
+
+				score_label->rect.x = SCREEN_WIDTH - 50 - score_label->rect.w;
+
+				y += 25;
+
+				Menu_add_label(game->records_menu, name_label);
+				Menu_add_label(game->records_menu, score_label);
+			}
+		}
+		Menu_render(game->records_menu, game->surface);
+	}
 }
 
 void Game_reset(Game * game) {
@@ -493,6 +562,8 @@ void Game_update(Game * game) {
 				}
 			}
 			Menu_render(game->new_record_menu, game->surface);
+		} else if (game->is_displaying_records) {
+			Game_display_records(game);
 		} else {
 			Menu_render(game->main_menu, game->surface);
 		}
@@ -575,7 +646,8 @@ void Game_check_enemies_collision(Game * game) {
 					game->enemy_on_surface = NULL;
 					// TODO Adicionar efeito da colisão aqui
 					Player_die(game->player);
-					LifeSurface_set_lifes(game->life_surface, game->player->lifes);
+					LifeSurface_set_lifes(game->life_surface,
+							game->player->lifes);
 
 					if (Player_is_dead(game->player)) {
 						Game_stop(game);

@@ -10,7 +10,7 @@
 #define FILENAME ".scores"
 #define PATTERN "%s %d\n"
 
-#define MAX_SCORE_SIZE 10
+#define MAX_SCORE_SIZE 15
 
 bool file_exist();
 

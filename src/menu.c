@@ -65,6 +65,12 @@ void Menu_add_button(Menu * menu, Button * button) {
 	}
 }
 
+void Menu_add_label(Menu * menu, Label * label) {
+	if (label) {
+		List_insert(menu->labels, label);
+	}
+}
+
 void Menu_add_input(Menu * menu, Input * input) {
 	if (input) {
 		List_insert(menu->inputs, input);
@@ -95,9 +101,20 @@ void render_inputs(Menu * menu, SDL_Surface* parent) {
 	}
 }
 
+void render_labels(Menu * menu, SDL_Surface* parent) {
+	Node * node = menu->labels->begin;
+
+	while (node != NULL) {
+		Label * label = (Label *) node->value;
+
+		Label_render(label, menu->surface);
+
+		node = node->next;
+	}
+}
+
 void Menu_render(Menu * menu, SDL_Surface* parent) {
 	if (menu) {
-
 		SDL_FillRect(menu->surface, NULL,
 				SDL_MapRGBA(menu->surface->format, menu->background_color.r,
 						menu->background_color.g, menu->background_color.b,
@@ -105,8 +122,27 @@ void Menu_render(Menu * menu, SDL_Surface* parent) {
 
 		render_buttons(menu, parent);
 		render_inputs(menu, parent);
+		render_labels(menu, parent);
 
 		SDL_BlitSurface(menu->surface, NULL, parent, menu->rect);
+	}
+}
+
+void Menu_destroy_labels(Menu * menu) {
+	if (menu && menu->labels->begin) {
+		Node* actual = menu->labels->begin;
+		Node * aux = NULL;
+		while (actual != NULL) {
+
+			aux = actual->next;
+
+			if (actual->value != NULL) {
+				Label_destroy((Label *) actual->value);
+			}
+			actual = aux;
+		}
+
+		menu->labels->begin = NULL;
 	}
 }
 
@@ -126,6 +162,20 @@ void Menu_destroy(Menu * menu) {
 			}
 			actual = aux;
 		}
+
+		actual = menu->inputs->begin;
+		aux = NULL;
+		while (actual != NULL) {
+
+			aux = actual->next;
+
+			if (actual->value != NULL) {
+				Input_destroy((Input *) actual->value);
+			}
+			actual = aux;
+		}
+
+		Menu_destroy_labels(menu);
 
 		List_destroy(menu->buttons);
 		List_destroy(menu->inputs);

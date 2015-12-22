@@ -43,6 +43,7 @@ typedef struct {
 	bool is_started;
 	bool is_paused;
 	bool is_editing;
+	bool is_displaying_records;
 	Uint8 spawn_zone_size;
 	Timer * timer;
 
@@ -60,6 +61,7 @@ typedef struct {
 	Menu * pause_menu;
 	Menu * main_menu;
 	Menu * new_record_menu;
+	Menu * records_menu;
 
 	Mix_Music * background_music;
 
@@ -90,6 +92,8 @@ void Game_start(Game * game);
 void Game_show_input_name(Game * game, bool show);
 
 void Game_stop(Game * game);
+
+void Game_display_records(Game * game);
 
 Enemy * Game_spawn_enemy(Game * game);
 
