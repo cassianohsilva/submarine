@@ -56,8 +56,7 @@ typedef struct {
 	// Menus
 	Menu * pause_menu;
 	Menu * main_menu;
-
-	Input * input;
+	Menu * new_record_menu;
 
 	Mix_Music * background_music;
 

@@ -19,6 +19,10 @@ typedef struct _Player {
 	SDL_Rect * rect;
 	float oxygen;
 	int score;
+
+	bool is_dead;
+	Uint8 lifes;
+
 	Uint8 divers_rescued;
 	SDL_Rect * sprite_rect;
 	SDL_Surface * surface;
@@ -49,6 +53,8 @@ void Player_shot(Player* player, List * bullets);
 void Player_move(Player * player, int h, int v, int x_max, int y_min, int y_max);
 
 void Player_set_position(Player * player, int x, int y);
+
+bool Player_is_dead(Player * player);
 
 void Player_destroy(Player * player);
 

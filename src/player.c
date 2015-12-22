@@ -7,6 +7,8 @@
 
 #include "player.h"
 
+#define MAX_LIFES 3
+
 Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 		float movement_factor, Uint32 time_between_shots) {
 
@@ -37,6 +39,9 @@ Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 			player->oxygen = 100;
 			player->divers_rescued = 0;
 			player->score = 0;
+			player->is_dead = false;
+			player->lifes = MAX_LIFES;
+
 			player->movement_factor = movement_factor;
 			player->time_between_shots = time_between_shots;
 			player->time_shot_counter = time_between_shots;
@@ -48,6 +53,14 @@ Player * Player_create(SDL_Window * window, const char * filename, int x, int y,
 	}
 
 	return player;
+}
+
+bool Player_is_dead(Player * player) {
+	if(player) {
+		return player->is_dead;
+	}
+
+	return true;
 }
 
 void Player_shot(Player* player, List * bullets) {
@@ -140,7 +153,7 @@ void Player_move(Player * player, int h, int v, int x_max, int y_min, int y_max)
 					r->y += rest;
 				}
 			} else {
-				int rest = y_min -r->y;
+				int rest = y_min - r->y;
 
 				if (rest <= v_move) {
 					r->y += v_move;

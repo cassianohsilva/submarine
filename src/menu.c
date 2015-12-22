@@ -20,12 +20,12 @@ Menu * Menu_create(SDL_Window * window, SDL_Rect * size,
 		} else {
 			SDL_Surface * surface = SDL_GetWindowSurface(window);
 
-		    Uint32 rmask, gmask, bmask, amask;
+			Uint32 rmask, gmask, bmask, amask;
 
-		    rmask = 0xff000000;
-		    gmask = 0x00ff0000;
-		    bmask = 0x0000ff00;
-		    amask = 0x000000ff;
+			rmask = 0xff000000;
+			gmask = 0x00ff0000;
+			bmask = 0x0000ff00;
+			amask = 0x000000ff;
 
 			menu->surface = SDL_CreateRGBSurface(0, surface->w, surface->h, 32,
 					rmask, gmask, bmask, amask);
@@ -49,6 +49,8 @@ Menu * Menu_create(SDL_Window * window, SDL_Rect * size,
 			menu->background_color = background_color;
 
 			menu->buttons = List_create();
+			menu->inputs = List_create();
+			menu->labels = List_create();
 		} else {
 			printf("Erro ao criar o menu: %s\n", SDL_GetError());
 		}
@@ -63,6 +65,36 @@ void Menu_add_button(Menu * menu, Button * button) {
 	}
 }
 
+void Menu_add_input(Menu * menu, Input * input) {
+	if (input) {
+		List_insert(menu->inputs, input);
+	}
+}
+
+void render_buttons(Menu * menu, SDL_Surface* parent) {
+	Node * node = menu->buttons->begin;
+
+	while (node != NULL) {
+		Button * button = (Button *) node->value;
+
+		Button_render(button, menu->surface);
+
+		node = node->next;
+	}
+}
+
+void render_inputs(Menu * menu, SDL_Surface* parent) {
+	Node * node = menu->inputs->begin;
+
+	while (node != NULL) {
+		Input * input = (Input *) node->value;
+
+		Input_render(input, menu->surface);
+
+		node = node->next;
+	}
+}
+
 void Menu_render(Menu * menu, SDL_Surface* parent) {
 	if (menu) {
 
@@ -71,15 +103,8 @@ void Menu_render(Menu * menu, SDL_Surface* parent) {
 						menu->background_color.g, menu->background_color.b,
 						menu->background_color.a));
 
-		Node * node = menu->buttons->begin;
-
-		while (node != NULL) {
-			Button * button = (Button *) node->value;
-
-			Button_render(button, menu->surface);
-
-			node = node->next;
-		}
+		render_buttons(menu, parent);
+		render_inputs(menu, parent);
 
 		SDL_BlitSurface(menu->surface, NULL, parent, menu->rect);
 	}
@@ -103,6 +128,8 @@ void Menu_destroy(Menu * menu) {
 		}
 
 		List_destroy(menu->buttons);
+		List_destroy(menu->inputs);
+		List_destroy(menu->labels);
 
 		menu = NULL;
 	}

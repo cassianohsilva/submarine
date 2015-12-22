@@ -68,8 +68,6 @@ void Score_save(const Score score) {
 		char n[MAX_NAME_SIZE];
 		int s;
 
-		printf("%d\n", size);
-
 		for (i = 0; i < size; ++i) {
 			fscanf(file, PATTERN, n, &s);
 
@@ -123,8 +121,6 @@ Score * Score_load(int * size) {
 		char n[MAX_NAME_SIZE];
 		int s;
 
-		printf("%d\n", *size);
-
 		for (i = 0; i < *size; ++i) {
 			fscanf(file, PATTERN, n, &s);
 
@@ -150,7 +146,7 @@ bool Score_is_new_record(const int score) {
 
 	int i = 0, size;
 
-	bool is_greater = false;
+	bool is_new_record = false;
 
 	if (file_exist()) {
 		fscanf(file, "%d\n", &size);
@@ -158,22 +154,24 @@ bool Score_is_new_record(const int score) {
 		char n[MAX_NAME_SIZE];
 		int s;
 
-		printf("%d\n", size);
-
 		while (i < size) {
 			fscanf(file, PATTERN, n, &s);
 
 			if (score > s) {
-				is_greater = true;
+				is_new_record = true;
 				break;
 			}
 			++i;
 		}
 
+		if(!is_new_record && size < MAX_SCORE_SIZE && score > 0) {
+			is_new_record = true;
+		}
+
 		fclose(file);
 	} else {
-		is_greater = true;
+		is_new_record = true;
 	}
 
-	return is_greater;
+	return is_new_record;
 }

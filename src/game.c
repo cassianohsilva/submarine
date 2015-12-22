@@ -49,13 +49,17 @@ void on_click_exit(void * data) {
 		Game * game = (Game *) data;
 
 		Game_stop(game);
-		Game_reset(game);
 
 		SDL_StartTextInput();
-		SDL_SetTextInputRect(game->input->rect);
+		SDL_SetTextInputRect(
+				((Input *) (game->new_record_menu->inputs->begin->value))->rect);
 
-// TODO Adicionar verificação de pontuação aqui
-		game->is_editing = true;
+		if (Score_is_new_record(game->player->score)) {
+			game->is_editing = true;
+		}
+
+		// TODO Reposicionar ese comando
+//		Game_reset(game);
 	}
 }
 
@@ -141,6 +145,7 @@ Game * Game_create(SDL_Window * window) {
 
 		game->pause_menu = Menu_create(window, NULL, color);
 		game->main_menu = Menu_create(window, NULL, color);
+		game->new_record_menu = Menu_create(window, NULL, color);
 
 		if (game->pause_menu) {
 
@@ -196,9 +201,13 @@ Game * Game_create(SDL_Window * window) {
 
 		game->diver_icon_rect = (SDL_Rect ) {diver_x, diver_y, diver_w, game->diver_icon->h};
 
-		game->input = Input_create(window, TTF_OpenFont(RES_DEFAULT_FONT, 28),
-				&rect, color, game->score_color);
+		if (game->new_record_menu) {
+			Input * input = Input_create(window,
+					TTF_OpenFont(RES_DEFAULT_FONT, 28), &rect, color,
+					game->score_color);
 
+			Menu_add_input(game->new_record_menu, input);
+		}
 	}
 
 	return game;
@@ -265,8 +274,8 @@ bool collision_check(SDL_Rect * element_1, CollisionMask mask_1,
 }
 
 void Game_spawn_enemy_on_surface(Game * game) {
-	game->enemy_on_surface = Enemy_create(game->window, RES_ENEMY_SUBMARINE, SUBMARINE,
-			LEFT, 0, DEFAULT_DIVER_VELOCITY_FACTOR, 0);
+	game->enemy_on_surface = Enemy_create(game->window, RES_ENEMY_SUBMARINE,
+			SUBMARINE, LEFT, 0, DEFAULT_DIVER_VELOCITY_FACTOR, 0);
 
 	game->enemy_on_surface->rect->y = game->breathe_zone.h
 			- (game->enemy_on_surface->rect->h / 2);
@@ -406,7 +415,6 @@ void Game_update(Game * game) {
 						game->player->oxygen = 0.0;
 					}
 				}
-
 			} else {
 				if (game->player->oxygen < 100) {
 					game->player->oxygen += 0.25;
@@ -466,19 +474,21 @@ void Game_update(Game * game) {
 		Game_check_bullets_collision(game);
 		Game_check_divers_collision(game);
 	} else {
-		Menu_render(game->main_menu, game->surface);
-
 		if (game->is_editing) {
+			Menu_render(game->new_record_menu, game->surface);
 
 			SDL_Event e;
+			Input * input =
+					(Input *) game->new_record_menu->inputs->begin->value;
 
 			if (SDL_PollEvent(&e)) {
 				if (e.type == SDL_TEXTINPUT) {
-					Input_insert_text(game->input, e.text.text);
+					Input_insert_text(input, e.text.text);
 				}
 			}
-
-			Input_render(game->input, game->surface);
+			Menu_render(game->new_record_menu, game->surface);
+		} else {
+			Menu_render(game->main_menu, game->surface);
 		}
 	}
 
@@ -806,6 +816,7 @@ void Game_destroy(Game * game) {
 
 		Menu_destroy(game->pause_menu);
 		Menu_destroy(game->main_menu);
+		Menu_destroy(game->new_record_menu);
 
 		free(game);
 	}
