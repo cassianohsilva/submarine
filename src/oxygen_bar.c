@@ -7,56 +7,56 @@
 #include "oxygen_bar.h"
 
 OxygenBar * OxygenBar_create(SDL_Window * window, int x, int y, int w, int h) {
-	OxygenBar * oxygenbar = (OxygenBar *) malloc(sizeof(OxygenBar));
+  OxygenBar * oxygenbar = (OxygenBar *) malloc(sizeof(OxygenBar));
 
-	if (oxygenbar != NULL) {
-		oxygenbar->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
+  if (oxygenbar != NULL) {
+    oxygenbar->rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-		oxygenbar->rect->x = x;
-		oxygenbar->rect->y = y;
+    oxygenbar->rect->x = x;
+    oxygenbar->rect->y = y;
 
-		oxygenbar->rect->w = w;
-		oxygenbar->rect->h = h;
+    oxygenbar->rect->w = w;
+    oxygenbar->rect->h = h;
 
-		oxygenbar->window = window;
-		oxygenbar->surface = SDL_CreateRGBSurface(0, oxygenbar->rect->w,
-				oxygenbar->rect->h, 32, 0, 0, 0, 0);
+    oxygenbar->window = window;
+    oxygenbar->surface = SDL_CreateRGBSurface(0, oxygenbar->rect->w,
+        oxygenbar->rect->h, 32, 0, 0, 0, 0);
 
-		oxygenbar->oxygen_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
+    oxygenbar->oxygen_rect = (SDL_Rect *) malloc(sizeof(SDL_Rect));
 
-		oxygenbar->oxygen_rect->x = 0;
-		oxygenbar->oxygen_rect->y = 0;
+    oxygenbar->oxygen_rect->x = 0;
+    oxygenbar->oxygen_rect->y = 0;
 
-		oxygenbar->oxygen_rect->w = w;
-		oxygenbar->oxygen_rect->h = h;
-		fflush(stdout);
+    oxygenbar->oxygen_rect->w = w;
+    oxygenbar->oxygen_rect->h = h;
+    fflush(stdout);
 
-//		} else {
-//			printf("Erro ao carregar a barra de oxygenio");
-//		}
-	}
+//    } else {
+//      printf("Erro ao carregar a barra de oxygenio");
+//    }
+  }
 
-	return oxygenbar;
+  return oxygenbar;
 }
 
 void OxygenBar_destroy(OxygenBar * oxygenbar) {
-	free(oxygenbar->rect);
-	SDL_FreeSurface(oxygenbar->surface);
-	free(oxygenbar);
+  free(oxygenbar->rect);
+  SDL_FreeSurface(oxygenbar->surface);
+  free(oxygenbar);
 }
 
 void OxygenBar_render(OxygenBar* oxygenbar, SDL_Surface * parent) {
 
-	SDL_FillRect(oxygenbar->surface, NULL,
-			SDL_MapRGB(oxygenbar->surface->format, 0xFF, 0, 0x00));
+  SDL_FillRect(oxygenbar->surface, NULL,
+      SDL_MapRGB(oxygenbar->surface->format, 0xFF, 0, 0x00));
 
-	SDL_FillRect(oxygenbar->surface, oxygenbar->oxygen_rect,
-			SDL_MapRGB(oxygenbar->surface->format, 0x13, 0x72, 10));
+  SDL_FillRect(oxygenbar->surface, oxygenbar->oxygen_rect,
+      SDL_MapRGB(oxygenbar->surface->format, 0x13, 0x72, 10));
 
-	SDL_BlitSurface(oxygenbar->surface, NULL, parent, oxygenbar->rect);
+  SDL_BlitSurface(oxygenbar->surface, NULL, parent, oxygenbar->rect);
 }
 
 void OxygenBar_set_oxygen(OxygenBar * oxygenbar, float oxygen) {
-	oxygenbar->oxygen_rect->w = oxygenbar->rect->w * (oxygen / 100.0);
+  oxygenbar->oxygen_rect->w = oxygenbar->rect->w * (oxygen / 100.0);
 }
 

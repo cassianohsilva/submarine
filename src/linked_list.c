@@ -9,62 +9,62 @@
 
 List * List_create() {
 
-	List * l = (List *) malloc(sizeof(List));
+  List * l = (List *) malloc(sizeof(List));
 
-	if (l != NULL) {
-		l->begin = NULL;
-	}
+  if (l != NULL) {
+    l->begin = NULL;
+  }
 
-	return l;
+  return l;
 }
 
 void List_insert(List * l, void * value) {
 
-	Node * node = (Node *) malloc(sizeof(Node));
+  Node * node = (Node *) malloc(sizeof(Node));
 
-	if(node != NULL) {
-		node->value = value;
+  if(node != NULL) {
+    node->value = value;
 
-		node->next = l->begin;
-		l->begin = node;
-	}
+    node->next = l->begin;
+    l->begin = node;
+  }
 }
 
 bool List_remove(List * l, void * value) {
 
-	Node ** node = &l->begin;
-	bool is_modified = false;
+  Node ** node = &l->begin;
+  bool is_modified = false;
 
-	while(*node != NULL) {
-		if((*node)->value == value) {
-			Node * next = (*node)->next;
+  while(*node != NULL) {
+    if((*node)->value == value) {
+      Node * next = (*node)->next;
 
-			free(*node);
+      free(*node);
 
-			*node = next;
+      *node = next;
 
-			is_modified = true;
-			break;
-		} else {
-			node = &(*node)->next;
-		}
-	}
+      is_modified = true;
+      break;
+    } else {
+      node = &(*node)->next;
+    }
+  }
 
-	return is_modified;
+  return is_modified;
 }
 
 
 void List_destroy(List * list) {
 
-	Node * node = list->begin;
-	Node * aux = NULL;
+  Node * node = list->begin;
+  Node * aux = NULL;
 
-	while(node != NULL) {
-		aux = node;
-		node = node->next;
+  while(node != NULL) {
+    aux = node;
+    node = node->next;
 
-		free(aux);
-	}
+    free(aux);
+  }
 
-	free(list);
+  free(list);
 }
